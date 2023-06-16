@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="options_array">
+        <item> </item>
+        <item>Horror</item>
+        <item>Classical</item>
+        <item>Comedy</item>
+        <!-- Add more options as needed -->
+    </string-array>
+
+</resources>

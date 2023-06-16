@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">TwoActivities</string>
+    <string name="statement_text">Enter 3 words:</string>
+    <string name="Choose_category_text">Choose Category</string>
+    <string name="generate_text">Generate</string>
+    <string name="Word2_text">Word 2</string>
+    <string name="Word3_text">Word 3</string>
+    <string name="logo_text">Logo</string>
+    <string name="word1_text">Word 1</string>
+    <string name="word_1">Word 1</string>
+    <string name="previous_text">Previous</string>
+    <string name="next_text">Next</string>
+    <string name="done_text">Done</string>
+    <string name="re_generate_text">Re-\ngenerate</string>
+    <string name="story">
+Once upon a time in a small town called Quirkville, there lived an astronaut named Major Melvin Mischief. Now, Major Mischief was known for his love of mischief and his uncanny ability to find humor in the most unlikely situations.\n
+
+One sunny day, Major Mischief decided to take a break from his space adventures and go on a road trip in his trusty old car, which he lovingly named "Cosmo Cruiser." He packed his bags, grabbed his favorite pair of headphones, and set off on a quirky adventure.\n
+
+As he cruised down the highway, Major Mischief couldn\'t resist the urge to listen to his favorite upbeat tunes. He plugged his headphones into his car\'s audio system, turned up the volume, and began singing along with gusto. Little did he know, his singing voice had the power to make people break into spontaneous laughter.\n
+
+Unaware of the hilarity he was causing, Major Mischief drove through town, spreading joy and laughter wherever he went. Pedestrians burst into giggles, dogs started wagging their tails uncontrollably, and even traffic lights turned red with laughter. Quirkville had never seen such a comical sight!\n
+
+Curious about the uproar he was causing, Major Mischief took off his headphones for a moment, and to his surprise, he heard the sound of laughter echoing through the streets. It was then that he realized his extraordinary talent for making people laugh with his singing.\n
+
+Determined to share his gift with the world, Major Mischief hatched a plan. He parked his car in the town square, connected his headphones to a portable speaker, and turned up the volume. As soon as his silly songs filled the air, a crowd gathered around him, unable to resist the infectious laughter that followed.\n
+
+Word quickly spread, and people from neighboring towns came to witness Major Mischief\'s comical concerts. His fame skyrocketed, and soon he was known as the "Singing Astronaut." He traveled from town to town, bringing joy to everyone he encountered.\n
+
+One day, as Major Mischief was performing his signature rendition of "Rocket Man," he caught the attention of a talent scout from a famous comedy show. The scout was so impressed by Major Mischief\'s ability to spread laughter that he offered him a spot on the show.\n
+
+Major Mischief gladly accepted the offer and became a beloved comedian, famous for his unique blend of space humor and catchy tunes. His car, the Cosmo Cruiser, became a symbol of laughter, and people started wearing headphones in his honor.\n
+
+And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles to people\'s faces, proving that even in the vastness of space or the ordinary setting of a car ride, laughter has the power to unite and brighten our lives.
+    </string>
+    <string name="choose_a_category_text">Choose a category:</string>
+    <string name="enter_3_words_text">Enter 3 words:</string>
+    <string name="word_1_text">Word 1</string>
+
+    <string-array name="Categories">
+        <item>Horror</item>
+        <item>Comedy</item>
+        <item>Romance</item>
+    </string-array>
+
+</resources>
