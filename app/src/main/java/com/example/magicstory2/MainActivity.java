@@ -14,6 +14,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.magicstory2.R;
 import com.example.magicstory2.databinding.ActivityMainBinding;
 
@@ -31,19 +37,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set Content View
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        //Create intent
         intent = new Intent(this, Story.class);
+        //initialise widgets
         first_word_box = bo.word1;
         second_word_box = bo.word2;
         third_word_box = bo.word3;
-
+        //initialise spinner
         Spinner spinner = bo.categoryBox;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
-
+        //Generate Button - On Click
         bo.generateButton.setOnClickListener(view -> {
             if (first_word_box.getText().toString().equals("") || second_word_box.getText().toString().equals("") || third_word_box.getText().toString().equals("")) {
                 Toast.makeText(MainActivity.this, "Enter 3 words and choose a category", Toast.LENGTH_SHORT).show();
@@ -55,6 +64,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 startActivityForResult(intent, REQ_CODE);
             }
         });
+
+
+        String google_URL = "https://www.google.com";
+        StringRequest sr = new StringRequest(Request.Method.GET, google_URL,
+                (Response.Listener<String>) response -> {
+            intent.putExtra("response",response.substring(0,10000));
+
+        }, (Response.ErrorListener) error -> {
+            intent.putExtra("response", "error");
+        });
+
+        // Add a request to your RequestQueue.
+        NetworkManager.getInstance(this).addToRequestQueue(sr);
+
+
     }
 
     @Override
@@ -73,11 +97,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String choice = adapterView.getItemAtPosition(i).toString();
         intent.putExtra("Category",choice);
-        //Toast.makeText(MainActivity.this,choice,Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+
+
 }
