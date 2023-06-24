@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,12 +14,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.magicstory2.R;
+import com.example.magicstory2.controller.AppController;
 import com.example.magicstory2.databinding.ActivityMainBinding;
 
 
@@ -76,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
         // Add a request to your RequestQueue.
-        NetworkManager.getInstance(this).addToRequestQueue(sr);
+        AppController.getInstance().addToRequestQueue(sr);
 
 
     }
