@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TwoActivities</string>
+    <string name="app_name">Magic Story</string>
     <string name="statement_text">Enter 3 words:</string>
     <string name="Choose_category_text">Choose Category</string>
     <string name="generate_text">Generate</string>
@@ -36,6 +36,8 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
     <string name="choose_a_category_text">Choose a category:</string>
     <string name="enter_3_words_text">Enter 3 words:</string>
     <string name="word_1_text">Word 1</string>
+    <string name="Error_message">\"Failed to generate. Click \"Regenerate\" or click \"Done\" to go back \"</string>
+    <string name="google_URL">https://www.google.com</string>
 
     <string-array name="Categories">
         <item>Horror</item>
