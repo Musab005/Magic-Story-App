@@ -5,7 +5,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.example.magicstory2.controller.StoryController;
-
+import com.example.magicstory2.controller.StoryGenerationListener;
 
 
 public class StoryModel {

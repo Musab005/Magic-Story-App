@@ -1,4 +1,4 @@
-package com.example.magicstory2;
+package com.example.magicstory2.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.magicstory2.R;
 import com.example.magicstory2.databinding.ActivityStoryBinding;
 
 
