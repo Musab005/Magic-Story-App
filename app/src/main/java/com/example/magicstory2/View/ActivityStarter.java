@@ -1,4 +1,4 @@
-package com.example.magicstory2.model;
+package com.example.magicstory2.View;
 
 import android.content.Intent;
 

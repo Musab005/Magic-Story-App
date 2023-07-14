@@ -15,10 +15,10 @@
         android:theme="@style/Theme.MagicStory2"
         tools:targetApi="31">
         <activity
-            android:name=".Story"
+            android:name=".View.Story"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".View.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

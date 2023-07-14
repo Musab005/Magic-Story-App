@@ -1,4 +1,4 @@
-package com.example.magicstory2.model;
+package com.example.magicstory2.controller;
 
 public interface StoryGenerationListener {
     void onDataReceived(String data);

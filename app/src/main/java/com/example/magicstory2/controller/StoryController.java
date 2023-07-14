@@ -6,9 +6,8 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.example.magicstory2.MainActivity;
-import com.example.magicstory2.model.ActivityStarter;
-import com.example.magicstory2.model.StoryGenerationListener;
+import com.example.magicstory2.View.MainActivity;
+import com.example.magicstory2.View.ActivityStarter;
 import com.example.magicstory2.model.StoryModel;
 
 public class StoryController extends Application {

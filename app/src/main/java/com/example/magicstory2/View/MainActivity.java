@@ -1,4 +1,4 @@
-package com.example.magicstory2;
+package com.example.magicstory2.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -13,9 +13,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.magicstory2.R;
 import com.example.magicstory2.controller.StoryController;
 import com.example.magicstory2.databinding.ActivityMainBinding;
-import com.example.magicstory2.model.ActivityStarter;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, ActivityStarter {
