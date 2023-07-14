@@ -16,7 +16,6 @@ import com.example.magicstory2.databinding.ActivityStoryBinding;
 
 
 public class Story extends AppCompatActivity {
-
     private ActivityStoryBinding bo;
     private ScrollView scrollView;
     private ConstraintLayout buttonLayout;
@@ -24,15 +23,22 @@ public class Story extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("Story Activity:", "onCreate");
         super.onCreate(savedInstanceState);
+        Log.d("Story Activity:", "onCreate2");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
+        Log.d("Story Activity:", "onCreate3");
+        //intent3 from mainActivity
         Intent intent = getIntent();
         Button done_button = bo.DoneButton;
         Button reg_button = bo.RegButton;
         scrollView = bo.scrollView;
         buttonLayout = bo.buttonLayout;
         storyText = bo.storyText;
-        storyText.setText(intent.getStringExtra("response"));
+        storyText.setText(intent.getStringExtra("story"));
+        Log.d("Story Activity:", "text set");
+        buttonLayout.setVisibility(View.GONE);
+
 
 
         scrollView.setOnScrollChangeListener((view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -45,7 +51,7 @@ public class Story extends AppCompatActivity {
             // Get the current scroll position
             int currentScrollPosition = scrollY + scrollViewHeight;
 
-            // Check if the scroll position has reached the bottom
+             //Check if the scroll position has reached the bottom
             if (currentScrollPosition >= contentHeight) {
                 buttonLayout.setVisibility(View.VISIBLE);
 
@@ -54,17 +60,18 @@ public class Story extends AppCompatActivity {
             }
         });
 
-
         done_button.setOnClickListener(view -> {
             intent.putExtra("message_back", "Done");
-            setResult(RESULT_OK,intent);
+            //setResult(RESULT_OK,intent);
             finish();
         });
 
         reg_button.setOnClickListener(view -> {
             intent.putExtra("message_back", "Regenerate");
-            setResult(RESULT_OK,intent);
+            //onActivityResult method ??
+            //setResult(RESULT_OK,intent);
             finish();
         });
     }
+
 }
