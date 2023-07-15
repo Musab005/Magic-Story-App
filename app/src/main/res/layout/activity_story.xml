@@ -1,4 +1,4 @@
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -18,9 +18,10 @@
                 android:id="@+id/story_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="casual"
                 android:text="@string/story"
                 android:textAlignment="viewStart"
-                android:textSize="15sp">
+                android:textSize="20sp">
 
             </TextView>
 

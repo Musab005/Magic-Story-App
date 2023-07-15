@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private EditText second_word_box;
     private EditText third_word_box;
     private String category;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("MainActivity", "Creating main activity");
@@ -78,9 +76,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                             @Override
                             public void showError2(String error) {
-                                Log.d("MainActivity", "on error");
+                                Log.d("MainActivity", "error: " + error);
                                 Toast.makeText(MainActivity.this, "Error: " + error,
-                                        Toast.LENGTH_SHORT).show();
+                                        Toast.LENGTH_LONG).show();
                             }
                         });
             }
