@@ -7,30 +7,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.magicstory2.View.MainActivity;
-import com.example.magicstory2.View.ActivityStarter;
 import com.example.magicstory2.model.StoryModel;
 
 public class StoryController extends Application {
 
-    //MainActivity
     private MainActivity mainActivity;
-    //interface
-    private ActivityStarter activityStarter;
     private static StoryController instance;
     private RequestQueue requestQueue;
-    //model
-    private StoryModel model;
-    public void setActivityStarter(ActivityStarter activityStarter) {
-        this.activityStarter = activityStarter;
-    }
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
-    }
-    public void setModel(StoryModel model) {
-        this.model = model;
-    }
-    public StoryModel getModel() {
-        return model;
     }
     public static synchronized StoryController getInstance() {
         Log.d("controller", "returning static instance of controller");
@@ -57,26 +42,28 @@ public class StoryController extends Application {
         super.onCreate();
         instance = this;
         Log.d("controller", "new controller self instance made onCreate");
-        getInstance().setModel(new StoryModel(getInstance()));
-        Log.d("controller", "model set to the static controller instance");
     }
 
     public void generateStory(String word1, String word2, String word3,
-                              String category) {
+                              String category, final MainActivity.startActivity activity) {
         Log.d("controller", "calling generateStory from model");
-        getInstance().getModel().generateStory(word1, word2, word3, category, new StoryGenerationListener() {
+        new StoryModel().generateStory(word1, word2, word3, category, new StoryGenerationListener() {
             @Override
             public void onDataReceived(String data) {
                 Log.d("controller", "on data received. Starting new activity");
-                getInstance().activityStarter.startActivity(data);
+                activity.startActivity2(data);
             }
             @Override
             public void onError(String error) {
                 Log.d("controller", "on error received. Showing error");
-                getInstance().activityStarter.showError(error);
+                activity.showError2(error);
             }
         });
     }
 
 
+    public interface StoryGenerationListener {
+        void onDataReceived(String data);
+        void onError(String error);
+    }
 }
