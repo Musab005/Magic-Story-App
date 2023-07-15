@@ -12,10 +12,13 @@ import com.example.magicstory2.model.StoryModel;
 
 public class StoryController extends Application {
 
+    //MainActivity
     private MainActivity mainActivity;
+    //interface
     private ActivityStarter activityStarter;
     private static StoryController instance;
     private RequestQueue requestQueue;
+    //model
     private StoryModel model;
     public void setActivityStarter(ActivityStarter activityStarter) {
         this.activityStarter = activityStarter;
@@ -26,15 +29,10 @@ public class StoryController extends Application {
     public void setModel(StoryModel model) {
         this.model = model;
     }
-
     public StoryModel getModel() {
         return model;
     }
     public static synchronized StoryController getInstance() {
-        if (instance==null) {
-            Log.d("controller", "new self instance of controller made in the getInstance method");
-            instance = new StoryController();
-        }
         Log.d("controller", "returning static instance of controller");
         return instance;
     }
@@ -57,7 +55,7 @@ public class StoryController extends Application {
     public void onCreate() {
         Log.d("controller", "controller created");
         super.onCreate();
-        instance = new StoryController();
+        instance = this;
         Log.d("controller", "new controller self instance made onCreate");
         getInstance().setModel(new StoryModel(getInstance()));
         Log.d("controller", "model set to the static controller instance");
