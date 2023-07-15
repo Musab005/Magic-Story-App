@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("MainActivity", "Creating main activity");
         super.onCreate(savedInstanceState);
-        StoryController.getInstance().setMainActivity(this);
+        StoryController.getInstance().setRequestQueue(this);
         Log.d("MainActivity", "Context set.");
         //set Content View
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
