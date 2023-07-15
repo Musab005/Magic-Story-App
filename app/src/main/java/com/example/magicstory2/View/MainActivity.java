@@ -3,10 +3,13 @@ package com.example.magicstory2.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -49,6 +52,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+        // Assuming your EditText widget is named editText
+        first_word_box.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(view);
+            }
+        });
+
+        second_word_box.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(view);
+            }
+        });
+
+        third_word_box.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(view);
+            }
+        });
+
         //Generate Button - On Click
         bo.generateButton.setOnClickListener(view -> {
             Log.d("Main Activity:", "button clicked");
@@ -83,6 +105,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         });
             }
         });
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if (view != null) {
+                hideKeyboard(view);
+            }
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
