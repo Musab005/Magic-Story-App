@@ -40,6 +40,7 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
     <string name="google_URL">https://www.google.com</string>
 
     <string-array name="Categories">
+        <item> </item>
         <item>Horror</item>
         <item>Comedy</item>
         <item>Romance</item>
