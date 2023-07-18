@@ -17,8 +17,17 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.magicstory2.R;
+import com.example.magicstory2.Util.Preference;
 import com.example.magicstory2.controller.StoryController;
 import com.example.magicstory2.databinding.ActivityMainBinding;
+
+//TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
+//TODO: 2. Ask user for their full name and username when they use the app for the first time
+//TODO: 3. Setup an animation upon start of the application which greets user by their username
+// OR MAKE A LEFT UTIL COLUMN TO MANAGE ACCOUNT NAME/LOGOUT AND ETC
+//TODO: 4. Make the quality of spinner better
+//TODO: 5. Make UI/UX better in general
+//TODO: 6. Let user choose a theme colour of the app and save their preference. Can edit later
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -28,10 +37,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void showError2(String error);
     }
     private ActivityMainBinding bo;
+    private Preference pref;
     private EditText first_word_box;
     private EditText second_word_box;
     private EditText third_word_box;
     private String category;
+    private String word1;
+    private String word2;
+    private String word3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("MainActivity", "Creating main activity");
@@ -41,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //set Content View
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         Log.d("MainActivity", "Content view set");
+        //initialise prefs
+        pref = new Preference(this);
+        Log.d("MainActivity", "Prefs set");
         //initialise widgets
         first_word_box = bo.word1;
         second_word_box = bo.word2;
@@ -51,23 +67,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+        word1 = pref.getWord1();
+        word2 = pref.getWord2();
+        word3 = pref.getWord3();
+        category = pref.getCategory();
+        first_word_box.setText(word1);
+        second_word_box.setText(word2);
+        third_word_box.setText(word3);
+        spinner.setPrompt(category);
+        Log.d("MainActivity", "setting: " + word1 + word2 + word3 + category);
 
         // Assuming your EditText widget is named editText
         first_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
+                word1 = first_word_box.getText().toString().trim();
             }
         });
 
         second_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
+                word2 = second_word_box.getText().toString().trim();
             }
         });
 
         third_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
+                word3 = third_word_box.getText().toString().trim();
             }
         });
 
@@ -76,7 +104,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("Main Activity:", "button clicked");
             if (first_word_box.getText().toString().equals("") ||
                     second_word_box.getText().toString().equals("") ||
-                    third_word_box.getText().toString().equals("")) {
+                    third_word_box.getText().toString().equals("") ||
+                    category.isEmpty()) {
                 Log.d("Main Activity:", "incorrect arguments");
                 Toast.makeText(MainActivity.this,
                         "Enter 3 words and choose a category",
@@ -84,10 +113,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             } else {
                 Log.d("MainActivity", "calling generate story from controller");
                 StoryController.getInstance().generateStory(
-                        first_word_box.getText().toString().trim(),
-                        second_word_box.getText().toString().trim(),
-                        third_word_box.getText().toString().trim(),
-                        category, new startActivity() {
+                        word1, word2, word3, category,
+                        new startActivity() {
                             @Override
                             public void startActivity2(String story) {
                                 Intent intent3 = new Intent(MainActivity.this, Story.class);
@@ -132,8 +159,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        Toast.makeText(this,
-                "Please select a category", Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pref.saveData(word1, word2, word3, category);
+        Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
+    }
 }
