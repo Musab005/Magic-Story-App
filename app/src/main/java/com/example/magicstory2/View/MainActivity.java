@@ -21,6 +21,15 @@ import com.example.magicstory2.Util.Preference;
 import com.example.magicstory2.controller.StoryController;
 import com.example.magicstory2.databinding.ActivityMainBinding;
 
+//TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
+//TODO: 2. Ask user for their full name and username when they use the app for the first time
+//TODO: 3. Setup an animation upon start of the application which greets user by their username
+// OR MAKE A LEFT UTIL COLUMN TO MANAGE ACCOUNT NAME/LOGOUT AND ETC
+//TODO: 4. Make the quality of spinner better
+//TODO: 5. Make UI/UX better in general
+//TODO: 6. Let user choose a theme colour of the app and save their preference. Can edit later
+
+
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public interface startActivity {

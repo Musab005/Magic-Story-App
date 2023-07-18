@@ -1,11 +1,9 @@
 package com.example.magicstory2.Util;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.magicstory2.databinding.ActivityStoryBinding;
+import java.util.Date;
 
 public class Preference {
     private SharedPreferences preferences;
@@ -15,10 +13,21 @@ public class Preference {
     }
 
     public void saveData(String word1, String word2, String word3, String category) {
-        preferences.edit().putString("word1", word1);
-        preferences.edit().putString("word2", word2);
-        preferences.edit().putString("word3", word3);
-        preferences.edit().putString("category", category);
+        preferences.edit().putString("word1", word1).apply();
+        preferences.edit().putString("word2", word2).apply();
+        preferences.edit().putString("word3", word3).apply();
+        preferences.edit().putString("category", category).apply();
+    }
+
+    public void saveUserInfo(String firstName, String lastName, String username, Date dateJoined) {
+        preferences.edit().putString("firstName", firstName).apply();
+        preferences.edit().putString("lastName", lastName).apply();
+        preferences.edit().putString("username", username).apply();
+        preferences.edit().putString("dateJoined", dateJoined.toString()).apply();
+    }
+
+    public String getUsername() {
+        return preferences.getString("username", "<username>");
     }
 
     public String getWord1() {
