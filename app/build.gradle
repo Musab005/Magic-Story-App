@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.magicstory2'
+    namespace 'com.apps005.magicstory'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.magicstory2"
+        applicationId "com.apps005.magicstory"
         minSdk 26
         targetSdk 33
         versionCode 1

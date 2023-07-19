@@ -1,10 +1,10 @@
-package com.example.magicstory2.model;
+package com.apps005.magicstory.model;
 
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.example.magicstory2.controller.StoryController;
+import com.apps005.magicstory.controller.StoryController;
 
 
 public class StoryModel {

@@ -1,4 +1,4 @@
-package com.example.magicstory2.Util;
+package com.apps005.magicstory.Util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;

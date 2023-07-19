@@ -1,4 +1,4 @@
-package com.example.magicstory2.controller;
+package com.apps005.magicstory.controller;
 
 import android.app.Application;
 import android.content.Context;
@@ -7,8 +7,8 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.example.magicstory2.View.MainActivity;
-import com.example.magicstory2.model.StoryModel;
+import com.apps005.magicstory.View.MainActivity;
+import com.apps005.magicstory.model.StoryModel;
 
 public class StoryController extends Application {
     private static StoryController instance;

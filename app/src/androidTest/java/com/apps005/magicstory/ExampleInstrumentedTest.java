@@ -1,4 +1,4 @@
-package com.example.magicstory2;
+package com.apps005.magicstory;
 
 import android.content.Context;
 

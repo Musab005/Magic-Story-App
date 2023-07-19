@@ -1,4 +1,4 @@
-package com.example.magicstory2.View;
+package com.apps005.magicstory.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -16,10 +16,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.magicstory2.R;
-import com.example.magicstory2.Util.Preference;
-import com.example.magicstory2.controller.StoryController;
-import com.example.magicstory2.databinding.ActivityMainBinding;
+import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.Preference;
+import com.apps005.magicstory.controller.StoryController;
+import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 //TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
 //TODO: 2. Ask user for their full name and username when they use the app for the first time
