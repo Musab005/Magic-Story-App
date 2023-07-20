@@ -5,11 +5,25 @@ import android.content.SharedPreferences;
 
 import java.util.Date;
 
-public class Preference {
+public class SharedPreferencesManager {
     private SharedPreferences preferences;
+    private static SharedPreferencesManager instance;
 
-    public Preference(Activity context) {
+
+//    // Inside an activity
+//    SharedPreferencesManager sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+//    String userName = sharedPreferencesManager.getUserName();
+//// Use userName as needed
+
+    public SharedPreferencesManager(Activity context) {
         this.preferences = context.getPreferences(Context.MODE_PRIVATE);
+    }
+
+    public static synchronized SharedPreferencesManager getInstance(Activity context) {
+        if (instance == null) {
+            instance = new SharedPreferencesManager(context);
+        }
+        return instance;
     }
 
     public void saveData(String word1, String word2, String word3, String category) {
@@ -19,15 +33,12 @@ public class Preference {
         preferences.edit().putString("category", category).apply();
     }
 
-    public void saveUserInfo(String firstName, String lastName, String username, Date dateJoined) {
-        preferences.edit().putString("firstName", firstName).apply();
-        preferences.edit().putString("lastName", lastName).apply();
+    public void saveUsername(String username) {
         preferences.edit().putString("username", username).apply();
-        preferences.edit().putString("dateJoined", dateJoined.toString()).apply();
     }
 
     public String getUsername() {
-        return preferences.getString("username", "<username>");
+        return preferences.getString("username", "");
     }
 
     public String getWord1() {

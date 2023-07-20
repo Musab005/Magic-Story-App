@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.Preference;
+import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.controller.StoryController;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void showError2(String error);
     }
     private ActivityMainBinding bo;
-    private Preference pref;
+    private SharedPreferencesManager pref;
     private EditText first_word_box;
     private EditText second_word_box;
     private EditText third_word_box;
@@ -47,16 +47,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String word3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("MainActivity", "Creating main activity");
         super.onCreate(savedInstanceState);
+        Log.d("MainActivity", "Creating main activity");
+        //initialise prefs
+        pref = SharedPreferencesManager.getInstance(this);
+        Log.d("MainActivity", "Prefs set");
+        if (pref.getUsername().isEmpty()) {
+            Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
+            Log.d("MainActivity", "starting landing page");
+            startActivity(intent_first_login);
+        }
+        Log.d("MainActivity", "did not start landing page. Showing username");
+        Log.d("MainActivity", pref.getUsername());
+        Toast.makeText(MainActivity.this,"welcome" + pref.getUsername(),Toast.LENGTH_LONG).show();
         StoryController.getInstance().setRequestQueue(this);
-        Log.d("MainActivity", "Context set.");
         //set Content View
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         Log.d("MainActivity", "Content view set");
-        //initialise prefs
-        pref = new Preference(this);
-        Log.d("MainActivity", "Prefs set");
         //initialise widgets
         first_word_box = bo.word1;
         second_word_box = bo.word2;
@@ -102,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Generate Button - On Click
         bo.generateButton.setOnClickListener(view -> {
             Log.d("Main Activity:", "button clicked");
-            if (first_word_box.getText().toString().equals("") ||
-                    second_word_box.getText().toString().equals("") ||
-                    third_word_box.getText().toString().equals("") ||
+            if (word1.equals("") ||
+                    word2.equals("") ||
+                    word3.equals("") ||
                     category.isEmpty()) {
                 Log.d("Main Activity:", "incorrect arguments");
                 Toast.makeText(MainActivity.this,
@@ -119,10 +126,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             public void startActivity2(String story) {
                                 Intent intent3 = new Intent(MainActivity.this, Story.class);
                                 intent3.putExtra("story", story);
-                                Log.d("MainActivity", "Starting new activity");
+                                Log.d("MainActivity", "Starting story activity");
                                 startActivity(intent3);
                             }
-
                             @Override
                             public void showError2(String error) {
                                 Log.d("MainActivity", "error: " + error);

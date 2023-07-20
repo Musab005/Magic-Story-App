@@ -3,12 +3,14 @@ package com.apps005.magicstory.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
 import com.apps005.magicstory.model.User;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -54,11 +56,15 @@ public class LandingPage extends AppCompatActivity {
                 user.setLast_name(last_name);
                 user.setUsername(username);
                 user.setDate_joined(formattedDate);
+                SharedPreferencesManager.getInstance(this).saveUsername(username);
                 db.collection("Users").add(user)
                         .addOnSuccessListener(documentReference ->
                                 Toast.makeText(LandingPage.this,"success",Toast.LENGTH_LONG).show())
                         .addOnFailureListener(e ->
                                 Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_LONG).show());
+                Intent intent_return = new Intent(LandingPage.this, MainActivity.class);
+                startActivity(intent_return);
+                finish();
             }
         });
 
