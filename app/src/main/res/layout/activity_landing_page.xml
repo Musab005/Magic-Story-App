@@ -8,9 +8,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent_layout_constraint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#3C3F41"
+        android:padding="18dp"
         tools:context=".View.LandingPage">
 
         <androidx.cardview.widget.CardView
@@ -19,16 +21,19 @@
             android:layout_height="157dp"
             android:layout_marginTop="120dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="20dp"
+            app:cardElevation="8dp"
+            app:cardUseCompatPadding="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
+                android:id="@+id/linearL_insideCard"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:padding="10dp"
                 android:visibility="visible">
 
                 <EditText
@@ -36,39 +41,39 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:autofillHints=""
                     android:ems="10"
                     android:fontFamily="@font/bubblegum_sans"
                     android:hint="@string/first_name_txt"
                     android:inputType="textPersonName"
                     android:textAlignment="center"
-                    android:textSize="25sp"
-                    android:autofillHints="" />
+                    android:textSize="25sp" />
 
                 <EditText
                     android:id="@+id/last_name_box"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:autofillHints=""
                     android:ems="10"
                     android:fontFamily="@font/bubblegum_sans"
                     android:hint="@string/last_name_txt"
                     android:inputType="textPersonName"
                     android:textAlignment="center"
-                    android:textSize="25sp"
-                    android:autofillHints="" />
+                    android:textSize="25sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/username_guide"
-            android:layout_width="257dp"
-            android:layout_height="34dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="76dp"
-            android:fontFamily="@font/atomic_age"
+            android:fontFamily="@font/cantora_one"
             android:text="@string/pick_a_username_txt"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="25sp"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,6 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:autofillHints=""
             android:ems="10"
             android:fontFamily="casual"
             android:hint="@string/e_g_wanderlustjunkie_txt"
@@ -91,15 +97,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.583"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/username_guide"
-            android:autofillHints="" />
+            app:layout_constraintTop_toBottomOf="@+id/username_guide" />
 
         <Button
             android:id="@+id/save_button"
-            android:layout_width="128dp"
-            android:layout_height="91dp"
+            android:layout_width="134dp"
+            android:layout_height="92dp"
             android:backgroundTint="@color/black"
-            android:elevation="30dp"
+            android:elevation="40dp"
+            android:fontFamily="@font/luckiest_guy"
+            android:shadowColor="@color/white"
             android:text="@string/let_s_go_txt"
             android:textSize="20sp"
             app:cornerRadius="10dp"
@@ -108,6 +115,7 @@
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/username_box"
-            app:layout_constraintVertical_bias="0.269" />
+            app:layout_constraintVertical_bias="0.269"
+            tools:ignore="TextSizeCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
