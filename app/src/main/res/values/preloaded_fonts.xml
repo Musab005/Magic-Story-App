@@ -3,5 +3,8 @@
     <array name="preloaded_fonts" translatable="false">
         <item>@font/atomic_age</item>
         <item>@font/bubblegum_sans</item>
+        <item>@font/cantora_one</item>
+        <item>@font/luckiest_guy</item>
+        <item>@font/paprika</item>
     </array>
 </resources>
