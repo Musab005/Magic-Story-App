@@ -1,28 +1,26 @@
 package com.apps005.magicstory.Util;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import java.util.Date;
+import android.util.Log;
 
 public class SharedPreferencesManager {
     private SharedPreferences preferences;
     private static SharedPreferencesManager instance;
 
 
-//    // Inside an activity
-//    SharedPreferencesManager sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
-//    String userName = sharedPreferencesManager.getUserName();
-//// Use userName as needed
-
-    public SharedPreferencesManager(Activity context) {
-        this.preferences = context.getPreferences(Context.MODE_PRIVATE);
+    private SharedPreferencesManager(Context context) {
+        this.preferences = context.getSharedPreferences("AppPrefs",Context.MODE_PRIVATE);
     }
 
-    public static synchronized SharedPreferencesManager getInstance(Activity context) {
+    public SharedPreferencesManager() {
+    }
+
+    public static synchronized SharedPreferencesManager getInstance(Context context) {
         if (instance == null) {
-            instance = new SharedPreferencesManager(context);
+            instance = new SharedPreferencesManager(context.getApplicationContext());
+            Log.d("SPManager","static instance SP created");
         }
+        Log.d("SPManager","returning static instance SP");
         return instance;
     }
 

@@ -56,18 +56,14 @@ public class LandingPage extends AppCompatActivity {
                 user.setLast_name(last_name);
                 user.setUsername(username);
                 user.setDate_joined(formattedDate);
-                SharedPreferencesManager.getInstance(this).saveUsername(username);
+                SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
                 db.collection("Users").add(user)
                         .addOnSuccessListener(documentReference ->
                                 Toast.makeText(LandingPage.this,"success",Toast.LENGTH_LONG).show())
                         .addOnFailureListener(e ->
                                 Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_LONG).show());
-                Intent intent_return = new Intent(LandingPage.this, MainActivity.class);
-                startActivity(intent_return);
                 finish();
             }
         });
-
-
     }
 }

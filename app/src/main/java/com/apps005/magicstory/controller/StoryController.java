@@ -13,12 +13,21 @@ import com.apps005.magicstory.model.StoryModel;
 public class StoryController extends Application {
     private static StoryController instance;
     private RequestQueue requestQueue;
-    public void setRequestQueue(Context context) {
-        Log.d("controller", "new RQ made");
-        this.requestQueue = Volley.newRequestQueue(context);
+
+    private StoryController(Context context) {
+        this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        Log.d("Controller","RQ created");
     }
-    public static synchronized StoryController getInstance() {
-        Log.d("controller", "returning static instance of controller");
+
+    public StoryController() {
+    }
+
+    public static synchronized StoryController getInstance(Context context) {
+        if (instance == null) {
+            instance = new StoryController(context);
+            Log.d("Controller","static instance controller created");
+        }
+        Log.d("Controller","returning static instance controller");
         return instance;
     }
     public RequestQueue getRequestQueue() {
@@ -30,20 +39,12 @@ public class StoryController extends Application {
         Log.d("controller", "request added to RQ");
     }
 
-
-    @Override
-    public void onCreate() {
-        Log.d("controller", "controller created");
-        super.onCreate();
-        //confused. Why not instance = new StoryController() ??
-        instance = this;
-        Log.d("controller", "new controller self instance made onCreate");
-    }
-
     public void generateStory(String word1, String word2, String word3,
-                              String category, final MainActivity.startActivity activity) {
+                              String category, Context context, final MainActivity.startActivity activity) {
         Log.d("controller", "calling generateStory from model");
-        new StoryModel().generateStory(word1, word2, word3, category, new StoryGenerationListener() {
+        new StoryModel().generateStory(word1, word2, word3, category,
+                StoryController.getInstance(context),
+                new StoryGenerationListener() {
             @Override
             public void onDataReceived(String data) {
                 Log.d("controller", "on data received. Starting new activity");

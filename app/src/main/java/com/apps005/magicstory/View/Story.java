@@ -24,11 +24,9 @@ public class Story extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("Story Activity:", "onCreate");
         super.onCreate(savedInstanceState);
-        Log.d("Story Activity:", "onCreate2");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
-        Log.d("Story Activity:", "onCreate3");
+        Log.d("Story Activity:", "onCreate");
         //intent3 from mainActivity
         Intent intent = getIntent();
         Button done_button = bo.DoneButton;
