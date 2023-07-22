@@ -1,6 +1,7 @@
 package com.apps005.magicstory.View;
 
-import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String word2 = "";
     private String word3 = "";
     private SharedPreferencesManager instance_SP;
-    private static final int REQUEST_LANDING_PAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("MainActivity", "inside if block");
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
-            startActivityForResult(intent_first_login, REQUEST_LANDING_PAGE);
+            launchLandingPage.launch(intent_first_login);
         } else {
             afterLogin();
     }}
@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Generate Button - On Click
         bo.generateButton.setOnClickListener(view -> {
             Log.d("Main Activity:", "button clicked");
+            instance_SP.saveData(word1, word2, word3, category);
             if (word1.equals("") ||
                     word2.equals("") ||
                     word3.equals("") ||
@@ -157,12 +158,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d("MainActivity:", "onResult");
-        afterLogin();
-    }
+    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    // Handle the result from the LandingPage activity here
+                    Log.d("MainActivity:", "onResult");
+                    afterLogin();
+                } else {
+                    // Handle other result scenarios, if needed
+                }
+            }
+    );
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -187,18 +194,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Toast.makeText(MainActivity.this,
                 category, Toast.LENGTH_LONG).show();
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         instance_SP.saveData(word1, word2, word3, category);
+        instance_SP.saveData(word1, word2, word3, category);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
         instance_SP.saveData(word1, word2, word3, category);
         Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
     }
-
 
 }

@@ -21,7 +21,6 @@ import java.time.format.DateTimeFormatter;
 public class LandingPage extends AppCompatActivity {
 
     private ActivityLandingPageBinding bo;
-    private Button save_button;
     private EditText first_name_box;
     private EditText last_name_box;
     private EditText username_box;
@@ -31,7 +30,7 @@ public class LandingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("LandingPage", "super onCreate");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
-        save_button = bo.saveButton;
+        Button save_button = bo.saveButton;
         first_name_box = bo.firstNameBox;
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
