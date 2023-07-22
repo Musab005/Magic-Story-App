@@ -3,8 +3,8 @@ package com.apps005.magicstory.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -29,6 +29,7 @@ public class LandingPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("LandingPage", "super onCreate");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
         save_button = bo.saveButton;
         first_name_box = bo.firstNameBox;
@@ -37,12 +38,14 @@ public class LandingPage extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         save_button.setOnClickListener(view -> {
+            Log.d("LandingPage", "save button clicked");
             String first_name = first_name_box.getText().toString().trim();
             String last_name = last_name_box.getText().toString().trim();
             String username = username_box.getText().toString().trim();
             LocalDate currentDate = LocalDate.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String formattedDate = currentDate.format(formatter);
+
             if (first_name.isEmpty() ||
                     last_name.isEmpty() ||
                     username.isEmpty()) {
@@ -51,17 +54,17 @@ public class LandingPage extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             } else {
                 //save data
-                User user = new User();
-                user.setFirst_name(first_name);
-                user.setLast_name(last_name);
-                user.setUsername(username);
-                user.setDate_joined(formattedDate);
+                Log.d("LandingPage", "saving data");
+                User user = new User(first_name,last_name,formattedDate,0,username);
                 SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
                 db.collection("Users").add(user)
                         .addOnSuccessListener(documentReference ->
                                 Toast.makeText(LandingPage.this,"success",Toast.LENGTH_LONG).show())
                         .addOnFailureListener(e ->
                                 Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_LONG).show());
+                //correct to make sure the activity dosen't end in case of failuer listener
+                setResult(RESULT_OK);
+                Log.d("LandingPage", "finishing");
                 finish();
             }
         });

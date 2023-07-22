@@ -1,5 +1,6 @@
 package com.apps005.magicstory.View;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
@@ -19,12 +20,10 @@ import android.widget.Toast;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.controller.StoryController;
-import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 //TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
-//TODO: 2. Ask user for their full name and username when they use the app for the first time
+//Put all instantiation in a separate method (widget instantiation)
 //TODO: 3. Setup an animation upon start of the application which greets user by their username
-// OR MAKE A LEFT UTIL COLUMN TO MANAGE ACCOUNT NAME/LOGOUT AND ETC
 //TODO: 4. Make the quality of spinner better
 //TODO: 5. Make UI/UX better in general
 //TODO: 6. Let user choose a theme colour of the app and save their preference. Can edit later
@@ -36,39 +35,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void startActivity2(String story);
         void showError2(String error);
     }
-    private ActivityMainBinding bo;
+
     private EditText first_word_box;
     private EditText second_word_box;
     private EditText third_word_box;
-    private String category;
-    private String word1;
-    private String word2;
-    private String word3;
+    private String category = "";
+    private String word1 = "";
+    private String word2 = "";
+    private String word3 = "";
     private SharedPreferencesManager instance_SP;
+    private static final int REQUEST_LANDING_PAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity", "Creating main activity");
-        //initialise prefs
-         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        Log.d("MainActivity", "super onCreate");
+        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         Log.d("MainActivity", "Created SP instance");
         if (instance_SP.getUsername().isEmpty()) {
+            Log.d("MainActivity", "inside if block");
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
-            startActivity(intent_first_login);
-        }
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        Log.d("MainActivity", "did not start landing page. Showing username");
+            startActivityForResult(intent_first_login, REQUEST_LANDING_PAGE);
+        } else {
+            afterLogin();
+    }}
+
+    private void afterLogin() {
+        Log.d("MainActivity", "afterLogin");
+        com.apps005.magicstory.databinding.ActivityMainBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         Log.d("MainActivity", "Username: " + instance_SP.getUsername());
-        Toast.makeText(MainActivity.this,"welcome " + instance_SP.getUsername(),Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
         //initialise widgets
         first_word_box = bo.word1;
         second_word_box = bo.word2;
         third_word_box = bo.word3;
         //initialise spinner
         Spinner spinner = bo.categoryBox;
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
@@ -79,7 +83,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         first_word_box.setText(word1);
         second_word_box.setText(word2);
         third_word_box.setText(word3);
-        spinner.setPrompt(category);
+        String[] categoryArray = getResources().getStringArray(R.array.Categories);
+// Find the index of the category in the array
+        int categoryIndex = -1;
+        for (int i = 0; i < categoryArray.length; i++) {
+            if (categoryArray[i].equals(category)) {
+                categoryIndex = i;
+                break;
+            }
+        }
+// Set the default selected item in the Spinner
+        if (categoryIndex != -1) {
+            spinner.setSelection(categoryIndex);
+        }
         Log.d("MainActivity", "setting: " + word1 + word2 + word3 + category);
 
 
@@ -141,6 +157,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("MainActivity:", "onResult");
+        afterLogin();
+    }
+
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -167,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+        instance_SP.saveData(word1, word2, word3, category);
     }
 
     @Override
@@ -175,4 +199,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         instance_SP.saveData(word1, word2, word3, category);
         Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
     }
+
+
 }

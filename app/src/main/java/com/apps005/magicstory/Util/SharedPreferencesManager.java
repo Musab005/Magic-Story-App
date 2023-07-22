@@ -17,7 +17,7 @@ public class SharedPreferencesManager {
 
     public static synchronized SharedPreferencesManager getInstance(Context context) {
         if (instance == null) {
-            instance = new SharedPreferencesManager(context.getApplicationContext());
+            instance = new SharedPreferencesManager(context);
             Log.d("SPManager","static instance SP created");
         }
         Log.d("SPManager","returning static instance SP");

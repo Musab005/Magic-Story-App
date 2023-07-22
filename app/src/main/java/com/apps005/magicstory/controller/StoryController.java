@@ -15,7 +15,7 @@ public class StoryController extends Application {
     private RequestQueue requestQueue;
 
     private StoryController(Context context) {
-        this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        this.requestQueue = Volley.newRequestQueue(context);
         Log.d("Controller","RQ created");
     }
 
@@ -42,8 +42,7 @@ public class StoryController extends Application {
     public void generateStory(String word1, String word2, String word3,
                               String category, Context context, final MainActivity.startActivity activity) {
         Log.d("controller", "calling generateStory from model");
-        new StoryModel().generateStory(word1, word2, word3, category,
-                StoryController.getInstance(context),
+        new StoryModel().generateStory(word1, word2, word3, category, context,
                 new StoryGenerationListener() {
             @Override
             public void onDataReceived(String data) {
