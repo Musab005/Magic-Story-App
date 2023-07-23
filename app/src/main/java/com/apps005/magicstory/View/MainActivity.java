@@ -9,13 +9,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps005.magicstory.R;
@@ -56,7 +59,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("MainActivity", "inside if block");
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
-            launchLandingPage.launch(intent_first_login);
+            //launchLandingPage.launch(intent_first_login);
+            startActivity(intent_first_login);
         } else {
             afterLogin();
     }}
@@ -70,6 +74,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         first_word_box = bo.word1;
         second_word_box = bo.word2;
         third_word_box = bo.word3;
+
+        third_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word3 = third_word_box.getText().toString().trim();
+                hideKeyboard(textView);
+                Log.d("MainActivity", "word3: " + word3);
+                return true;
+            }
+            return false;
+        });
+
+        first_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word1 = first_word_box.getText().toString().trim();
+                hideKeyboard(textView);
+                Log.d("MainActivity", "word1: " + word1);
+                return true;
+            }
+            return false;
+        });
+
+        second_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word2 = second_word_box.getText().toString().trim();
+                hideKeyboard(textView);
+                Log.d("MainActivity", "word2: " + word2);
+                return true;
+            }
+            return false;
+        });
+
         //initialise spinner
         Spinner spinner = bo.categoryBox;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
@@ -102,24 +137,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         first_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
-                word1 = first_word_box.getText().toString().trim();
-                instance_SP.saveData(word1, word2, word3, category);
             }
         });
 
         second_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
-                word2 = second_word_box.getText().toString().trim();
-                instance_SP.saveData(word1, word2, word3, category);
             }
         });
 
         third_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
-                word3 = third_word_box.getText().toString().trim();
-                instance_SP.saveData(word1, word2, word3, category);
             }
         });
 
@@ -127,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         bo.generateButton.setOnClickListener(view -> {
             Log.d("Main Activity:", "button clicked");
             instance_SP.saveData(word1, word2, word3, category);
+            Log.d("Main Activity: you chose ", word1 + word2 + word3 + category);
             if (word1.equals("") ||
                     word2.equals("") ||
                     word3.equals("") ||
@@ -158,23 +188,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    // Handle the result from the LandingPage activity here
-                    Log.d("MainActivity:", "onResult");
-                    afterLogin();
-                } else {
-                    // Handle other result scenarios, if needed
-                }
-            }
-    );
+//    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            result -> {
+//                if (result.getResultCode() == RESULT_OK) {
+//                    // Handle the result from the LandingPage activity here
+//                    Log.d("MainActivity:", "onResult");
+//                    afterLogin();
+//                } else {
+//                    // Handle other result scenarios, if needed
+//                }
+//            }
+//    );
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        word3 = third_word_box.getText().toString().trim();
+        word2 = second_word_box.getText().toString().trim();
+        word1 = first_word_box.getText().toString().trim();
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -192,11 +226,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         this.category = adapterView.getItemAtPosition(i).toString();
         instance_SP.saveData(word1, word2, word3, category);
         Toast.makeText(MainActivity.this,
-                category, Toast.LENGTH_LONG).show();
+                category, Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        instance_SP.saveData(word1, word2, word3, category);
         instance_SP.saveData(word1, word2, word3, category);
     }
     @Override
