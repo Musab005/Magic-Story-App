@@ -1,5 +1,7 @@
 package com.apps005.magicstory.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
@@ -7,24 +9,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.controller.StoryController;
-import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 //TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
-//TODO: 2. Ask user for their full name and username when they use the app for the first time
+//Put all instantiation in a separate method (widget instantiation)
 //TODO: 3. Setup an animation upon start of the application which greets user by their username
-// OR MAKE A LEFT UTIL COLUMN TO MANAGE ACCOUNT NAME/LOGOUT AND ETC
 //TODO: 4. Make the quality of spinner better
 //TODO: 5. Make UI/UX better in general
 //TODO: 6. Let user choose a theme colour of the app and save their preference. Can edit later
@@ -36,79 +39,124 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void startActivity2(String story);
         void showError2(String error);
     }
-    private ActivityMainBinding bo;
-    private SharedPreferencesManager pref;
+
     private EditText first_word_box;
     private EditText second_word_box;
     private EditText third_word_box;
-    private String category;
-    private String word1;
-    private String word2;
-    private String word3;
+    private String category = "";
+    private String word1 = "";
+    private String word2 = "";
+    private String word3 = "";
+    private SharedPreferencesManager instance_SP;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity", "Creating main activity");
-        //initialise prefs
-        pref = SharedPreferencesManager.getInstance(this);
-        Log.d("MainActivity", "Prefs set");
-        if (pref.getUsername().isEmpty()) {
+        Log.d("MainActivity", "super onCreate");
+        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        Log.d("MainActivity", "Created SP instance");
+        if (instance_SP.getUsername().isEmpty()) {
+            Log.d("MainActivity", "inside if block");
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
+            //launchLandingPage.launch(intent_first_login);
             startActivity(intent_first_login);
-        }
-        Log.d("MainActivity", "did not start landing page. Showing username");
-        Log.d("MainActivity", pref.getUsername());
-        Toast.makeText(MainActivity.this,"welcome" + pref.getUsername(),Toast.LENGTH_LONG).show();
-        StoryController.getInstance().setRequestQueue(this);
-        //set Content View
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        Log.d("MainActivity", "Content view set");
+        } else {
+            afterLogin();
+    }}
+
+    private void afterLogin() {
+        Log.d("MainActivity", "afterLogin");
+        com.apps005.magicstory.databinding.ActivityMainBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        Log.d("MainActivity", "Username: " + instance_SP.getUsername());
+        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
         //initialise widgets
         first_word_box = bo.word1;
         second_word_box = bo.word2;
         third_word_box = bo.word3;
+
+        third_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word3 = third_word_box.getText().toString().trim();
+                hideKeyboard(textView);
+                Log.d("MainActivity", "word3: " + word3);
+                return true;
+            }
+            return false;
+        });
+
+        first_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word1 = first_word_box.getText().toString().trim();
+                hideKeyboard(textView);
+                Log.d("MainActivity", "word1: " + word1);
+                return true;
+            }
+            return false;
+        });
+
+        second_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word2 = second_word_box.getText().toString().trim();
+                hideKeyboard(textView);
+                Log.d("MainActivity", "word2: " + word2);
+                return true;
+            }
+            return false;
+        });
+
         //initialise spinner
         Spinner spinner = bo.categoryBox;
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-        word1 = pref.getWord1();
-        word2 = pref.getWord2();
-        word3 = pref.getWord3();
-        category = pref.getCategory();
+        word1 = instance_SP.getWord1();
+        word2 = instance_SP.getWord2();
+        word3 = instance_SP.getWord3();
+        category = instance_SP.getCategory();
         first_word_box.setText(word1);
         second_word_box.setText(word2);
         third_word_box.setText(word3);
-        spinner.setPrompt(category);
+        String[] categoryArray = getResources().getStringArray(R.array.Categories);
+// Find the index of the category in the array
+        int categoryIndex = -1;
+        for (int i = 0; i < categoryArray.length; i++) {
+            if (categoryArray[i].equals(category)) {
+                categoryIndex = i;
+                break;
+            }
+        }
+// Set the default selected item in the Spinner
+        if (categoryIndex != -1) {
+            spinner.setSelection(categoryIndex);
+        }
         Log.d("MainActivity", "setting: " + word1 + word2 + word3 + category);
 
-        // Assuming your EditText widget is named editText
+
         first_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
-                word1 = first_word_box.getText().toString().trim();
             }
         });
 
         second_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
-                word2 = second_word_box.getText().toString().trim();
             }
         });
 
         third_word_box.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(view);
-                word3 = third_word_box.getText().toString().trim();
             }
         });
 
         //Generate Button - On Click
         bo.generateButton.setOnClickListener(view -> {
             Log.d("Main Activity:", "button clicked");
+            instance_SP.saveData(word1, word2, word3, category);
+            Log.d("Main Activity: you chose ", word1 + word2 + word3 + category);
             if (word1.equals("") ||
                     word2.equals("") ||
                     word3.equals("") ||
@@ -119,15 +167,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         Toast.LENGTH_SHORT).show();
             } else {
                 Log.d("MainActivity", "calling generate story from controller");
-                StoryController.getInstance().generateStory(
-                        word1, word2, word3, category,
+                StoryController.getInstance(this.getApplicationContext()).generateStory(
+                        word1, word2, word3, category, this.getApplicationContext(),
                         new startActivity() {
                             @Override
                             public void startActivity2(String story) {
-                                Intent intent3 = new Intent(MainActivity.this, Story.class);
-                                intent3.putExtra("story", story);
+                                Intent intent2 = new Intent(MainActivity.this, Story.class);
+                                intent2.putExtra("story", story);
                                 Log.d("MainActivity", "Starting story activity");
-                                startActivity(intent3);
+                                startActivity(intent2);
                             }
                             @Override
                             public void showError2(String error) {
@@ -140,10 +188,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+//    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            result -> {
+//                if (result.getResultCode() == RESULT_OK) {
+//                    // Handle the result from the LandingPage activity here
+//                    Log.d("MainActivity:", "onResult");
+//                    afterLogin();
+//                } else {
+//                    // Handle other result scenarios, if needed
+//                }
+//            }
+//    );
+
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        word3 = third_word_box.getText().toString().trim();
+        word2 = second_word_box.getText().toString().trim();
+        word1 = first_word_box.getText().toString().trim();
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -159,18 +224,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         this.category = adapterView.getItemAtPosition(i).toString();
+        instance_SP.saveData(word1, word2, word3, category);
         Toast.makeText(MainActivity.this,
-                category, Toast.LENGTH_LONG).show();
+                category, Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+        instance_SP.saveData(word1, word2, word3, category);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
-        pref.saveData(word1, word2, word3, category);
+        instance_SP.saveData(word1, word2, word3, category);
         Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
     }
+
 }

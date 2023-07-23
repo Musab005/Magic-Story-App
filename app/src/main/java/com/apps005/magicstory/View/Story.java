@@ -13,22 +13,18 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.databinding.ActivityStoryBinding;
 
 
 public class Story extends AppCompatActivity {
-    private ActivityStoryBinding bo;
     private ScrollView scrollView;
     private ConstraintLayout buttonLayout;
     private TextView storyText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("Story Activity:", "onCreate");
         super.onCreate(savedInstanceState);
-        Log.d("Story Activity:", "onCreate2");
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
-        Log.d("Story Activity:", "onCreate3");
+        Log.d("Story Activity:", "onCreate");
+        com.apps005.magicstory.databinding.ActivityStoryBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
         //intent3 from mainActivity
         Intent intent = getIntent();
         Button done_button = bo.DoneButton;
@@ -38,9 +34,6 @@ public class Story extends AppCompatActivity {
         storyText = bo.storyText;
         storyText.setText(intent.getStringExtra("story"));
         Log.d("Story Activity:", "text set");
-        buttonLayout.setVisibility(View.GONE);
-
-
 
         scrollView.setOnScrollChangeListener((view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             // Get the height of the ScrollView
