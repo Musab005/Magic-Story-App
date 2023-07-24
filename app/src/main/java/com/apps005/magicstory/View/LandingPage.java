@@ -75,6 +75,7 @@ public class LandingPage extends AppCompatActivity {
                                     // startActivity(new Intent(MainActivity.this, NewActivity.class));
                                     progressBar.setVisibility(View.INVISIBLE);
                                     Log.d("LandingPage", "onComplete");
+                                    setResult(RESULT_OK);
                                     finish();
                                     Log.d("LandingPage", "finish done");
                                 }, 2000);

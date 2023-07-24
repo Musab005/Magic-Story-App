@@ -3,24 +3,136 @@ package com.apps005.magicstory.model;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.apps005.magicstory.controller.StoryController;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 
 
 public class StoryModel {
-    private final static String URL = "https://www.google.com";
+
+    private static final String API_KEY = "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";
+    private static final String CHATGPT_URL = "https://api.openai.com/v1/chat/completions";
 
     public void generateStory(String word1, String word2, String word3,
                               String category, Context context, final StoryController.StoryGenerationListener callback) {
 
-        Log.d("model", "API request being made");
-        StringRequest sr = new StringRequest(Request.Method.GET, URL,
-                response -> callback.onDataReceived(response.substring(0,5000)),
-                error -> callback.onError(error.getMessage()));
-        StoryController.getInstance(context).addToRequestQueue(sr);
+        //test(context);
+
+        //String prompt = "Generate a short " + category + "story about " + word1 + ", " + word2 + ", " + word3;
+        String prompt = "Hi";
+        Log.d("model", "inside generateStory method");
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("model", "gpt-3.5-turbo");
+            jsonObject.put("messages", new JSONArray()
+                            .put(0, new JSONObject().put("role", "user"))
+                            .put(1, new JSONObject().put("content", prompt)));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, jsonObject,
+                response -> {
+                    // Process the API response
+                    try {
+                        Log.d("model", "making API request");
+                        String generatedText = response.getJSONArray("choices")
+                                .getJSONObject(0)
+                                .getJSONObject("message")
+                                .getString("content");
+                        Log.d("ChatGptSUCCESS", "Generated Text: " + generatedText);
+                    } catch (JSONException e) {
+                        Log.d("model", "API request failed");
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    // Handle error
+                    Log.d("model", "API request failed 2");
+                    Log.d("ChatGptFAILURE", "Error: " + error.toString());
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + API_KEY);
+                return headers;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                return super.parseNetworkResponse(response);
+            }
+        };
+
+        int intTimeoutPeriod = 60000; // 60 seconds timeout duration defined
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(intTimeoutPeriod,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(retryPolicy);
+
+
+        Log.d("model", "adding to RQ");
+        StoryController.getInstance(context).addToRequestQueue(request);
     }
 
+
+//    public static void test(Context context) {
+//        JsonObjectRequest pingRequest = new JsonObjectRequest(Request.Method.GET, PING_ENDPOINT, null,
+//                response -> {
+//                    // Request successful, handle the response here
+//                    Log.d("Ping Response: ", response.toString());
+//                },
+//                error -> {
+//                    // Request failed, handle the error here
+//                    Log.d("Ping Error: ", error.toString());
+//                }) {
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String, String> headers = new HashMap<>();
+//                headers.put("Authorization", "Bearer " + API_KEY);
+////                headers.put("OpenAI-Organization", "Apps005");
+////                headers.put("OpenAI-Organization-Id", "org-yx8MAeM3prp4oIAq6NOeCahC");
+//                return headers;
+//            }
+//        };
+//
+//        // Add the request to the queue to execute it
+//        StoryController.getInstance(context).addToRequestQueue(pingRequest);
+//    }
+
 }
+
+
+
+
+
+//        StringRequest sr = new StringRequest(Request.Method.GET, URL,
+//                response -> callback.onDataReceived(response.substring(0,5000)),
+//                error -> callback.onError(error.getMessage()));
+//        StoryController.getInstance(context).addToRequestQueue(sr);
+//    }
+//
+//}
+
+
+
+
+
+
 
 

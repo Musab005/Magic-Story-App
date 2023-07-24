@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("MainActivity", "inside if block");
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
-            //launchLandingPage.launch(intent_first_login);
-            startActivity(intent_first_login);
+            launchLandingPage.launch(intent_first_login);
+            //startActivity(intent_first_login);
         } else {
             afterLogin();
     }}
@@ -188,18 +188,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-//    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            result -> {
-//                if (result.getResultCode() == RESULT_OK) {
-//                    // Handle the result from the LandingPage activity here
-//                    Log.d("MainActivity:", "onResult");
-//                    afterLogin();
-//                } else {
-//                    // Handle other result scenarios, if needed
-//                }
-//            }
-//    );
+    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    // Handle the result from the LandingPage activity here
+                    Log.d("MainActivity:", "onResult");
+                    afterLogin();
+                } else {
+                    // Handle other result scenarios, if needed
+                }
+            }
+    );
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
