@@ -31,11 +31,12 @@ public class StoryModel {
     public void generateStory(String word1, String word2, String word3,
                               String category, Context context, final StoryController.StoryGenerationListener callback) {
 
-        String prompt = "Write 10 words";
+        String prompt = "Write 100 words";
         try {
             // Create a HashMap to represent the request payload
             Map<String, Object> requestData = new HashMap<>();
-            requestData.put("model", "gpt-3.5-turbo");
+            requestData.put("model", "gpt-3.5-turbo-16k");
+            //use 16k model for more tokens!
 
             // Create a HashMap for the user message
             Map<String, String> userMessageMap = new HashMap<>();
