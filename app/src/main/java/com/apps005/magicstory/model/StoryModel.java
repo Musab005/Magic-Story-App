@@ -9,8 +9,10 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.apps005.magicstory.controller.StoryController;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,71 +25,104 @@ import java.util.Map;
 
 public class StoryModel {
 
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "";
     private static final String CHATGPT_URL = "https://api.openai.com/v1/chat/completions";
 
     public void generateStory(String word1, String word2, String word3,
                               String category, Context context, final StoryController.StoryGenerationListener callback) {
 
-        //test(context);
-
-        //String prompt = "Generate a short " + category + "story about " + word1 + ", " + word2 + ", " + word3;
         String prompt = "Hi";
-        Log.d("model", "inside generateStory method");
-
-        JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("model", "gpt-3.5-turbo");
-            jsonObject.put("messages", new JSONArray()
-                            .put(0, new JSONObject().put("role", "user"))
-                            .put(1, new JSONObject().put("content", prompt)));
+            // Create a HashMap to represent the request payload
+            Map<String, Object> requestData = new HashMap<>();
+            requestData.put("model", "gpt-3.5-turbo");
 
+            // Create a HashMap for the user message
+            Map<String, String> userMessageMap = new HashMap<>();
+            userMessageMap.put("role", "user");
+            userMessageMap.put("content", prompt);
+
+            // Create an array to hold the messages
+            Object[] messagesArray = {userMessageMap};
+            requestData.put("messages", messagesArray);
+
+            // Convert the HashMap to a JSONObject using Gson
+            Gson gson = new Gson();
+            JSONObject requestJson = new JSONObject(gson.toJson(requestData));
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, requestJson,
+                    response -> Log.d("success", response.toString()),
+                    error -> Log.d("error", error.toString())
+            ) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + API_KEY);
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+            };
+
+
+            StoryController.getInstance(context).addToRequestQueue(request);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, jsonObject,
-                response -> {
-                    // Process the API response
-                    try {
-                        Log.d("model", "making API request");
-                        String generatedText = response.getJSONArray("choices")
-                                .getJSONObject(0)
-                                .getJSONObject("message")
-                                .getString("content");
-                        Log.d("ChatGptSUCCESS", "Generated Text: " + generatedText);
-                    } catch (JSONException e) {
-                        Log.d("model", "API request failed");
-                        e.printStackTrace();
-                    }
-                },
-                error -> {
-                    // Handle error
-                    Log.d("model", "API request failed 2");
-                    Log.d("ChatGptFAILURE", "Error: " + error.toString());
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + API_KEY);
-                return headers;
-            }
-
-            @Override
-            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                return super.parseNetworkResponse(response);
-            }
-        };
-
-        int intTimeoutPeriod = 60000; // 60 seconds timeout duration defined
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(intTimeoutPeriod,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-
-
-        Log.d("model", "adding to RQ");
-        StoryController.getInstance(context).addToRequestQueue(request);
+//
+//        //test(context);
+//
+//        //String prompt = "Generate a short " + category + "story about " + word1 + ", " + word2 + ", " + word3;
+//        String prompt = "Hi";
+//        try {
+//            // Create a HashMap to represent the request payload
+//            Map<String, Object> requestData = new HashMap<>();
+//            requestData.put("model", "gpt-3.5-turbo");
+//
+//            // Create a HashMap for the user message
+//            Map<String, String> userMessageMap = new HashMap<>();
+//            userMessageMap.put("role", "user");
+//            userMessageMap.put("content", prompt);
+//
+//            // Create an array to hold the messages
+//            Object[] messagesArray = {userMessageMap};
+//            requestData.put("messages", messagesArray);
+//
+//            // Convert the HashMap to a JSONObject using Gson
+//            Gson gson = new Gson();
+//            JSONObject requestJson = new JSONObject(gson.toJson(requestData));
+//        } catch (JSONException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//
+//        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, requestJson,
+//                    response -> Log.d("success",response.toString()),
+//                    error -> Log.d("error", error.toString())
+//            ) {
+//                @Override
+//                public Map<String, String> getHeaders() {
+//                    Map<String, String> headers = new HashMap<>();
+//                    headers.put("Authorization", "Bearer " + API_KEY);
+//                    headers.put("Content-Type", "application/json");
+//                    return headers;
+//                }
+//
+//                @Override
+//                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+//                    return super.parseNetworkResponse(response);
+//                }
+//            };
+//
+//            int intTimeoutPeriod = 60000; // 60 seconds timeout duration defined
+//            RetryPolicy retryPolicy = new DefaultRetryPolicy(intTimeoutPeriod,
+//                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+//                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+//            request.setRetryPolicy(retryPolicy);
+//
+//
+//            Log.d("model", "adding to RQ");
+//            StoryController.getInstance(context).addToRequestQueue(request);
+        }
     }
 
 
@@ -115,7 +150,6 @@ public class StoryModel {
 //        StoryController.getInstance(context).addToRequestQueue(pingRequest);
 //    }
 
-}
 
 
 

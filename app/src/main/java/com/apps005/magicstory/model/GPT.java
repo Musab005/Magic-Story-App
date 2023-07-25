@@ -13,7 +13,7 @@ import java.io.IOException;
 public class GPT {
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "";
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
     public interface ChatGptResponseListener {
