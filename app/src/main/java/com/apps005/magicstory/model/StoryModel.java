@@ -31,7 +31,7 @@ public class StoryModel {
     public void generateStory(String word1, String word2, String word3,
                               String category, Context context, final StoryController.StoryGenerationListener callback) {
 
-        String prompt = "Hi";
+        String prompt = "Write 10 words";
         try {
             // Create a HashMap to represent the request payload
             Map<String, Object> requestData = new HashMap<>();
@@ -51,8 +51,8 @@ public class StoryModel {
             JSONObject requestJson = new JSONObject(gson.toJson(requestData));
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, requestJson,
-                    response -> Log.d("success", response.toString()),
-                    error -> Log.d("error", error.toString())
+                    response -> callback.onDataReceived(response.toString()),
+                    error -> callback.onError(error.getMessage())
             ) {
                 @Override
                 public Map<String, String> getHeaders() {
@@ -62,7 +62,6 @@ public class StoryModel {
                     return headers;
                 }
             };
-
 
             StoryController.getInstance(context).addToRequestQueue(request);
         } catch (JSONException e) {
