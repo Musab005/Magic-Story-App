@@ -10,6 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#FEF9EF"
         tools:context=".View.ImageTest">
 
         <ImageView
@@ -17,6 +18,7 @@
             android:layout_width="256dp"
             android:layout_height="256dp"
             android:layout_marginTop="100dp"
+            android:elevation="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -25,18 +27,33 @@
 
         <Button
             android:id="@+id/ReadStory_button"
-            android:layout_width="151dp"
-            android:layout_height="77dp"
+            android:layout_width="147dp"
+            android:layout_height="107dp"
             android:layout_marginTop="136dp"
+            android:backgroundTint="#8A4513"
+            android:fontFamily="@font/bubblegum_sans"
             android:padding="16dp"
-            android:text="Story"
+            android:text="Read story"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.823"
+            app:layout_constraintHorizontal_bias="0.833"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:layout_constraintVertical_bias="0.512" />
+            app:layout_constraintVertical_bias="0.628" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="82dp"
+            android:layout_height="86dp"
+            android:layout_marginTop="84dp"
+            app:layout_constraintBottom_toTopOf="@+id/ReadStory_button"
+            app:layout_constraintEnd_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintVertical_bias="0.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -6,8 +6,8 @@
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#2196F3"
-        android:backgroundTint="#009688"
+        android:background="@color/light_white"
+        android:backgroundTint="@color/light_white"
         android:foregroundTint="#009688"
         android:orientation="vertical">
 
@@ -19,9 +19,12 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/cantora_one"
             android:gravity="center"
             android:text="@string/choose_a_category_text"
-            android:textSize="20sp" />
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:textStyle="italic" />
 
         <Spinner
             android:id="@+id/category_box"
@@ -40,9 +43,11 @@
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/bubblegum_sans"
             android:gravity="center"
             android:text="@string/enter_3_words_text"
-            android:textSize="30sp" />
+            android:textColor="@color/black"
+            android:textSize="40sp" />
 
         <EditText
             android:id="@+id/word1"
@@ -52,9 +57,16 @@
             android:layout_weight="1"
             android:autofillHints=""
             android:ems="10"
+            android:fontFamily="@font/paprika"
+            android:foregroundTint="@color/black"
             android:gravity="center"
             android:hint="@string/word_1_text"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@color/black"
+            android:textColorHighlight="@color/light_white"
+            android:textColorHint="@color/black"
+            android:textColorLink="@color/black"
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/word2"
@@ -64,9 +76,15 @@
             android:layout_weight="1"
             android:autofillHints=""
             android:ems="10"
+            android:fontFamily="@font/paprika"
             android:gravity="center"
             android:hint="@string/Word2_text"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@color/black"
+            android:textColorHighlight="@color/light_white"
+            android:textColorHint="@color/black"
+            android:textColorLink="@color/black"
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/word3"
@@ -76,19 +94,27 @@
             android:layout_weight="1"
             android:autofillHints=""
             android:ems="10"
+            android:fontFamily="@font/paprika"
             android:gravity="center"
             android:hint="@string/Word3_text"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@color/black"
+            android:textColorHighlight="@color/light_white"
+            android:textColorHint="@color/black"
+            android:textColorLink="@color/black"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/generate_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="177dp"
+            android:layout_height="58dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/button_lightBrown"
+            android:fontFamily="@font/cantora_one"
             android:text="@string/generate_text"
-            android:textSize="17sp" />
+            android:textSize="25sp" />
     </LinearLayout>
 </layout>
