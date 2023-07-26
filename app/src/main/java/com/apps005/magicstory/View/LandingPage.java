@@ -84,7 +84,7 @@ public class LandingPage extends AppCompatActivity {
                     }
                 });
         //does setResult take back to mainActivity or finish??
-        //correct to make sure the activity dosen't end in case of failuer listener
+        //correct to make sure the activity doesn't end in case of failure listener
     }
 
     private void widgets_init(ActivityLandingPageBinding bo) {

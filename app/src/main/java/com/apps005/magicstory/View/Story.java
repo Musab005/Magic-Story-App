@@ -32,18 +32,9 @@ public class Story extends AppCompatActivity {
         widgets_init(bo);
         storyText.setText(intent.getStringExtra("PossibleStory"));
 
-        done_button.setOnClickListener(view -> {
-            //intent.putExtra("message_back", "Done");
-            //setResult(RESULT_OK,intent);
-            finish();
-        });
+        done_button.setOnClickListener(view -> finish());
 
-        reg_button.setOnClickListener(view -> {
-            //intent.putExtra("message_back", "Regenerate");
-            //onActivityResult method ??
-            //setResult(RESULT_OK,intent);
-            finish();
-        });
+        reg_button.setOnClickListener(view -> finish());
     }
 
     private void widgets_init(ActivityStoryBinding bo) {

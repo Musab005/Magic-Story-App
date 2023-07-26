@@ -35,11 +35,6 @@ import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-//    public interface startStory {
-//        void onSuccess(String story);
-//        void onError(String error);
-//    }
-
     public interface startImage {
         void onSuccess(String url);
         void onError(String error);
@@ -100,6 +95,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     public void onSuccess(String url) {
                         Intent intent = new Intent(MainActivity.this, ImageTest.class);
                         intent.putExtra("url", url);
+                        intent.putExtra("word1", word1);
+                        intent.putExtra("word2", word2);
+                        intent.putExtra("word3", word3);
+                        intent.putExtra("category", category);
                         Log.d("MainActivity", "Starting image activity");
                         startActivity(intent);
                     }
@@ -112,27 +111,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
         );
     }
-
-
-//    private void startStoryActivity() {
-//        StoryController.getInstance(this.getApplicationContext()).generateStory(
-//                word1, word2, word3, category, this.getApplicationContext(),
-//                new startStory() {
-//                    @Override
-//                    public void onSuccess(String story) {
-//                        Intent intent2 = new Intent(MainActivity.this, Story.class);
-//                        intent2.putExtra("story", story);
-//                        Log.d("MainActivity", "Starting story activity");
-//                        startActivity(intent2);
-//                    }
-//                    @Override
-//                    public void onError(String error) {
-//                        Log.d("MainActivity", "error: " + error);
-//                        Toast.makeText(MainActivity.this, "Error: " + error,
-//                                Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//    }
 
 
     @NonNull
@@ -225,6 +203,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     afterLogin();
                 } else {
                     // Handle other result scenarios, if needed
+                    Toast.makeText(MainActivity.this, "Error",
+                            Toast.LENGTH_LONG).show();
+
                 }
             }
     );
