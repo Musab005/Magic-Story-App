@@ -7,6 +7,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.apps005.magicstory.View.ImageTest;
 import com.apps005.magicstory.View.MainActivity;
 import com.apps005.magicstory.model.StoryModel;
 
@@ -40,26 +41,38 @@ public class StoryController extends Application {
     }
 
     public void generateStory(String word1, String word2, String word3,
-                              String category, Context context, final MainActivity.startActivity activity) {
+                              String category, Context context, final ImageTest.startStory callback) {
         Log.d("controller", "calling generateStory from model");
         new StoryModel().generateStory(word1, word2, word3, category, context,
-                new StoryGenerationListener() {
+                callback::onResult);
+    }
+
+    public void generateImage(String word1, String word2, String word3,
+                              String category, Context context, final MainActivity.startImage callback) {
+        Log.d("controller", "calling generateImage from model");
+        new StoryModel().generateImage(word1, word2, word3, category, context, new ImageGenerationListener() {
             @Override
-            public void onDataReceived(String data) {
-                Log.d("controller", "on data received. Starting new activity");
-                activity.startActivity2(data);
+            public void onSuccess(String url) {
+                Log.d("controller", "on image url received. Starting image activity");
+                callback.onSuccess(url);
             }
             @Override
             public void onError(String error) {
-                Log.d("controller", "on error received. Showing error");
-                activity.showError2(error);
+                Log.d("controller", "on error received.");
+                callback.onError(error);
             }
         });
+
+
     }
 
 
     public interface StoryGenerationListener {
-        void onDataReceived(String data);
+        void onResult(String result);
+    }
+
+    public interface ImageGenerationListener {
+        void onSuccess(String url);
         void onError(String error);
     }
 }

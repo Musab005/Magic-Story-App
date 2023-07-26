@@ -1,18 +1,12 @@
 package com.apps005.magicstory.model;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.apps005.magicstory.View.ImageTest;
 import com.apps005.magicstory.controller.StoryController;
 import com.google.gson.Gson;
 
@@ -27,9 +21,9 @@ import java.util.Map;
 
 public class StoryModel {
 
-    private static final String API_KEY = "";
+    private static final String API_KEY = "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";
     private static final String CHATGPT_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_URL = "https://api.openai.com/v1/images/generations"; // API endpoint
+    private static final String DALLE_URL = "https://api.openai.com/v1/images/generations"; // API endpoint
 
 
     public void generateStory(String word1, String word2, String word3,
@@ -56,9 +50,8 @@ public class StoryModel {
             JSONObject requestJson = new JSONObject(gson.toJson(requestData));
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, requestJson,
-                    response -> callback.onDataReceived(response.toString()),
-                    error -> callback.onError(error.getMessage())
-            ) {
+                    response -> callback.onResult(response.toString()),
+                    Throwable::printStackTrace) {
                 @Override
                 public Map<String, String> getHeaders() {
                     Map<String, String> headers = new HashMap<>();
@@ -67,15 +60,14 @@ public class StoryModel {
                     return headers;
                 }
             };
-
             StoryController.getInstance(context).addToRequestQueue(request);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-        public void image(Context context, final ImageTest.loadImage image) {
-
+        public void generateImage(String word1, String word2, String word3,
+                                  String category, Context context, final StoryController.ImageGenerationListener callback) {
         String prompt = "comedy picture of apple, car, monkey";
             // Make the POST request
             JSONObject jsonRequest = new JSONObject();
@@ -86,18 +78,18 @@ public class StoryModel {
                 e.printStackTrace();
             }
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, API_URL, jsonRequest,
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, DALLE_URL, jsonRequest,
                     response -> {
                         try {
                             JSONArray dataArray = response.getJSONArray("data");
-                                JSONObject imageData = dataArray.getJSONObject(0);
-                                String imageUrl = imageData.getString("url");
-                                image.startImageActivity(imageUrl);
+                            JSONObject imageData = dataArray.getJSONObject(0);
+                            String imageUrl = imageData.getString("url");
+                            callback.onSuccess(imageUrl);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    },
-                    Throwable::printStackTrace) {
+                    }, error -> callback.onError(error.getMessage())
+            ) {
                 @Override
                 public Map<String, String> getHeaders() {
                     Map<String, String> headers = new HashMap<>();
