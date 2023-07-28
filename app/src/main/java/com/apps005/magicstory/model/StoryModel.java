@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class StoryModel {
 
-    private static final String API_KEY = "";
+    private static final String API_KEY = "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";
     private static final String CHATGPT_URL = "https://api.openai.com/v1/chat/completions";
     private static final String DALLE_URL = "https://api.openai.com/v1/images/generations";
 

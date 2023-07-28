@@ -24,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.controller.StoryController;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String word2 = "";
     private String word3 = "";
     private SharedPreferencesManager instance_SP;
-
+    private LottieAnimationView anim;
     private ProgressBar pBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         wordBox_init(bo);
         Spinner spinner = spinner_init(bo);
         setSavedData(spinner);
+        //start anim
+        anim = bo.animationView;
+        anim.setVisibility(View.VISIBLE);
 
         //Generate Button - On Click
         bo.generateButton.setOnClickListener(view -> {

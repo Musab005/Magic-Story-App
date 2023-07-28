@@ -62,7 +62,6 @@ public class ImageTest extends AppCompatActivity {
     @SuppressLint("ResourceAsColor")
     private void displayImage(ImageView iv, Intent intent) {
         //progressBar.setVisibility(View.VISIBLE);
-
         iv.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
         btn.setVisibility(View.GONE);
