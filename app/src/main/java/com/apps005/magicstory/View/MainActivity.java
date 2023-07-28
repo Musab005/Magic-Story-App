@@ -4,8 +4,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,8 +19,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String word3 = "";
     private SharedPreferencesManager instance_SP;
 
+    private ProgressBar pBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
+                pBar.setVisibility(View.VISIBLE);
                 startImageActivity();
-                //startStoryActivity();
             }
         });
     }
@@ -100,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         intent.putExtra("word3", word3);
                         intent.putExtra("category", category);
                         Log.d("MainActivity", "Starting image activity");
+                        pBar.setVisibility(View.GONE);
                         startActivity(intent);
                     }
                     @Override
@@ -146,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void wordBox_init(ActivityMainBinding bo) {
+        pBar = bo.pBar;
         first_word_box = bo.word1;
         second_word_box = bo.word2;
         third_word_box = bo.word3;

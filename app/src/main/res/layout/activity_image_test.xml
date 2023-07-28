@@ -8,6 +8,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#FEF9EF"
@@ -19,6 +20,7 @@
             android:layout_height="256dp"
             android:layout_marginTop="100dp"
             android:elevation="20dp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +38,7 @@
             android:text="Read story"
             android:textColor="#FFFFFF"
             android:textSize="25sp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.833"
@@ -49,11 +52,22 @@
             android:layout_width="82dp"
             android:layout_height="86dp"
             android:layout_marginTop="84dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/ReadStory_button"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
             app:layout_constraintStart_toStartOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintVertical_bias="0.0" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_autoPlay="false"
+            app:lottie_rawRes="@raw/writing_animation">
+
+        </com.airbnb.lottie.LottieAnimationView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
