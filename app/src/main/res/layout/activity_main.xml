@@ -12,6 +12,7 @@
             android:id="@+id/animationView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/dark_blue"
             android:visibility="visible"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
@@ -60,6 +61,9 @@
                 android:gravity="center"
                 android:text="@string/enter_3_words_text"
                 android:textColor="@color/light_white"
+                android:textColorHighlight="@color/button_lightBrown"
+                android:textColorHint="@color/light_white"
+                android:textColorLink="@color/light_white"
                 android:textSize="40sp" />
 
             <ProgressBar
@@ -86,7 +90,7 @@
                 android:textColor="@color/light_white"
                 android:textColorHighlight="@color/button_lightBrown"
                 android:textColorHint="@color/light_white"
-                android:textColorLink="@color/black"
+                android:textColorLink="@color/light_white"
                 android:textSize="20sp" />
 
             <EditText
@@ -104,7 +108,7 @@
                 android:textColor="@color/light_white"
                 android:textColorHighlight="@color/button_lightBrown"
                 android:textColorHint="@color/light_white"
-                android:textColorLink="@color/black"
+                android:textColorLink="@color/light_white"
                 android:textSize="20sp" />
 
             <EditText
@@ -122,7 +126,7 @@
                 android:textColor="@color/light_white"
                 android:textColorHighlight="@color/button_lightBrown"
                 android:textColorHint="@color/light_white"
-                android:textColorLink="@color/black"
+                android:textColorLink="@color/light_white"
                 android:textSize="20sp" />
 
             <Button
@@ -133,7 +137,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/button_lightBrown"
+                android:backgroundTint="@color/dark_brown"
                 android:fontFamily="@font/cantora_one"
                 android:text="@string/generate_text"
                 android:textSize="25sp" />

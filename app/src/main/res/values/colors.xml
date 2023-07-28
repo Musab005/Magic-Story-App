@@ -5,4 +5,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_white">#FEF9EF</color>
     <color name="button_lightBrown">#FF985D32</color>
+    <color name="dark_blue">#FF02082B</color>
+    <color name="dark_brown">#4C2204</color>
 </resources>

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
 
+    @SuppressLint("ResourceAsColor")
     private void afterLogin() {
         com.apps005.magicstory.databinding.ActivityMainBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
@@ -91,10 +93,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
-                pBar.setVisibility(View.VISIBLE);
+                buffer_start(bo, spinner);
                 startImageActivity();
             }
         });
+    }
+
+    @SuppressLint("ResourceAsColor")
+    private void buffer_start(ActivityMainBinding bo, Spinner spinner) {
+        first_word_box.setVisibility(View.INVISIBLE);
+        second_word_box.setVisibility(View.INVISIBLE);
+        third_word_box.setVisibility(View.INVISIBLE);
+        spinner.setVisibility(View.INVISIBLE);
+        bo.generateButton.setVisibility(View.INVISIBLE);
+        bo.categoryStatement.setVisibility(View.INVISIBLE);
+        bo.wordsStatement.setText("Putting in the magic...");
+        bo.wordsStatement.setTextColor(R.color.black);
+        anim.cancelAnimation();
+        anim.setVisibility(View.INVISIBLE);
+        pBar.setVisibility(View.VISIBLE);
+    }
+
+    private void buffer_end(ActivityMainBinding bo, Spinner spinner) {
+
+
     }
 
     private void startImageActivity() {
@@ -109,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         intent.putExtra("word3", word3);
                         intent.putExtra("category", category);
                         Log.d("MainActivity", "Starting image activity");
-                        pBar.setVisibility(View.GONE);
+                        //pBar.setVisibility(View.GONE);
                         startActivity(intent);
                     }
                     @Override
