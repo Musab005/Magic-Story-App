@@ -32,6 +32,8 @@ import com.apps005.magicstory.controller.StoryController;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 //TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
+//issue of after login method when using on mobile might be solved with onStart() ??
+//too much activity on main thread!!
 //Put all instantiation in a separate method (widget instantiation)
 //TODO: 3. Setup an animation upon start of the application which greets user by their username
 //TODO: 4. Make the quality of spinner better
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SharedPreferencesManager instance_SP;
     private LottieAnimationView anim;
     private ProgressBar pBar;
+    private ActivityMainBinding bo;
+    private Spinner spinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,10 +77,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @SuppressLint("ResourceAsColor")
     private void afterLogin() {
-        com.apps005.magicstory.databinding.ActivityMainBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
         wordBox_init(bo);
-        Spinner spinner = spinner_init(bo);
+        bo.wordsStatement.setTextColor(R.color.light_white);
+        spinner = spinner_init(bo);
         setSavedData(spinner);
         //start anim
         anim = bo.animationView;
@@ -114,8 +119,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         pBar.setVisibility(View.VISIBLE);
     }
 
+    @SuppressLint("ResourceAsColor")
     private void buffer_end(ActivityMainBinding bo, Spinner spinner) {
-
+        first_word_box.setVisibility(View.VISIBLE);
+        second_word_box.setVisibility(View.VISIBLE);
+        third_word_box.setVisibility(View.VISIBLE);
+        spinner.setVisibility(View.VISIBLE);
+        bo.generateButton.setVisibility(View.VISIBLE);
+        bo.categoryStatement.setVisibility(View.VISIBLE);
+        bo.wordsStatement.setText(R.string.enter_3_words_text);
+        bo.wordsStatement.setTextColor(R.color.light_white);
+        anim.playAnimation();
+        anim.setVisibility(View.VISIBLE);
+        pBar.setVisibility(View.INVISIBLE);
 
     }
 
@@ -132,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         intent.putExtra("category", category);
                         Log.d("MainActivity", "Starting image activity");
                         //pBar.setVisibility(View.GONE);
+                        buffer_end(bo, spinner);
                         startActivity(intent);
                     }
                     @Override
@@ -281,4 +298,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        buffer_end(bo, spinner);
+//    }
 }

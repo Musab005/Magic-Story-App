@@ -32,9 +32,17 @@ public class Story extends AppCompatActivity {
         widgets_init(bo);
         storyText.setText(intent.getStringExtra("PossibleStory"));
 
-        done_button.setOnClickListener(view -> finish());
+        done_button.setOnClickListener(view -> {
+            Intent intent_back = new Intent(Story.this, MainActivity.class);
+            startActivity(intent_back);
+            finish();
+        });
 
-        reg_button.setOnClickListener(view -> finish());
+        reg_button.setOnClickListener(view -> {
+            Intent intent_back = new Intent(Story.this, MainActivity.class);
+            startActivity(intent_back);
+            finish();
+        });
     }
 
     private void widgets_init(ActivityStoryBinding bo) {
