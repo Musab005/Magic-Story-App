@@ -22,6 +22,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.Objects;
+
 public class ImageTest extends AppCompatActivity {
     private ProgressBar progressBar;
     private Handler handler;
@@ -33,6 +35,7 @@ public class ImageTest extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         com.apps005.magicstory.databinding.ActivityImageTestBinding bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         Log.d("Image Activity:", "onCreate");
         btn = bo.ReadStoryButton;
         iv = bo.imageView;

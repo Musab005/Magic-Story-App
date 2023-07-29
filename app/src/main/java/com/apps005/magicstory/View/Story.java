@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.databinding.ActivityStoryBinding;
 
+import java.util.Objects;
+
 
 public class Story extends AppCompatActivity {
     private ScrollView scrollView;
@@ -27,6 +29,7 @@ public class Story extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("Story Activity:", "onCreate");
         com.apps005.magicstory.databinding.ActivityStoryBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         //intent from ImageActivity
         Intent intent = getIntent();
         widgets_init(bo);
