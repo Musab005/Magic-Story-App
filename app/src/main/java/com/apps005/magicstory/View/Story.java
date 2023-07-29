@@ -13,28 +13,47 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.databinding.ActivityStoryBinding;
+
+import java.util.Objects;
 
 
 public class Story extends AppCompatActivity {
     private ScrollView scrollView;
     private ConstraintLayout buttonLayout;
     private TextView storyText;
-
+    private Button done_button;
+    private Button reg_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Story Activity:", "onCreate");
         com.apps005.magicstory.databinding.ActivityStoryBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
-        //intent3 from mainActivity
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        //intent from ImageActivity
         Intent intent = getIntent();
-        Button done_button = bo.DoneButton;
-        Button reg_button = bo.RegButton;
+        widgets_init(bo);
+        storyText.setText(intent.getStringExtra("PossibleStory"));
+
+        done_button.setOnClickListener(view -> {
+            Intent intent_back = new Intent(Story.this, MainActivity.class);
+            startActivity(intent_back);
+            finish();
+        });
+
+        reg_button.setOnClickListener(view -> {
+            Intent intent_back = new Intent(Story.this, MainActivity.class);
+            startActivity(intent_back);
+            finish();
+        });
+    }
+
+    private void widgets_init(ActivityStoryBinding bo) {
+        done_button = bo.DoneButton;
+        reg_button = bo.RegButton;
         scrollView = bo.scrollView;
         buttonLayout = bo.buttonLayout;
         storyText = bo.storyText;
-        storyText.setText(intent.getStringExtra("story"));
-        Log.d("Story Activity:", "text set");
-
         scrollView.setOnScrollChangeListener((view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             // Get the height of the ScrollView
             int scrollViewHeight = scrollView.getHeight();
@@ -45,26 +64,13 @@ public class Story extends AppCompatActivity {
             // Get the current scroll position
             int currentScrollPosition = scrollY + scrollViewHeight;
 
-             //Check if the scroll position has reached the bottom
+            //Check if the scroll position has reached the bottom
             if (currentScrollPosition >= contentHeight) {
                 buttonLayout.setVisibility(View.VISIBLE);
 
             } else {
                 buttonLayout.setVisibility(View.GONE);
             }
-        });
-
-        done_button.setOnClickListener(view -> {
-            //intent.putExtra("message_back", "Done");
-            //setResult(RESULT_OK,intent);
-            finish();
-        });
-
-        reg_button.setOnClickListener(view -> {
-            //intent.putExtra("message_back", "Regenerate");
-            //onActivityResult method ??
-            //setResult(RESULT_OK,intent);
-            finish();
         });
     }
 

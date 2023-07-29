@@ -1,94 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:id="@+id/linear_layout"
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#2196F3"
-        android:backgroundTint="#009688"
-        android:foregroundTint="#009688"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/category_statement"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/choose_a_category_text"
-            android:textSize="20sp" />
+            android:layout_height="match_parent"
+            android:background="@color/dark_blue"
+            android:visibility="visible"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/writing_animation" />
 
-        <Spinner
-            android:id="@+id/category_box"
-            android:layout_width="223dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="30dp"
-            android:layout_weight="1"
-            android:entries="@array/Categories"
-            android:gravity="center" />
-
-        <TextView
-            android:id="@+id/words_statement"
+        <LinearLayout
+            android:id="@+id/linear_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/enter_3_words_text"
-            android:textSize="30sp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/word1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:autofillHints=""
-            android:ems="10"
-            android:gravity="center"
-            android:hint="@string/word_1_text"
-            android:inputType="textPersonName" />
+            <TextView
+                android:id="@+id/category_statement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/cantora_one"
+                android:gravity="center"
+                android:text="@string/choose_a_category_text"
+                android:textColor="@color/light_white"
+                android:textColorHighlight="@color/button_lightBrown"
+                android:textSize="25sp"
+                android:textStyle="italic" />
 
-        <EditText
-            android:id="@+id/word2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:autofillHints=""
-            android:ems="10"
-            android:gravity="center"
-            android:hint="@string/Word2_text"
-            android:inputType="textPersonName" />
+            <Spinner
+                android:id="@+id/category_box"
+                android:layout_width="223dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"
+                android:layout_weight="1"
+                android:entries="@array/Categories"
+                android:gravity="center" />
 
-        <EditText
-            android:id="@+id/word3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:autofillHints=""
-            android:ems="10"
-            android:gravity="center"
-            android:hint="@string/Word3_text"
-            android:inputType="textPersonName" />
+            <TextView
+                android:id="@+id/words_statement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/bubblegum_sans"
+                android:gravity="center"
+                android:text="@string/enter_3_words_text"
+                android:textColor="@color/light_white"
+                android:textColorHighlight="@color/button_lightBrown"
+                android:textColorHint="@color/light_white"
+                android:textColorLink="@color/light_white"
+                android:textSize="40sp" />
 
-        <Button
-            android:id="@+id/generate_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:text="@string/generate_text"
-            android:textSize="17sp" />
-    </LinearLayout>
+            <ProgressBar
+                android:id="@+id/pBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/word1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:ems="10"
+                android:fontFamily="@font/paprika"
+                android:foregroundTint="@color/black"
+                android:gravity="center"
+                android:hint="@string/word_1_text"
+                android:inputType="textPersonName"
+                android:textColor="@color/light_white"
+                android:textColorHighlight="@color/button_lightBrown"
+                android:textColorHint="@color/light_white"
+                android:textColorLink="@color/light_white"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/word2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:ems="10"
+                android:fontFamily="@font/paprika"
+                android:gravity="center"
+                android:hint="@string/Word2_text"
+                android:inputType="textPersonName"
+                android:textColor="@color/light_white"
+                android:textColorHighlight="@color/button_lightBrown"
+                android:textColorHint="@color/light_white"
+                android:textColorLink="@color/light_white"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/word3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:ems="10"
+                android:fontFamily="@font/paprika"
+                android:gravity="center"
+                android:hint="@string/Word3_text"
+                android:inputType="textPersonName"
+                android:textColor="@color/light_white"
+                android:textColorHighlight="@color/button_lightBrown"
+                android:textColorHint="@color/light_white"
+                android:textColorLink="@color/light_white"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/generate_button"
+                android:layout_width="wrap_content"
+                android:layout_height="79dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/dark_brown"
+                android:fontFamily="@font/cantora_one"
+                android:text="@string/generate_text"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
 </layout>

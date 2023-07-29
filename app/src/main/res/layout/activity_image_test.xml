@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FEF9EF"
+        tools:context=".View.ImageTest">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_marginTop="100dp"
+            android:elevation="20dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <Button
+            android:id="@+id/ReadStory_button"
+            android:layout_width="147dp"
+            android:layout_height="107dp"
+            android:layout_marginTop="136dp"
+            android:backgroundTint="#8A4513"
+            android:fontFamily="@font/bubblegum_sans"
+            android:padding="16dp"
+            android:text="Read story"
+            android:textColor="#FFFFFF"
+            android:textSize="25sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.833"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintVertical_bias="0.628" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="82dp"
+            android:layout_height="86dp"
+            android:layout_marginTop="84dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/ReadStory_button"
+            app:layout_constraintEnd_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/writing_story">
+        </com.airbnb.lottie.LottieAnimationView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
