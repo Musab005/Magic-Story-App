@@ -4,11 +4,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,14 +21,16 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.ImageNetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.controller.StoryController;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
 
+import java.util.concurrent.CompletableFuture;
+
+//TODO: buffer-end when "done" pressed form story activity
 //TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
 //issue of after login method when using on mobile might be solved with onStart() ??
 //too much activity on main thread!!
@@ -77,11 +77,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @SuppressLint("ResourceAsColor")
     private void afterLogin() {
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
-        wordBox_init(bo);
-        bo.wordsStatement.setTextColor(R.color.light_white);
-        spinner = spinner_init(bo);
+        init();
         setSavedData(spinner);
         //start anim
         anim = bo.animationView;
@@ -104,7 +100,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    @SuppressLint("ResourceAsColor")
+    private void init() {
+        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
+        wordBox_init(bo);
+        spinner = spinner_init(bo);
+    }
+
+
     private void buffer_start(ActivityMainBinding bo, Spinner spinner) {
         first_word_box.setVisibility(View.INVISIBLE);
         second_word_box.setVisibility(View.INVISIBLE);
@@ -112,14 +115,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setVisibility(View.INVISIBLE);
         bo.generateButton.setVisibility(View.INVISIBLE);
         bo.categoryStatement.setVisibility(View.INVISIBLE);
-        bo.wordsStatement.setText("Putting in the magic...");
-        bo.wordsStatement.setTextColor(R.color.black);
+        bo.wordsStatement.setVisibility(View.INVISIBLE);
+        bo.hiddenStatement.setVisibility(View.VISIBLE);
         anim.cancelAnimation();
         anim.setVisibility(View.INVISIBLE);
         pBar.setVisibility(View.VISIBLE);
     }
 
-    @SuppressLint("ResourceAsColor")
     private void buffer_end(ActivityMainBinding bo, Spinner spinner) {
         first_word_box.setVisibility(View.VISIBLE);
         second_word_box.setVisibility(View.VISIBLE);
@@ -127,8 +129,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setVisibility(View.VISIBLE);
         bo.generateButton.setVisibility(View.VISIBLE);
         bo.categoryStatement.setVisibility(View.VISIBLE);
-        bo.wordsStatement.setText(R.string.enter_3_words_text);
-        bo.wordsStatement.setTextColor(R.color.light_white);
+        bo.hiddenStatement.setVisibility(View.INVISIBLE);
+        bo.wordsStatement.setVisibility(View.VISIBLE);
         anim.playAnimation();
         anim.setVisibility(View.VISIBLE);
         pBar.setVisibility(View.INVISIBLE);
@@ -136,29 +138,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void startImageActivity() {
-        StoryController.getInstance(this.getApplicationContext()).generateImage(
-                word1, word2, word3, category, this.getApplicationContext(), new startImage() {
-                    @Override
-                    public void onSuccess(String url) {
-                        Intent intent = new Intent(MainActivity.this, ImageTest.class);
-                        intent.putExtra("url", url);
-                        intent.putExtra("word1", word1);
-                        intent.putExtra("word2", word2);
-                        intent.putExtra("word3", word3);
-                        intent.putExtra("category", category);
-                        Log.d("MainActivity", "Starting image activity");
-                        //pBar.setVisibility(View.GONE);
-                        buffer_end(bo, spinner);
-                        startActivity(intent);
-                    }
-                    @Override
-                    public void onError(String error) {
-                        Log.d("MainActivity", "error: " + error);
-                        Toast.makeText(MainActivity.this, "Error: " + error,
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
+        CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
+
+// Handling the result when it becomes available
+        future.thenAccept(imageUrl -> {
+            // Handle the image URL when the request is successful
+            // This code will run in the main thread (UI thread)
+            // Use imageUrl here to display the image or perform other actions
+            Toast.makeText(MainActivity.this,"Image success",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, ImageTest.class);
+            intent.putExtra("url", imageUrl);
+            intent.putExtra("word1",word1);
+            intent.putExtra("word2",word2);
+            intent.putExtra("word3",word3);
+            intent.putExtra("category",category);
+            startActivity(intent);
+        }).exceptionally(exception -> {
+            Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
+            // Handle exceptions here, if any
+            // This code will also run in the main thread (UI thread)
+            exception.printStackTrace();
+            return null;
+        });
     }
 
 
@@ -250,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (result.getResultCode() == RESULT_OK) {
                     // Handle the result from the LandingPage activity here
                     Log.d("MainActivity:", "onResult");
+                    buffer_end(bo, spinner);
                     afterLogin();
                 } else {
                     // Handle other result scenarios, if needed
@@ -298,9 +300,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        buffer_end(bo, spinner);
-//    }
 }

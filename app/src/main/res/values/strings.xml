@@ -43,6 +43,7 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
     <string name="pick_a_username_txt">Pick a username:</string>
     <string name="last_name_txt">Last name</string>
     <string name="first_name_txt">First name</string>
+    <string name="putting_in_the_magic_txt">Putting in the magic...</string>
 
     <string-array name="Categories">
         <item> </item>

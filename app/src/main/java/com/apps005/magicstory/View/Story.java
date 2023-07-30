@@ -33,17 +33,17 @@ public class Story extends AppCompatActivity {
         //intent from ImageActivity
         Intent intent = getIntent();
         widgets_init(bo);
-        storyText.setText(intent.getStringExtra("PossibleStory"));
+        storyText.setText(intent.getStringExtra("story"));
 
         done_button.setOnClickListener(view -> {
             Intent intent_back = new Intent(Story.this, MainActivity.class);
-            startActivity(intent_back);
+            setResult(RESULT_OK);
             finish();
         });
 
         reg_button.setOnClickListener(view -> {
             Intent intent_back = new Intent(Story.this, MainActivity.class);
-            startActivity(intent_back);
+            setResult(RESULT_OK);
             finish();
         });
     }

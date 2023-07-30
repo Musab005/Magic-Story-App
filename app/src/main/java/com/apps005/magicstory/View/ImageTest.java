@@ -13,16 +13,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.controller.StoryController;
+import com.apps005.magicstory.Util.ImageNetworkRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class ImageTest extends AppCompatActivity {
     private ProgressBar progressBar;
@@ -79,14 +81,26 @@ public class ImageTest extends AppCompatActivity {
         btn.setVisibility(View.GONE);
         anim.setVisibility(View.VISIBLE);
         anim.playAnimation();
-            StoryController.getInstance(this.getApplicationContext()).generateStory(
-                    word1, word2, word3, category, context,
-                    result -> {
-                        Intent intent = new Intent(ImageTest.this, Story.class);
-                        intent.putExtra("PossibleStory", result);
-                            startActivity(intent);
-                            finish();
-                    });
+        CompletableFuture<String> future = new ImageNetworkRequest().
+                generateStoryAsync(word1, word2, word3, category, context);
+
+// Handling the result when it becomes available
+        future.thenAccept(story -> {
+            // Handle the image URL when the request is successful
+            // This code will run in the main thread (UI thread)
+            // Use imageUrl here to display the image or perform other actions
+            Toast.makeText(ImageTest.this,"Image success",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ImageTest.this, Story.class);
+            intent.putExtra("story", story);
+            startActivity(intent);
+            finish();
+        }).exceptionally(exception -> {
+            Toast.makeText(ImageTest.this,"Image fail",Toast.LENGTH_SHORT).show();
+            // Handle exceptions here, if any
+            // This code will also run in the main thread (UI thread)
+            exception.printStackTrace();
+            return null;
+        });
     }
 
 

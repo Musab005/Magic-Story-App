@@ -7,4 +7,7 @@
     <color name="button_lightBrown">#FF985D32</color>
     <color name="dark_blue">#FF02082B</color>
     <color name="dark_brown">#4C2204</color>
+    <color name="hint">#A8A59E</color>
+    <color name="hint_words">#A31B1A18</color>
+    <color name="words_hint_txt">#A3322D25</color>
 </resources>
