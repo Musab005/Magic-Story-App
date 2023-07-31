@@ -30,6 +30,7 @@ import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 import java.util.concurrent.CompletableFuture;
 
+//TODO: move landing page widgets down
 //TODO: buffer-end when "done" pressed form story activity
 //TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
 //issue of after login method when using on mobile might be solved with onStart() ??
