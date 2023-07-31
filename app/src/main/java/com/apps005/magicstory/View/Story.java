@@ -23,7 +23,6 @@ public class Story extends AppCompatActivity {
     private ConstraintLayout buttonLayout;
     private TextView storyText;
     private Button done_button;
-    private Button reg_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,16 +40,10 @@ public class Story extends AppCompatActivity {
             finish();
         });
 
-        reg_button.setOnClickListener(view -> {
-            Intent intent_back = new Intent(Story.this, MainActivity.class);
-            setResult(RESULT_OK);
-            finish();
-        });
     }
 
     private void widgets_init(ActivityStoryBinding bo) {
         done_button = bo.DoneButton;
-        reg_button = bo.RegButton;
         scrollView = bo.scrollView;
         buttonLayout = bo.buttonLayout;
         storyText = bo.storyText;

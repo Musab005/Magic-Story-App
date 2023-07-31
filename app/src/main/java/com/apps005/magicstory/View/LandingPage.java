@@ -89,7 +89,6 @@ public class LandingPage extends AppCompatActivity {
         first_name_box = bo.firstNameBox;
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
-        progressBar = bo.progressBar;
         handler = new Handler();
         db = FirebaseFirestore.getInstance();
     }

@@ -11,7 +11,7 @@
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="130dp"
             android:background="@color/light_white"
             android:backgroundTint="@color/light_white"
             android:visibility="visible">
@@ -43,47 +43,34 @@
             android:visibility="gone"
             tools:visibility="visible">
 
-            <Button
-                android:id="@+id/Done_button"
-                android:layout_width="100dp"
-                android:layout_height="110dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/light_white"
-                android:elevation="30dp"
-                android:fontFamily="@font/bubblegum_sans"
-                android:gravity="center"
-                android:shadowColor="@color/black"
-                android:shadowRadius="2"
-                android:text="@string/done_text"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                app:cornerRadius="120dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/Reg_button"
-                app:layout_constraintHorizontal_bias="0.295"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/Reg_button"
-                android:layout_width="100dp"
-                android:layout_height="110dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/light_white"
-                android:elevation="30dp"
-                android:fontFamily="@font/bubblegum_sans"
-                android:gravity="center"
-                android:shadowColor="@color/black"
-                android:shadowRadius="2"
-                android:text="@string/re_generate_text"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                app:cornerRadius="120dp"
+            <LinearLayout
+                android:id="@+id/button_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#D3D1CC"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/Done_button" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/Done_button"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:layout_gravity="center|center_horizontal|center_vertical"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/rounded_button"
+                    android:elevation="50dp"
+                    android:fontFamily="@font/bubblegum_sans"
+                    android:gravity="center"
+                    android:shadowColor="@color/black"
+                    android:text="@string/done_text"
+                    android:textColor="@color/black"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="100dp" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -27,11 +27,13 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class ImageTest extends AppCompatActivity {
-    private ProgressBar progressBar;
     private Handler handler;
     private LottieAnimationView anim;
     private Button btn;
     private ImageView iv;
+    ImageView arrow;
+    TextView statement;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +42,9 @@ public class ImageTest extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         Log.d("Image Activity:", "onCreate");
         btn = bo.ReadStoryButton;
+        arrow = bo.readStoryArrow;
+        statement = bo.readStoryStatement;
         iv = bo.imageView;
-        progressBar = bo.progressBar;
         anim = bo.animationView;
         anim.setVisibility(View.GONE);
         handler = new Handler();
@@ -60,8 +63,9 @@ public class ImageTest extends AppCompatActivity {
     @SuppressLint("ResourceAsColor")
     private void displayImage(ImageView iv, Intent intent) {
         iv.setVisibility(View.GONE);
-        progressBar.setVisibility(View.GONE);
         btn.setVisibility(View.GONE);
+        arrow.setVisibility(View.GONE);
+        statement.setVisibility(View.GONE);
 
         RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL); // Cache the image for subsequent requests
@@ -73,12 +77,16 @@ public class ImageTest extends AppCompatActivity {
         handler.postDelayed(() -> {
             // Code to be executed after t seconds
             btn.setVisibility(View.VISIBLE);
-        }, 5000);
+            arrow.setVisibility(View.VISIBLE);
+            statement.setVisibility(View.VISIBLE);
+        }, 7000);
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
         iv.setVisibility(View.GONE);
         btn.setVisibility(View.GONE);
+        arrow.setVisibility(View.GONE);
+        statement.setVisibility(View.GONE);
         anim.setVisibility(View.VISIBLE);
         anim.playAnimation();
         CompletableFuture<String> future = new ImageNetworkRequest().

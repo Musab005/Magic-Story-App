@@ -12,15 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_blue"
-        android:padding="18dp"
+        android:padding="15dp"
         tools:context=".View.LandingPage">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animationView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="18dp"
             app:layout_constraintBottom_toTopOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,12 +34,11 @@
             android:id="@+id/cardView"
             android:layout_width="327dp"
             android:layout_height="157dp"
-            android:layout_marginTop="120dp"
+            android:layout_marginTop="152dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp"
             app:cardUseCompatPadding="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -83,14 +82,14 @@
             android:id="@+id/username_guide"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="84dp"
+            android:layout_marginTop="96dp"
             android:fontFamily="@font/cantora_one"
             android:text="@string/pick_a_username_txt"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.485"
+            app:layout_constraintHorizontal_bias="0.551"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView"
             tools:ignore="TextSizeCheck" />
@@ -99,7 +98,7 @@
             android:id="@+id/username_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:autofillHints=""
             android:ems="10"
             android:fontFamily="casual"
@@ -111,7 +110,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.583"
+            app:layout_constraintHorizontal_bias="0.575"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/username_guide" />
 
@@ -119,6 +118,7 @@
             android:id="@+id/save_button"
             android:layout_width="134dp"
             android:layout_height="92dp"
+            android:layout_marginBottom="18dp"
             android:backgroundTint="@color/black"
             android:elevation="40dp"
             android:fontFamily="@font/luckiest_guy"
@@ -132,18 +132,8 @@
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/username_box"
-            app:layout_constraintVertical_bias="0.269"
+            app:layout_constraintVertical_bias="0.584"
             tools:ignore="TextSizeCheck" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@android:style/Widget.DeviceDefault.ProgressBar.Large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/username_guide"
-            app:layout_constraintEnd_toEndOf="@+id/cardView"
-            app:layout_constraintStart_toStartOf="@+id/cardView"
-            app:layout_constraintTop_toBottomOf="@+id/cardView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

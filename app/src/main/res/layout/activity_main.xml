@@ -138,13 +138,13 @@
 
             <Button
                 android:id="@+id/generate_button"
-                android:layout_width="185dp"
-                android:layout_height="64dp"
+                android:layout_width="190dp"
+                android:layout_height="75dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="18dp"
                 android:layout_weight="1"
-                android:background="@color/black"
+                android:background="@drawable/mainactivity_button"
                 android:fontFamily="@font/luckiest_guy"
                 android:shadowRadius="2"
                 android:text="@string/generate_text"
