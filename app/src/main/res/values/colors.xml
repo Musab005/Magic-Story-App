@@ -10,4 +10,7 @@
     <color name="hint">#A8A59E</color>
     <color name="hint_words">#A31B1A18</color>
     <color name="words_hint_txt">#A3322D25</color>
+    <color name="light_blue_hint">#FF7F95AC</color>
+    <color name="blue_username" />
+    <color name="BLUE_username">#0B5DB3</color>
 </resources>

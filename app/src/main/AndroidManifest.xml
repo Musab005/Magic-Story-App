@@ -21,7 +21,8 @@
             android:theme="@style/Theme.AppCompat.Light"/>
         <activity
             android:name=".View.LandingPage"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
         <activity
             android:name=".View.Story"
             android:exported="true"
@@ -29,7 +30,8 @@
             android:theme="@style/Theme.AppCompat.Light"/>
         <activity
             android:name=".View.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

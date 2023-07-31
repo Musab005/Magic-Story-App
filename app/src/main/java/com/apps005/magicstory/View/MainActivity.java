@@ -63,26 +63,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity", "super onCreate");
+        Log.d("MainActivity", "onCreate");
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
             launchLandingPage.launch(intent_first_login);
         } else {
+            Log.d("MainActivity", "did not start landing page");
             afterLogin();
     }}
 
 
 
-    @SuppressLint("ResourceAsColor")
     private void afterLogin() {
         init();
-        setSavedData(spinner);
-        //start anim
-        anim = bo.animationView;
-        anim.setVisibility(View.VISIBLE);
-
         //Generate Button - On Click
         bo.generateButton.setOnClickListener(view -> {
             instance_SP.saveData(word1, word2, word3, category);
@@ -94,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
-                buffer_start(bo, spinner);
                 startImageActivity();
             }
         });
@@ -103,8 +97,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void init() {
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
+        anim = bo.animationView;
+        anim.setVisibility(View.VISIBLE);
+        pBar = bo.pBar;
         wordBox_init(bo);
         spinner = spinner_init(bo);
+        word1 = instance_SP.getWord1();
+        word2 = instance_SP.getWord2();
+        word3 = instance_SP.getWord3();
+        category = instance_SP.getCategory();
+        first_word_box.setText(word1);
+        second_word_box.setText(word2);
+        third_word_box.setText(word3);
+        String[] categoryArray = getResources().getStringArray(R.array.Categories);
+        int categoryIndex = -1;
+        for (int i = 0; i < categoryArray.length; i++) {
+            if (categoryArray[i].equals(category)) {
+                categoryIndex = i;
+                break;
+            }
+        }
+        if (categoryIndex != -1) {
+            spinner.setSelection(categoryIndex);
+        }
+        Log.d("MainActivity", "setting: " + word1 + word2 + word3 + category);
     }
 
 
@@ -138,23 +154,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void startImageActivity() {
+        buffer_start(bo, spinner);
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
-
-// Handling the result when it becomes available
+        // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
             // Handle the image URL when the request is successful
             // This code will run in the main thread (UI thread)
             // Use imageUrl here to display the image or perform other actions
-            Toast.makeText(MainActivity.this,"Image success",Toast.LENGTH_SHORT).show();
+            Log.d("MainActivity", "ImageURL successfully generated");
             Intent intent = new Intent(MainActivity.this, ImageTest.class);
             intent.putExtra("url", imageUrl);
             intent.putExtra("word1",word1);
             intent.putExtra("word2",word2);
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
+            buffer_end(bo, spinner);
             startActivity(intent);
         }).exceptionally(exception -> {
             Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
+            Log.d("MainActivity", "ImageURL unsuccessful");
             // Handle exceptions here, if any
             // This code will also run in the main thread (UI thread)
             exception.printStackTrace();
@@ -173,47 +191,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return spinner;
     }
 
-    private void setSavedData(Spinner spinner) {
-        word1 = instance_SP.getWord1();
-        word2 = instance_SP.getWord2();
-        word3 = instance_SP.getWord3();
-        category = instance_SP.getCategory();
-        first_word_box.setText(word1);
-        second_word_box.setText(word2);
-        third_word_box.setText(word3);
-        String[] categoryArray = getResources().getStringArray(R.array.Categories);
-        int categoryIndex = -1;
-        for (int i = 0; i < categoryArray.length; i++) {
-            if (categoryArray[i].equals(category)) {
-                categoryIndex = i;
-                break;
-            }
-        }
-        if (categoryIndex != -1) {
-            spinner.setSelection(categoryIndex);
-        }
-        Log.d("MainActivity", "setting: " + word1 + word2 + word3 + category);
-    }
-
     private void wordBox_init(ActivityMainBinding bo) {
-        pBar = bo.pBar;
         first_word_box = bo.word1;
         second_word_box = bo.word2;
         third_word_box = bo.word3;
-        third_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
-            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
-                word3 = third_word_box.getText().toString().trim();
-                hideKeyboard(textView);
-                Log.d("MainActivity", "word3: " + word3);
-                return true;
-            }
-            return false;
-        });
+
         first_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
                 word1 = first_word_box.getText().toString().trim();
                 hideKeyboard(textView);
-                Log.d("MainActivity", "word1: " + word1);
                 return true;
             }
             return false;
@@ -222,7 +208,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
                 word2 = second_word_box.getText().toString().trim();
                 hideKeyboard(textView);
-                Log.d("MainActivity", "word2: " + word2);
+                return true;
+            }
+            return false;
+        });
+        third_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word3 = third_word_box.getText().toString().trim();
+                hideKeyboard(textView);
                 return true;
             }
             return false;
@@ -250,13 +243,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     // Handle the result from the LandingPage activity here
-                    Log.d("MainActivity:", "onResult");
-                    buffer_end(bo, spinner);
+                    Log.d("MainActivity:", "onResult after activity ended");
                     afterLogin();
                 } else {
                     // Handle other result scenarios, if needed
                     Toast.makeText(MainActivity.this, "Error",
                             Toast.LENGTH_LONG).show();
+                    Log.d("MainActivity:", "onResult error after activity ended");
 
                 }
             }

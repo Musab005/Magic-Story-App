@@ -64,13 +64,6 @@ public class LandingPage extends AppCompatActivity {
     }
 
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
-//        cardView.setVisibility(View.GONE);
-//        bo.usernameGuide.setVisibility(View.GONE);
-//        bo.usernameBox.setVisibility(View.GONE);
-//        bo.saveButton.setVisibility(View.GONE);
-//        anim.setVisibility(View.VISIBLE);
-//        anim.setRepeatCount(5);
-//        anim.playAnimation();
         User user = new User(first_name, last_name, formattedDate,0, username);
         SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
         db.collection("Users").add(user)
