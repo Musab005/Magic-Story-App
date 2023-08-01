@@ -22,7 +22,7 @@
         <activity
             android:name=".View.LandingPage"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".View.Story"
             android:exported="true"

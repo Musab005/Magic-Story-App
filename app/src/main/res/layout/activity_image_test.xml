@@ -27,6 +27,7 @@
             app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ImageContrastCheck"
             tools:srcCompat="@tools:sample/avatars" />
 
 
@@ -41,14 +42,12 @@
 
         <ImageView
             android:id="@+id/ReadStory_arrow"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:contentDescription="@string/proceed_to_read_story_txt"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.945"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/read_story_statement"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/arrow_new" />
@@ -57,16 +56,16 @@
             android:id="@+id/read_story_statement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="180dp"
+            android:layout_marginTop="264dp"
             android:fontFamily="@font/luckiest_guy"
             android:text="@string/Read_story_txt"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/ReadStory_arrow"
-            app:layout_constraintEnd_toEndOf="@+id/ReadStory_arrow"
-            app:layout_constraintHorizontal_bias="0.734"
-            app:layout_constraintStart_toStartOf="@+id/ReadStory_arrow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.949"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintVertical_bias="1.0" />
 

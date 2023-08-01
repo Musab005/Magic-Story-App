@@ -33,7 +33,12 @@ import com.apps005.magicstory.databinding.ActivityMainLandBinding;
 
 import java.util.concurrent.CompletableFuture;
 
+//TODO: onResume called after ending landing page
+//TODO: back button pressed on landing page
 //TODO: buffer-end when "done" pressed form story activity
+//TODO: buffer stop after starting imge activity from main, not necessarily before?
+//study onSTART, RESUME ETC
+//If u can do it after then no need for handler delayed
 //issue of after login method when using on mobile might be solved with onStart() ??
 //TODO: 3. Setup an animation upon start of the application which greets user by their username
 //TODO: 4. Make the quality of spinner better
@@ -72,21 +77,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
-            Log.d("MainActivity", "starting landing page");
-            launchLandingPage.launch(intent_first_login);
+            Log.d("MainActivity onCreate", "starting landing page");
+//            launchLandingPage.launch(intent_first_login);
+            startActivity(intent_first_login);
+            Log.d("MainActivity onCreate", "here??");
         } else {
+            Log.d("MainActivity onCreate", "did not start landing page");
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 //landscape mode
                 bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
                 init_landscape();
+                Log.d("MainActivity onCreate", "landscape config set");
             } else {
                 //portrait mode
                 bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
                 init_portrait();
+                Log.d("MainActivity onCreate", "portrait config set");
             }
             Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
+            Log.d("MainActivity onCreate", "executing afterLogin");
             afterLogin();
-    }}
+        }
+    }
 
     private void init_landscape() {
         hidden_statement = bo_land.hiddenStatement;
@@ -119,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Generate Button - On Click
         btn.setOnClickListener(view -> {
             instance_SP.saveData(word1, word2, word3, category);
+            Log.d("MainActivity onBtnClick", "saving: " + word1 + word2 + word3 + category);
             if (word1.equals("") ||
                     word2.equals("") ||
                     word3.equals("") ||
@@ -153,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (categoryIndex != -1) {
             spinner.setSelection(categoryIndex);
         }
-        Log.d("MainActivity", "setting: " + word1 + word2 + word3 + category);
+        Log.d("MainActivity setUI", "setting: " + word1 + word2 + word3 + category);
     }
 
 
@@ -193,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             // Handle the image URL when the request is successful
             // This code will run in the main thread (UI thread)
             // Use imageUrl here to display the image or perform other actions
-            Log.d("MainActivity", "ImageURL successfully generated");
+            Log.d("MainActivity startImage", "ImageURL successfully generated");
             Intent intent = new Intent(MainActivity.this, ImageTest.class);
             intent.putExtra("url", imageUrl);
             intent.putExtra("word1",word1);
@@ -203,8 +216,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             buffer_end();
             startActivity(intent);
         }).exceptionally(exception -> {
-            Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
-            Log.d("MainActivity", "ImageURL unsuccessful");
+            Toast.makeText(MainActivity.this,"error line 206: Image fail",Toast.LENGTH_SHORT).show();
+            Log.d("MainActivity startImage", "ImageURL unsuccessful");
             // Handle exceptions here, if any
             // This code will also run in the main thread (UI thread)
             exception.printStackTrace();
@@ -264,22 +277,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    // Handle the result from the LandingPage activity here
-                    Log.d("MainActivity:", "onResult after activity ended");
-                    afterLogin();
-                } else {
-                    // Handle other result scenarios, if needed
-                    Toast.makeText(MainActivity.this, "Error",
-                            Toast.LENGTH_LONG).show();
-                    Log.d("MainActivity:", "onResult error after activity ended");
-
-                }
-            }
-    );
+//    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            result -> {
+//                if (result.getResultCode() == RESULT_OK) {
+//                    // Handle the result from the LandingPage activity here
+//                    Log.d("MainActivity onResult", "afterLogin");
+//                    afterLogin();
+//                } else {
+//                    // back button presses on landing page
+//                    Toast.makeText(MainActivity.this, "Error line 276",
+//                            Toast.LENGTH_LONG).show();
+//                    Log.d("MainActivity onResult", "Landing page unsuccessfully ended");
+//
+//
+//                }
+//            }
+//    );
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -305,8 +319,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         this.category = adapterView.getItemAtPosition(i).toString();
         instance_SP.saveData(word1, word2, word3, category);
-        Toast.makeText(MainActivity.this,
-                category, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -318,7 +330,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onPause() {
         super.onPause();
         instance_SP.saveData(word1, word2, word3, category);
-        Log.d("MainActivity onPause", "saving: " + word1 + word2 + word3 + category);
     }
 
     @Override
@@ -326,12 +337,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // For landscape mode
-            ActivityMainLandBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
+            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
+            Log.d("MainActivity onConfig", "setting landscape");
             // Use 'binding' to access views in the landscape layout
         } else {
             // For portrait mode
-            ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+            bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+            Log.d("MainActivity onConfig", "setting portrait");
             // Use 'binding' to access views in the portrait layout
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("MainActivity", "onResume");
+        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        if (instance_SP.getUsername().isEmpty()) {
+            Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
+            Log.d("MainActivity onResume", "starting landing page");
+//            launchLandingPage.launch(intent_first_login);
+            startActivity(intent_first_login);
+            Log.d("MainActivity onResume", "here??");
+        } else {
+            Log.d("MainActivity onResume", "did not start landing page");
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                //landscape mode
+                bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
+                init_landscape();
+                Log.d("MainActivity onResume", "landscape config set");
+            } else {
+                //portrait mode
+                bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+                init_portrait();
+                Log.d("MainActivity onResume", "portrait config set");
+            }
+            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
+            Log.d("MainActivity onResume", "executing afterLogin");
+            afterLogin();
         }
     }
 }

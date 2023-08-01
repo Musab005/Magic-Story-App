@@ -35,7 +35,7 @@ public class Story extends AppCompatActivity {
         storyText.setText(intent.getStringExtra("story"));
 
         done_button.setOnClickListener(view -> {
-            setResult(RESULT_OK);
+            //setResult(RESULT_OK);
             finish();
         });
 

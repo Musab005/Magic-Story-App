@@ -1,16 +1,16 @@
 package com.apps005.magicstory.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -28,20 +28,16 @@ public class LandingPage extends AppCompatActivity {
     private EditText first_name_box;
     private EditText last_name_box;
     private EditText username_box;
-    private ProgressBar progressBar;
     private Button save_button;
-    private Handler handler;
     private FirebaseFirestore db;
-    private LottieAnimationView anim;
-    private CardView cardView;
-    private ActivityLandingPageBinding bo;
-
+    private int num_clicks = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("LandingPage", "super onCreate");
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
-        widgets_init(bo);
+        num_clicks = 0;
+        com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
+        init(bo);
 
         save_button.setOnClickListener(view -> {
             String first_name = first_name_box.getText().toString().trim();
@@ -58,7 +54,10 @@ public class LandingPage extends AppCompatActivity {
                         "Please write your first name, last name and choose a username",
                         Toast.LENGTH_SHORT).show();
             } else {
-                saveData(first_name, last_name, username, formattedDate);
+                if (num_clicks == 0) {
+                    num_clicks++;
+                    saveData(first_name, last_name, username, formattedDate);
+                }
             }
         });
     }
@@ -71,25 +70,68 @@ public class LandingPage extends AppCompatActivity {
                         Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                            setResult(RESULT_OK);
+                        Log.d("LandingPage", "ending");
                             finish();
                     } else {
                         Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show();
                     }
                 });
-        //does setResult take back to mainActivity or finish??
-        //correct to make sure the activity doesn't end in case of failure listener
     }
 
-    private void widgets_init(ActivityLandingPageBinding bo) {
-        cardView = bo.cardView;
-        anim = bo.animationView;
+    private void init(ActivityLandingPageBinding bo) {
+        LottieAnimationView anim = bo.animationView;
         anim.setVisibility(View.VISIBLE);
         save_button = bo.saveButton;
+        db = FirebaseFirestore.getInstance();
+        wordBox_init(bo);
+    }
+
+    private void wordBox_init(ActivityLandingPageBinding bo) {
         first_name_box = bo.firstNameBox;
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
-        handler = new Handler();
-        db = FirebaseFirestore.getInstance();
+        first_name_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(textView);
+                return true;
+            }
+            return false;
+        });
+        last_name_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(textView);
+                return true;
+            }
+            return false;
+        });
+        username_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(textView);
+                return true;
+            }
+            return false;
+        });
+        first_name_box.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(view);
+            }
+        });
+        last_name_box.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(view);
+            }
+        });
+        username_box.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(view);
+            }
+        });
     }
+
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
 }
