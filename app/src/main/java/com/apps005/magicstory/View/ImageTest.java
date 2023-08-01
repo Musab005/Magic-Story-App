@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +28,6 @@ import java.util.concurrent.CompletableFuture;
 public class ImageTest extends AppCompatActivity {
     private Handler handler;
     private LottieAnimationView anim;
-    private Button btn;
     private ImageView iv;
     ImageView arrow;
     TextView statement;
@@ -41,8 +39,7 @@ public class ImageTest extends AppCompatActivity {
         com.apps005.magicstory.databinding.ActivityImageTestBinding bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         Log.d("Image Activity:", "onCreate");
-        btn = bo.ReadStoryButton;
-        arrow = bo.readStoryArrow;
+        arrow = bo.ReadStoryArrow;
         statement = bo.readStoryStatement;
         iv = bo.imageView;
         anim = bo.animationView;
@@ -55,7 +52,8 @@ public class ImageTest extends AppCompatActivity {
         String word2 = intent.getStringExtra("word2");
         String word3 = intent.getStringExtra("word3");
         String category = intent.getStringExtra("category");
-        btn.setOnClickListener(view -> startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext()));
+
+        arrow.setOnClickListener(view -> startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext()));
 
 
     }
@@ -63,7 +61,6 @@ public class ImageTest extends AppCompatActivity {
     @SuppressLint("ResourceAsColor")
     private void displayImage(ImageView iv, Intent intent) {
         iv.setVisibility(View.GONE);
-        btn.setVisibility(View.GONE);
         arrow.setVisibility(View.GONE);
         statement.setVisibility(View.GONE);
 
@@ -76,15 +73,13 @@ public class ImageTest extends AppCompatActivity {
         iv.setVisibility(View.VISIBLE);
         handler.postDelayed(() -> {
             // Code to be executed after t seconds
-            btn.setVisibility(View.VISIBLE);
             arrow.setVisibility(View.VISIBLE);
             statement.setVisibility(View.VISIBLE);
-        }, 7000);
+        }, 6000);
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
         iv.setVisibility(View.GONE);
-        btn.setVisibility(View.GONE);
         arrow.setVisibility(View.GONE);
         statement.setVisibility(View.GONE);
         anim.setVisibility(View.VISIBLE);

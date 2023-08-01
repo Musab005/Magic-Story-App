@@ -46,6 +46,7 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
     <string name="putting_in_the_magic_txt">Putting in the magic...</string>
     <string name="Read_story_txt">Read story</string>
     <string name="image_generated_based_on_user_input_txt">Image generated based on user input</string>
+    <string name="proceed_to_read_story_txt">proceed to read story</string>
 
     <string-array name="Categories">
         <item> </item>

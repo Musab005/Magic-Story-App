@@ -35,7 +35,6 @@ public class Story extends AppCompatActivity {
         storyText.setText(intent.getStringExtra("story"));
 
         done_button.setOnClickListener(view -> {
-            Intent intent_back = new Intent(Story.this, MainActivity.class);
             setResult(RESULT_OK);
             finish();
         });

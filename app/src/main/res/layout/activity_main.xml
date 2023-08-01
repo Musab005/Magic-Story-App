@@ -33,12 +33,9 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
-                android:fontFamily="@font/cantora_one"
                 android:gravity="center"
                 android:text="@string/choose_a_category_text"
-                android:textColor="@color/black"
-                android:textSize="25sp"
-                android:textStyle="italic" />
+                style="@style/Colour" />
 
             <Spinner
                 android:id="@+id/category_box"
@@ -48,7 +45,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:entries="@array/Categories"
-                android:gravity="center" />
+                android:gravity="center"
+                android:visibility="visible" />
 
 
             <TextView
@@ -61,22 +59,16 @@
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="40sp"
-                android:visibility="invisible" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/words_statement"
+                style="@style/enter_words_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="30dp"
                 android:layout_weight="1"
-                android:fontFamily="@font/bubblegum_sans"
                 android:text="@string/enter_3_words_text"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textColorHighlight="@color/black"
-                android:textColorHint="@color/black"
-                android:textColorLink="@color/black"
-                android:textSize="40sp"
                 android:visibility="visible" />
 
             <ProgressBar
@@ -92,16 +84,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="1"
-                android:autofillHints=""
-                android:ems="10"
-                android:fontFamily="@font/paprika"
-                android:gravity="center"
                 android:hint="@string/word1_text"
-                android:inputType="textPersonName"
-                android:textColor="@color/black"
-                android:textColorHint="@color/words_hint_txt"
-                android:textSize="20sp" />
+                style="@style/wordbox_style"
+                android:autofillHints="" />
 
             <EditText
                 android:id="@+id/word2"
@@ -138,19 +123,12 @@
 
             <Button
                 android:id="@+id/generate_button"
-                android:layout_width="190dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="18dp"
                 android:layout_weight="1"
-                android:background="@drawable/mainactivity_button"
-                android:fontFamily="@font/luckiest_guy"
-                android:shadowRadius="2"
                 android:text="@string/generate_text"
-                android:textColor="@color/light_white"
-                android:textSize="28sp"
-                tools:ignore="TextSizeCheck" />
+                tools:ignore="TextSizeCheck"
+                style="@style/gen_button_style" />
 
         </LinearLayout>
 

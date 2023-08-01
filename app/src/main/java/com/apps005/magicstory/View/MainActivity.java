@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,9 +17,11 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -27,19 +29,15 @@ import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.ImageNetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
+import com.apps005.magicstory.databinding.ActivityMainLandBinding;
 
 import java.util.concurrent.CompletableFuture;
 
-//TODO: move landing page widgets down
 //TODO: buffer-end when "done" pressed form story activity
-//TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
 //issue of after login method when using on mobile might be solved with onStart() ??
-//too much activity on main thread!!
-//Put all instantiation in a separate method (widget instantiation)
 //TODO: 3. Setup an animation upon start of the application which greets user by their username
 //TODO: 4. Make the quality of spinner better
 //TODO: 5. Make UI/UX better in general
-//TODO: 6. Let user choose a theme colour of the app and save their preference. Can edit later
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -60,8 +58,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private LottieAnimationView anim;
     private ProgressBar pBar;
     private ActivityMainBinding bo;
+    private ActivityMainLandBinding bo_land;
     private Spinner spinner;
+    private TextView hidden_statement;
+    private TextView category_statement;
+    private TextView words_statement;
+    private Button btn;
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MainActivity", "onCreate");
@@ -71,16 +75,49 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("MainActivity", "starting landing page");
             launchLandingPage.launch(intent_first_login);
         } else {
-            Log.d("MainActivity", "did not start landing page");
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                //landscape mode
+                bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
+                init_landscape();
+            } else {
+                //portrait mode
+                bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+                init_portrait();
+            }
+            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
             afterLogin();
     }}
 
+    private void init_landscape() {
+        hidden_statement = bo_land.hiddenStatement;
+        pBar = bo_land.pBar;
+        anim = bo_land.animationView;
+        category_statement = bo_land.categoryStatement;
+        spinner = bo_land.categoryBox;
+        words_statement = bo_land.wordsStatement;
+        first_word_box = bo_land.word1;
+        second_word_box = bo_land.word2;
+        third_word_box = bo_land.word3;
+        btn = bo_land.generateButton;
+    }
 
+    private void init_portrait() {
+        hidden_statement = bo.hiddenStatement;
+        pBar = bo.pBar;
+        anim = bo.animationView;
+        category_statement = bo.categoryStatement;
+        spinner = bo.categoryBox;
+        words_statement = bo.wordsStatement;
+        first_word_box = bo.word1;
+        second_word_box = bo.word2;
+        third_word_box = bo.word3;
+        btn = bo.generateButton;
+    }
 
     private void afterLogin() {
-        init();
+        setUI();
         //Generate Button - On Click
-        bo.generateButton.setOnClickListener(view -> {
+        btn.setOnClickListener(view -> {
             instance_SP.saveData(word1, word2, word3, category);
             if (word1.equals("") ||
                     word2.equals("") ||
@@ -95,14 +132,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    private void init() {
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
-        anim = bo.animationView;
-        anim.setVisibility(View.VISIBLE);
-        pBar = bo.pBar;
-        wordBox_init(bo);
-        spinner = spinner_init(bo);
+    private void setUI() {
+        wordBoxListener_init();
+        spinner_init();
         word1 = instance_SP.getWord1();
         word2 = instance_SP.getWord2();
         word3 = instance_SP.getWord3();
@@ -125,37 +157,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private void buffer_start(ActivityMainBinding bo, Spinner spinner) {
+    private void buffer_start() {
+        category_statement.setVisibility(View.INVISIBLE);
+        spinner.setVisibility(View.GONE);
+        words_statement.setVisibility(View.GONE);
         first_word_box.setVisibility(View.INVISIBLE);
         second_word_box.setVisibility(View.INVISIBLE);
         third_word_box.setVisibility(View.INVISIBLE);
-        spinner.setVisibility(View.INVISIBLE);
-        bo.generateButton.setVisibility(View.INVISIBLE);
-        bo.categoryStatement.setVisibility(View.INVISIBLE);
-        bo.wordsStatement.setVisibility(View.INVISIBLE);
-        bo.hiddenStatement.setVisibility(View.VISIBLE);
+        btn.setVisibility(View.INVISIBLE);
+        hidden_statement.setVisibility(View.VISIBLE);
+        pBar.setVisibility(View.VISIBLE);
         anim.cancelAnimation();
         anim.setVisibility(View.INVISIBLE);
-        pBar.setVisibility(View.VISIBLE);
     }
 
-    private void buffer_end(ActivityMainBinding bo, Spinner spinner) {
+    private void buffer_end() {
+        category_statement.setVisibility(View.VISIBLE);
+        spinner.setVisibility(View.VISIBLE);
+        words_statement.setVisibility(View.VISIBLE);
         first_word_box.setVisibility(View.VISIBLE);
         second_word_box.setVisibility(View.VISIBLE);
         third_word_box.setVisibility(View.VISIBLE);
-        spinner.setVisibility(View.VISIBLE);
-        bo.generateButton.setVisibility(View.VISIBLE);
-        bo.categoryStatement.setVisibility(View.VISIBLE);
-        bo.hiddenStatement.setVisibility(View.INVISIBLE);
-        bo.wordsStatement.setVisibility(View.VISIBLE);
+        btn.setVisibility(View.VISIBLE);
+        hidden_statement.setVisibility(View.GONE);
+        pBar.setVisibility(View.GONE);
         anim.playAnimation();
         anim.setVisibility(View.VISIBLE);
-        pBar.setVisibility(View.INVISIBLE);
-
     }
 
     private void startImageActivity() {
-        buffer_start(bo, spinner);
+        buffer_start();
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
@@ -169,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("word2",word2);
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
-            buffer_end(bo, spinner);
+            buffer_end();
             startActivity(intent);
         }).exceptionally(exception -> {
             Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
@@ -182,21 +213,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    @NonNull
-    private Spinner spinner_init(ActivityMainBinding bo) {
-        Spinner spinner = bo.categoryBox;
+
+    private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-        return spinner;
     }
 
-    private void wordBox_init(ActivityMainBinding bo) {
-        first_word_box = bo.word1;
-        second_word_box = bo.word2;
-        third_word_box = bo.word3;
-
+    private void wordBoxListener_init() {
         first_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
                 word1 = first_word_box.getText().toString().trim();
@@ -283,15 +308,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Toast.makeText(MainActivity.this,
                 category, Toast.LENGTH_SHORT).show();
     }
+
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         instance_SP.saveData(word1, word2, word3, category);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         instance_SP.saveData(word1, word2, word3, category);
-        Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
+        Log.d("MainActivity onPause", "saving: " + word1 + word2 + word3 + category);
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // For landscape mode
+            ActivityMainLandBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
+            // Use 'binding' to access views in the landscape layout
+        } else {
+            // For portrait mode
+            ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+            // Use 'binding' to access views in the portrait layout
+        }
+    }
 }
