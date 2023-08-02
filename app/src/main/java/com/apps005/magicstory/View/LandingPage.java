@@ -1,9 +1,11 @@
 package com.apps005.magicstory.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
+import com.apps005.magicstory.databinding.ActivityLandingPageLandBinding;
 import com.apps005.magicstory.model.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,13 +34,25 @@ public class LandingPage extends AppCompatActivity {
     private Button save_button;
     private FirebaseFirestore db;
     private int num_clicks = 0;
+    private ActivityLandingPageBinding bo;
+    private ActivityLandingPageLandBinding bo_land;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("LandingPage", "super onCreate");
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //landscape mode
+            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_landing_page_land);
+            init_land(bo_land);
+            //init_landscape();
+            Log.d("LandingPage onCreate", "landscape config set");
+        } else {
+            //portrait mode
+            bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
+            init_portrait(bo);
+            Log.d("LandingPage onCreate", "portrait config set");
+        }
         num_clicks = 0;
-        com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
-        init(bo);
 
         save_button.setOnClickListener(view -> {
             String first_name = first_name_box.getText().toString().trim();
@@ -78,18 +93,29 @@ public class LandingPage extends AppCompatActivity {
                 });
     }
 
-    private void init(ActivityLandingPageBinding bo) {
+    private void init_portrait(ActivityLandingPageBinding bo) {
         LottieAnimationView anim = bo.animationView;
         anim.setVisibility(View.VISIBLE);
         save_button = bo.saveButton;
         db = FirebaseFirestore.getInstance();
-        wordBox_init(bo);
-    }
-
-    private void wordBox_init(ActivityLandingPageBinding bo) {
         first_name_box = bo.firstNameBox;
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
+        wordBox_init();
+    }
+
+    private void init_land(ActivityLandingPageLandBinding bo_land) {
+        LottieAnimationView anim = bo_land.animationView;
+        anim.setVisibility(View.VISIBLE);
+        save_button = bo_land.saveButton;
+        db = FirebaseFirestore.getInstance();
+        first_name_box = bo_land.firstNameBox;
+        last_name_box = bo_land.lastNameBox;
+        username_box = bo_land.usernameBox;
+        wordBox_init();
+    }
+
+    private void wordBox_init() {
         first_name_box.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard(textView);
@@ -132,6 +158,22 @@ public class LandingPage extends AppCompatActivity {
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // For landscape mode
+            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
+            Log.d("LandingPage onConfig", "setting landscape");
+            // Use 'binding' to access views in the landscape layout
+        } else {
+            // For portrait mode
+            bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+            Log.d("LandingPage onConfig", "setting portrait");
+            // Use 'binding' to access views in the portrait layout
+        }
     }
 
 }
