@@ -28,6 +28,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.ImageNetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
+import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
 import com.apps005.magicstory.databinding.ActivityMainLandBinding;
 
@@ -274,7 +275,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 hideKeyboard(view);
             }
         });
-
+        first_word_box.addTextChangedListener(new WordListener(first_word_box));
+        second_word_box.addTextChangedListener(new WordListener(second_word_box));
+        third_word_box.addTextChangedListener(new WordListener(third_word_box));
     }
 
 //    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(

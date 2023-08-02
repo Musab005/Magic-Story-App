@@ -28,7 +28,7 @@
             app:lottie_autoPlay="true"
             app:lottie_colorFilter="@color/white"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/login2"></com.airbnb.lottie.LottieAnimationView>
+            app:lottie_rawRes="@raw/login2" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
@@ -104,9 +104,12 @@
             android:fontFamily="casual"
             android:hint="@string/e_g_wanderlustjunkie_txt"
             android:inputType="textPersonName"
+            android:shadowColor="@color/white"
             android:textAlignment="center"
             android:textColor="@color/white"
+            android:textColorHighlight="@color/white"
             android:textColorHint="@color/hint"
+            android:textColorLink="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
