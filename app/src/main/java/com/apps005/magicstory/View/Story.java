@@ -1,6 +1,7 @@
 package com.apps005.magicstory.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,7 +20,6 @@ import com.apps005.magicstory.R;
 import com.apps005.magicstory.databinding.ActivityStoryBinding;
 import com.apps005.magicstory.databinding.ActivityStoryLandBinding;
 
-import java.util.Objects;
 
 
 public class Story extends AppCompatActivity {
@@ -32,6 +33,7 @@ public class Story extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("StoryActivity", "onCreate");
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_story_land);
             init_landscape();
@@ -41,12 +43,19 @@ public class Story extends AppCompatActivity {
             init_portrait();
             Log.d("StoryActivity onCreate", "portrait config set");
         }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         proceed();
 
     }
+    public boolean onOptionsItemSelected(MenuItem item){
+        finish();
+        return true;
+    }
 
     private void proceed() {
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         storyText.setText(intent.getStringExtra("story"));
         done_button.setOnClickListener(view -> finish());
     }
@@ -99,12 +108,44 @@ public class Story extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_story_land);
+            init_landscape();
             Log.d("StoryActivity onConfig", "setting landscape");
             proceed();
         } else {
             bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
+            init_portrait();
             Log.d("StoryActivity onConfig", "setting portrait");
             proceed();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("StoryActivity", "onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("StoryActivity", "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("StoryActivity", "onDestroy");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("StoryActivity", "onPause");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("StoryActivity", "onResume");
     }
 }

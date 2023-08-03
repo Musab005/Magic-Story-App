@@ -17,7 +17,6 @@
         <activity
             android:name=".View.ImageTest"
             android:exported="true"
-            android:parentActivityName=".View.MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:configChanges="orientation|screenSize"/>
         <activity
@@ -29,7 +28,6 @@
             android:name=".View.Story"
             android:exported="true"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".View.ImageTest"
             android:theme="@style/Theme.AppCompat.Light"/>
         <activity
             android:name=".View.MainActivity"
@@ -38,7 +36,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

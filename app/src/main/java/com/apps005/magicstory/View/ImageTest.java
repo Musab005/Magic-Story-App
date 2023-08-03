@@ -1,16 +1,17 @@
 package com.apps005.magicstory.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,8 +26,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class ImageTest extends AppCompatActivity {
@@ -43,6 +42,7 @@ public class ImageTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("ImageActivity", "onCreate");
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_image_land_test);
             init_landscape();
@@ -52,12 +52,28 @@ public class ImageTest extends AppCompatActivity {
             init_portrait();
             Log.d("MainActivity onCreate", "portrait config set");
         }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         proceed();
     }
 
+    public boolean onOptionsItemSelected(MenuItem item){
+        finish();
+        return true;
+    }
     private void proceed() {
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         displayImage(iv, intent);
+        String word1 = intent.getStringExtra("word1");
+        String word2 = intent.getStringExtra("word2");
+        String word3 = intent.getStringExtra("word3");
+        String category = intent.getStringExtra("category");
+        arrow.setOnClickListener(view -> startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext()));
+    }
+
+    private void proceed_onConfig() {
+        displayImage_onConfig(iv, intent);
         String word1 = intent.getStringExtra("word1");
         String word2 = intent.getStringExtra("word2");
         String word3 = intent.getStringExtra("word3");
@@ -85,7 +101,7 @@ public class ImageTest extends AppCompatActivity {
         intent = getIntent();
     }
 
-    @SuppressLint("ResourceAsColor")
+
     private void displayImage(ImageView iv, Intent intent) {
         iv.setVisibility(View.GONE);
         arrow.setVisibility(View.GONE);
@@ -103,6 +119,22 @@ public class ImageTest extends AppCompatActivity {
             arrow.setVisibility(View.VISIBLE);
             statement.setVisibility(View.VISIBLE);
         }, 5000);
+    }
+
+    private void displayImage_onConfig(ImageView iv, Intent intent) {
+        iv.setVisibility(View.GONE);
+        arrow.setVisibility(View.GONE);
+        statement.setVisibility(View.GONE);
+
+        RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
+                .diskCacheStrategy(DiskCacheStrategy.ALL); // Cache the image for subsequent requests
+        Glide.with(ImageTest.this)
+                .load(intent.getStringExtra("url")) // Load the image URL
+                .apply(requestOptions)
+                .into(iv); // Display the image in the ImageView
+        iv.setVisibility(View.VISIBLE);
+        arrow.setVisibility(View.VISIBLE);
+        statement.setVisibility(View.VISIBLE);
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
@@ -144,17 +176,48 @@ public class ImageTest extends AppCompatActivity {
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_image_land_test);
             Log.d("MainActivity onConfig", "setting landscape");
             init_landscape();
-            proceed();
+            proceed_onConfig();
         } else {
             bo = DataBindingUtil.setContentView(this, R.layout.activity_image_test);
             Log.d("MainActivity onConfig", "setting portrait");
             init_portrait();
-            proceed();
+            proceed_onConfig();
         }
     }
-
 
     public interface startStory {
         void onResult(String result);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("ImageActivity", "onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("ImageActivity", "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("ImageActivity", "onDestroy");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("ImageActivity", "onPause");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("ImageActivity", "onResume");
+    }
+
+
 }

@@ -1,7 +1,5 @@
 package com.apps005.magicstory.View;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -36,10 +34,13 @@ import com.apps005.magicstory.databinding.ActivityMainLandBinding;
 import java.util.concurrent.CompletableFuture;
 
 //TODO: onResume called after ending landing page
-//TODO: story activitty done button not appearing
+//TODO: ImageActivity oncnfigchanged put read story aarrow immediately w/o delay
+//TODO: story activitty done button
 //TODO: back button pressed on landing page
 //TODO: buffer-end when "done" pressed form story activity ??
-//study onSTART, RESUME ETC
+//TODO: image activity when config changed keep the saved instance state
+//TODO: when clicked read story and writing animation appears, it defaults to normal screen onconfigchanged but
+//TODO: background api call still working
 //issue of after login method when using on mobile might be solved with onStart() ??
 
 
@@ -76,25 +77,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
-            Log.d("MainActivity onCreate", "starting landing page");
+            Log.d("MainActivity", "starting landing page");
 //            launchLandingPage.launch(intent_first_login);
             startActivity(intent_first_login);
-            Log.d("MainActivity onCreate", "here??");
+            Log.d("MainActivity", "here??");
         } else {
-            Log.d("MainActivity onCreate", "did not start landing page");
+            Log.d("MainActivity", "did not start landing page");
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 //landscape mode
                 bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
                 init_landscape();
-                Log.d("MainActivity onCreate", "landscape config set");
+                Log.d("MainActivity", "landscape config set");
             } else {
                 //portrait mode
                 bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
                 init_portrait();
-                Log.d("MainActivity onCreate", "portrait config set");
+                Log.d("MainActivity", "portrait config set");
             }
-            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
-            Log.d("MainActivity onCreate", "executing afterLogin");
+            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_SHORT).show();
+            Log.d("MainActivity", "showed username. Executing afterLogin");
             afterLogin();
         }
     }
@@ -279,24 +280,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         third_word_box.addTextChangedListener(new WordListener(third_word_box));
     }
 
-//    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            result -> {
-//                if (result.getResultCode() == RESULT_OK) {
-//                    // Handle the result from the LandingPage activity here
-//                    Log.d("MainActivity onResult", "afterLogin");
-//                    afterLogin();
-//                } else {
-//                    // back button presses on landing page
-//                    Toast.makeText(MainActivity.this, "Error line 276",
-//                            Toast.LENGTH_LONG).show();
-//                    Log.d("MainActivity onResult", "Landing page unsuccessfully ended");
-//
-//
-//                }
-//            }
-//    );
-
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -331,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("MainActivity", "onPause");
         instance_SP.saveData(word1, word2, word3, category);
     }
 
@@ -363,18 +347,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("MainActivity", "onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("MainActivity", "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("MainActivity", "onDestroy");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        Log.d("MainActivity", "onResume");
-        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        if (instance_SP.getUsername().isEmpty()) {
-            Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
-            Log.d("MainActivity onResume", "starting landing page");
-//            launchLandingPage.launch(intent_first_login);
-            startActivity(intent_first_login);
-            Log.d("MainActivity onResume", "here??");
-        } else {
-            Log.d("MainActivity onResume", "did not start landing page");
+            Log.d("MainActivity", "onResume");
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 //landscape mode
                 bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
@@ -386,9 +379,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 init_portrait();
                 Log.d("MainActivity onResume", "portrait config set");
             }
-            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
             Log.d("MainActivity onResume", "executing afterLogin");
             afterLogin();
-        }
     }
 }
