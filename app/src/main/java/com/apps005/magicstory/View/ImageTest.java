@@ -1,11 +1,13 @@
 package com.apps005.magicstory.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.ImageNetworkRequest;
+import com.apps005.magicstory.databinding.ActivityImageLandTestBinding;
+import com.apps005.magicstory.databinding.ActivityImageTestBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -29,33 +33,56 @@ public class ImageTest extends AppCompatActivity {
     private Handler handler;
     private LottieAnimationView anim;
     private ImageView iv;
-    ImageView arrow;
-    TextView statement;
+    private ImageView arrow;
+    private TextView statement;
+    private ActivityImageTestBinding bo;
+    private ActivityImageLandTestBinding bo_land;
+    private Intent intent;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.apps005.magicstory.databinding.ActivityImageTestBinding bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_image_land_test);
+            init_landscape();
+            Log.d("MainActivity onCreate", "landscape config set");
+        } else {
+            bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
+            init_portrait();
+            Log.d("MainActivity onCreate", "portrait config set");
+        }
+        proceed();
+    }
+
+    private void proceed() {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        Log.d("Image Activity:", "onCreate");
+        displayImage(iv, intent);
+        String word1 = intent.getStringExtra("word1");
+        String word2 = intent.getStringExtra("word2");
+        String word3 = intent.getStringExtra("word3");
+        String category = intent.getStringExtra("category");
+        arrow.setOnClickListener(view -> startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext()));
+    }
+
+    private void init_landscape() {
+        arrow = bo_land.ReadStoryArrow;
+        statement = bo_land.readStoryStatement;
+        iv = bo_land.imageView;
+        anim = bo_land.animationView;
+        anim.setVisibility(View.GONE);
+        handler = new Handler();
+        intent = getIntent();
+    }
+
+    private void init_portrait() {
         arrow = bo.ReadStoryArrow;
         statement = bo.readStoryStatement;
         iv = bo.imageView;
         anim = bo.animationView;
         anim.setVisibility(View.GONE);
         handler = new Handler();
-        Intent intent = getIntent();
-        displayImage(iv, intent);
-
-        String word1 = intent.getStringExtra("word1");
-        String word2 = intent.getStringExtra("word2");
-        String word3 = intent.getStringExtra("word3");
-        String category = intent.getStringExtra("category");
-
-        arrow.setOnClickListener(view -> startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext()));
-
-
+        intent = getIntent();
     }
 
     @SuppressLint("ResourceAsColor")
@@ -75,7 +102,7 @@ public class ImageTest extends AppCompatActivity {
             // Code to be executed after t seconds
             arrow.setVisibility(View.VISIBLE);
             statement.setVisibility(View.VISIBLE);
-        }, 6000);
+        }, 5000);
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
@@ -104,6 +131,26 @@ public class ImageTest extends AppCompatActivity {
             exception.printStackTrace();
             return null;
         });
+    }
+    @Override
+    public void onBackPressed() {
+        // Go back to the previous activity when the back button is pressed
+        finish();
+    }
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_image_land_test);
+            Log.d("MainActivity onConfig", "setting landscape");
+            init_landscape();
+            proceed();
+        } else {
+            bo = DataBindingUtil.setContentView(this, R.layout.activity_image_test);
+            Log.d("MainActivity onConfig", "setting portrait");
+            init_portrait();
+            proceed();
+        }
     }
 
 

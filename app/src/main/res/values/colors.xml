@@ -13,4 +13,5 @@
     <color name="light_blue_hint">#FF7F95AC</color>
     <color name="blue_username" />
     <color name="BLUE_username">#0B5DB3</color>
+    <color name="button_layout">#D3D1CC</color>
 </resources>

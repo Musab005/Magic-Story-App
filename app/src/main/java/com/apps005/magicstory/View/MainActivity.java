@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,15 +36,11 @@ import com.apps005.magicstory.databinding.ActivityMainLandBinding;
 import java.util.concurrent.CompletableFuture;
 
 //TODO: onResume called after ending landing page
+//TODO: story activitty done button not appearing
 //TODO: back button pressed on landing page
-//TODO: buffer-end when "done" pressed form story activity
-//TODO: buffer stop after starting imge activity from main, not necessarily before?
+//TODO: buffer-end when "done" pressed form story activity ??
 //study onSTART, RESUME ETC
-//If u can do it after then no need for handler delayed
 //issue of after login method when using on mobile might be solved with onStart() ??
-//TODO: 3. Setup an animation upon start of the application which greets user by their username
-//TODO: 4. Make the quality of spinner better
-//TODO: 5. Make UI/UX better in general
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -70,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView category_statement;
     private TextView words_statement;
     private Button btn;
+    private Handler handler;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,8 +212,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("word2",word2);
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
-            buffer_end();
+            handler = new Handler();
             startActivity(intent);
+            handler.postDelayed(this::buffer_end, 2000);
         }).exceptionally(exception -> {
             Toast.makeText(MainActivity.this,"error line 206: Image fail",Toast.LENGTH_SHORT).show();
             Log.d("MainActivity startImage", "ImageURL unsuccessful");
@@ -343,12 +342,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
             Log.d("MainActivity onConfig", "setting landscape");
             // Use 'binding' to access views in the landscape layout
+            instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+            init_landscape();
+            afterLogin();
         } else {
             // For portrait mode
             bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
             Log.d("MainActivity onConfig", "setting portrait");
             // Use 'binding' to access views in the portrait layout
+            instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+            init_portrait();
+            afterLogin();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Go back to the previous activity when the back button is pressed
+        finish();
     }
 
     @Override

@@ -8,11 +8,13 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -29,31 +31,29 @@ import java.time.format.DateTimeFormatter;
 public class LandingPage extends AppCompatActivity {
 
     private EditText first_name_box;
+    private ProgressBar pBar;
     private EditText last_name_box;
     private EditText username_box;
     private Button save_button;
     private FirebaseFirestore db;
-    private int num_clicks = 0;
     private ActivityLandingPageBinding bo;
     private ActivityLandingPageLandBinding bo_land;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("LandingPage", "super onCreate");
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //landscape mode
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_landing_page_land);
             init_land(bo_land);
-            //init_landscape();
             Log.d("LandingPage onCreate", "landscape config set");
         } else {
-            //portrait mode
             bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
             init_portrait(bo);
             Log.d("LandingPage onCreate", "portrait config set");
         }
-        num_clicks = 0;
+        button_listener();
+    }
 
+    private void button_listener() {
         save_button.setOnClickListener(view -> {
             String first_name = first_name_box.getText().toString().trim();
             String last_name = last_name_box.getText().toString().trim();
@@ -69,10 +69,9 @@ public class LandingPage extends AppCompatActivity {
                         "Please write your first name, last name and choose a username",
                         Toast.LENGTH_SHORT).show();
             } else {
-                if (num_clicks == 0) {
-                    num_clicks++;
+                save_button.setVisibility(View.GONE);
+                pBar.setVisibility(View.VISIBLE);
                     saveData(first_name, last_name, username, formattedDate);
-                }
             }
         });
     }
@@ -81,13 +80,18 @@ public class LandingPage extends AppCompatActivity {
         User user = new User(first_name, last_name, formattedDate,0, username);
         SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
         db.collection("Users").add(user)
-                .addOnFailureListener(e ->
-                        Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> {
+                    Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show();
+                    pBar.setVisibility(View.GONE);
+                    save_button.setVisibility(View.VISIBLE);
+                })
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d("LandingPage", "ending");
                             finish();
                     } else {
+                        pBar.setVisibility(View.GONE);
+                        save_button.setVisibility(View.VISIBLE);
                         Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -101,6 +105,7 @@ public class LandingPage extends AppCompatActivity {
         first_name_box = bo.firstNameBox;
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
+        pBar = bo.pBar;
         wordBox_init();
     }
 
@@ -112,6 +117,7 @@ public class LandingPage extends AppCompatActivity {
         first_name_box = bo_land.firstNameBox;
         last_name_box = bo_land.lastNameBox;
         username_box = bo_land.usernameBox;
+        pBar = bo_land.pBar;
         wordBox_init();
     }
 
@@ -161,18 +167,35 @@ public class LandingPage extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        // Close the app when the back button is pressed on the LandingPageActivity
+        finishAffinity();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if (view != null) {
+                hideKeyboard(view);
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // For landscape mode
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
             Log.d("LandingPage onConfig", "setting landscape");
-            // Use 'binding' to access views in the landscape layout
+            init_land(bo_land);
+            button_listener();
         } else {
-            // For portrait mode
             bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
             Log.d("LandingPage onConfig", "setting portrait");
-            // Use 'binding' to access views in the portrait layout
+            init_portrait(bo);
+            button_listener();
         }
     }
 

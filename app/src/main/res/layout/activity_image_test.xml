@@ -20,7 +20,6 @@
             android:layout_width="0dp"
             android:layout_height="305dp"
             android:layout_marginTop="72dp"
-            android:background="@color/light_white"
             android:contentDescription="@string/image_generated_based_on_user_input_txt"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,21 +35,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/writing_story" />
-
-        <ImageView
-            android:id="@+id/ReadStory_arrow"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:contentDescription="@string/proceed_to_read_story_txt"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/read_story_statement"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/arrow_new" />
 
         <TextView
             android:id="@+id/read_story_statement"
@@ -68,6 +59,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintVertical_bias="1.0" />
+
+        <ImageView
+            android:id="@+id/ReadStory_arrow"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@string/proceed_to_read_story_txt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/read_story_statement"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@drawable/arrow_new" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
