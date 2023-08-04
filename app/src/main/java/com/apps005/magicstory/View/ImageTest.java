@@ -46,11 +46,11 @@ public class ImageTest extends AppCompatActivity {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_image_land_test);
             init_landscape();
-            Log.d("MainActivity onCreate", "landscape config set");
+            Log.d("ImageActivity", "landscape config set");
         } else {
             bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
             init_portrait();
-            Log.d("MainActivity onCreate", "portrait config set");
+            Log.d("ImageActivity", "portrait config set");
         }
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

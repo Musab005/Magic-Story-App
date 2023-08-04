@@ -358,6 +358,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("MainActivity", "onStop");
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

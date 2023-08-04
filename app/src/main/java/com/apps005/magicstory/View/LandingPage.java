@@ -45,11 +45,11 @@ public class LandingPage extends AppCompatActivity {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bo_land = DataBindingUtil.setContentView(this, R.layout.activity_landing_page_land);
             init_land(bo_land);
-            Log.d("LandingPage onCreate", "landscape config set");
+            Log.d("LandingPage", "landscape config set");
         } else {
             bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
             init_portrait(bo);
-            Log.d("LandingPage onCreate", "portrait config set");
+            Log.d("LandingPage", "portrait config set");
         }
         button_listener();
     }
