@@ -1,12 +1,10 @@
 package com.apps005.magicstory.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -29,11 +27,11 @@ import com.apps005.magicstory.Util.ImageNetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
-import com.apps005.magicstory.databinding.ActivityMainLandBinding;
 
 import java.util.concurrent.CompletableFuture;
 
 //TODO: onResume called after ending landing page
+//TODO: for activities that display animation, we need it to continue on config changed and not make multiple API calls
 //TODO: ImageActivity oncnfigchanged put read story aarrow immediately w/o delay
 //TODO: story activitty done button
 //TODO: back button pressed on landing page
@@ -62,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private LottieAnimationView anim;
     private ProgressBar pBar;
     private ActivityMainBinding bo;
-    private ActivityMainLandBinding bo_land;
     private Spinner spinner;
     private TextView hidden_statement;
     private TextView category_statement;
@@ -78,39 +75,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
-//            launchLandingPage.launch(intent_first_login);
             startActivity(intent_first_login);
-            Log.d("MainActivity", "here??");
         } else {
             Log.d("MainActivity", "did not start landing page");
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                //landscape mode
-                bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
-                init_landscape();
-                Log.d("MainActivity", "landscape config set");
-            } else {
-                //portrait mode
-                bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-                init_portrait();
-                Log.d("MainActivity", "portrait config set");
-            }
-            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_SHORT).show();
-            Log.d("MainActivity", "showed username. Executing afterLogin");
-            afterLogin();
         }
-    }
-
-    private void init_landscape() {
-        hidden_statement = bo_land.hiddenStatement;
-        pBar = bo_land.pBar;
-        anim = bo_land.animationView;
-        category_statement = bo_land.categoryStatement;
-        spinner = bo_land.categoryBox;
-        words_statement = bo_land.wordsStatement;
-        first_word_box = bo_land.word1;
-        second_word_box = bo_land.word2;
-        third_word_box = bo_land.word3;
-        btn = bo_land.generateButton;
     }
 
     private void init_portrait() {
@@ -318,27 +286,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         instance_SP.saveData(word1, word2, word3, category);
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // For landscape mode
-            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
-            Log.d("MainActivity onConfig", "setting landscape");
-            // Use 'binding' to access views in the landscape layout
-            instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-            init_landscape();
-            afterLogin();
-        } else {
-            // For portrait mode
-            bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-            Log.d("MainActivity onConfig", "setting portrait");
-            // Use 'binding' to access views in the portrait layout
-            instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-            init_portrait();
-            afterLogin();
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -369,18 +316,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
             Log.d("MainActivity", "onResume");
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                //landscape mode
-                bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
-                init_landscape();
-                Log.d("MainActivity onResume", "landscape config set");
-            } else {
-                //portrait mode
-                bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-                init_portrait();
-                Log.d("MainActivity onResume", "portrait config set");
-            }
-            Log.d("MainActivity onResume", "executing afterLogin");
+            bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+            init_portrait();
             afterLogin();
     }
 }

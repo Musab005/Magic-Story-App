@@ -1,11 +1,9 @@
 package com.apps005.magicstory.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -21,7 +19,6 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
-import com.apps005.magicstory.databinding.ActivityLandingPageLandBinding;
 import com.apps005.magicstory.model.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -37,28 +34,21 @@ public class LandingPage extends AppCompatActivity {
     private Button save_button;
     private FirebaseFirestore db;
     private ActivityLandingPageBinding bo;
-    private ActivityLandingPageLandBinding bo_land;
+    private String first_name;
+    private String last_name;
+    private String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("LandingActivity", "onCreate");
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_landing_page_land);
-            init_land(bo_land);
-            Log.d("LandingPage", "landscape config set");
-        } else {
-            bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
-            init_portrait(bo);
-            Log.d("LandingPage", "portrait config set");
-        }
+        bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
+        init_portrait(bo);
         button_listener();
     }
 
     private void button_listener() {
         save_button.setOnClickListener(view -> {
-            String first_name = first_name_box.getText().toString().trim();
-            String last_name = last_name_box.getText().toString().trim();
-            String username = username_box.getText().toString().trim();
+            save_fields();
             LocalDate currentDate = LocalDate.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String formattedDate = currentDate.format(formatter);
@@ -75,6 +65,12 @@ public class LandingPage extends AppCompatActivity {
                     saveData(first_name, last_name, username, formattedDate);
             }
         });
+    }
+
+    private void save_fields() {
+        first_name = first_name_box.getText().toString().trim();
+        last_name = last_name_box.getText().toString().trim();
+        username = username_box.getText().toString().trim();
     }
 
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
@@ -107,18 +103,6 @@ public class LandingPage extends AppCompatActivity {
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
         pBar = bo.pBar;
-        wordBox_init();
-    }
-
-    private void init_land(ActivityLandingPageLandBinding bo_land) {
-        LottieAnimationView anim = bo_land.animationView;
-        anim.setVisibility(View.VISIBLE);
-        save_button = bo_land.saveButton;
-        db = FirebaseFirestore.getInstance();
-        first_name_box = bo_land.firstNameBox;
-        last_name_box = bo_land.lastNameBox;
-        username_box = bo_land.usernameBox;
-        pBar = bo_land.pBar;
         wordBox_init();
     }
 
@@ -184,22 +168,6 @@ public class LandingPage extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_main_land);
-            Log.d("LandingPage onConfig", "setting landscape");
-            init_land(bo_land);
-            button_listener();
-        } else {
-            bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-            Log.d("LandingPage onConfig", "setting portrait");
-            init_portrait(bo);
-            button_listener();
-        }
-    }
-
 
     @Override
     protected void onStart() {
@@ -230,4 +198,5 @@ public class LandingPage extends AppCompatActivity {
         super.onResume();
         Log.d("LandingActivity", "onResume");
     }
+
 }

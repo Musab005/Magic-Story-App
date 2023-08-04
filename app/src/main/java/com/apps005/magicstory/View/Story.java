@@ -28,21 +28,13 @@ public class Story extends AppCompatActivity {
     private TextView storyText;
     private Button done_button;
     private ActivityStoryBinding bo;
-    private ActivityStoryLandBinding bo_land;
     private Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("StoryActivity", "onCreate");
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_story_land);
-            init_landscape();
-            Log.d("StoryActivity onCreate", "landscape config set");
-        } else {
-            bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
-            init_portrait();
-            Log.d("StoryActivity onCreate", "portrait config set");
-        }
+        bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
+        init_portrait();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -69,14 +61,6 @@ public class Story extends AppCompatActivity {
         intent = getIntent();
     }
 
-    private void init_landscape() {
-        done_button = bo_land.DoneButton;
-        scrollView = bo_land.scrollView;
-        buttonLayout = bo_land.buttonLayout;
-        storyText = bo_land.storyText;
-        widgets_init();
-        intent = getIntent();
-    }
 
     private void widgets_init() {
         scrollView.setOnScrollChangeListener((view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -103,21 +87,6 @@ public class Story extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bo_land = DataBindingUtil.setContentView(this, R.layout.activity_story_land);
-            init_landscape();
-            Log.d("StoryActivity onConfig", "setting landscape");
-            proceed();
-        } else {
-            bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
-            init_portrait();
-            Log.d("StoryActivity onConfig", "setting portrait");
-            proceed();
-        }
-    }
 
     @Override
     protected void onStart() {
