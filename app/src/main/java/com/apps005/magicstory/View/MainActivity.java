@@ -1,5 +1,6 @@
 package com.apps005.magicstory.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
@@ -30,8 +31,11 @@ import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 import java.util.concurrent.CompletableFuture;
 
+//TODO: check going to home then reopening app and also handling notifications during app
+//TODO: animation of writing story need to save upon config change
+//TODO: Read story text appearing after delay upon config change
 //TODO: onResume called after ending landing page
-//TODO: for activities that display animation, we need it to continue on config changed and not make multiple API calls
+//TODO: for activities that display animation, we need anim to continue on config changed and not make multiple API calls
 //TODO: ImageActivity oncnfigchanged put read story aarrow immediately w/o delay
 //TODO: story activitty done button
 //TODO: back button pressed on landing page
@@ -66,12 +70,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView words_statement;
     private Button btn;
     private Handler handler;
+    private boolean isProgressBarVisible = false;
+    private boolean isTextViewVisible = false;
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MainActivity", "onCreate");
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        if (savedInstanceState != null) {
+            isProgressBarVisible = savedInstanceState.getBoolean("progressBarVisible", false);
+            isTextViewVisible = savedInstanceState.getBoolean("textViewVisible", false);
+        }
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
@@ -79,6 +88,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else {
             Log.d("MainActivity", "did not start landing page");
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("MainActivity", "onStart");
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("MainActivity", "onResume");
+        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        init_portrait();
+        pBar.setVisibility(isProgressBarVisible ? View.VISIBLE : View.GONE);
+        hidden_statement.setVisibility(isTextViewVisible ? View.VISIBLE : View.GONE);
+        afterLogin();
     }
 
     private void init_portrait() {
@@ -138,34 +165,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private void buffer_start() {
-        category_statement.setVisibility(View.INVISIBLE);
-        spinner.setVisibility(View.GONE);
-        words_statement.setVisibility(View.GONE);
-        first_word_box.setVisibility(View.INVISIBLE);
-        second_word_box.setVisibility(View.INVISIBLE);
-        third_word_box.setVisibility(View.INVISIBLE);
-        btn.setVisibility(View.INVISIBLE);
-        hidden_statement.setVisibility(View.VISIBLE);
-        pBar.setVisibility(View.VISIBLE);
-        anim.cancelAnimation();
-        anim.setVisibility(View.INVISIBLE);
-    }
-
-    private void buffer_end() {
-        category_statement.setVisibility(View.VISIBLE);
-        spinner.setVisibility(View.VISIBLE);
-        words_statement.setVisibility(View.VISIBLE);
-        first_word_box.setVisibility(View.VISIBLE);
-        second_word_box.setVisibility(View.VISIBLE);
-        third_word_box.setVisibility(View.VISIBLE);
-        btn.setVisibility(View.VISIBLE);
-        hidden_statement.setVisibility(View.GONE);
-        pBar.setVisibility(View.GONE);
-        anim.playAnimation();
-        anim.setVisibility(View.VISIBLE);
-    }
-
     private void startImageActivity() {
         buffer_start();
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
@@ -183,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("category",category);
             handler = new Handler();
             startActivity(intent);
+            //buffer_end();
             handler.postDelayed(this::buffer_end, 2000);
         }).exceptionally(exception -> {
             Toast.makeText(MainActivity.this,"error line 206: Image fail",Toast.LENGTH_SHORT).show();
@@ -192,6 +192,38 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             exception.printStackTrace();
             return null;
         });
+    }
+
+    private void buffer_start() {
+        category_statement.setVisibility(View.INVISIBLE);
+        spinner.setVisibility(View.GONE);
+        words_statement.setVisibility(View.GONE);
+        first_word_box.setVisibility(View.INVISIBLE);
+        second_word_box.setVisibility(View.INVISIBLE);
+        third_word_box.setVisibility(View.INVISIBLE);
+        btn.setVisibility(View.INVISIBLE);
+        isProgressBarVisible = true;
+        isTextViewVisible = true;
+        hidden_statement.setVisibility(View.VISIBLE);
+        pBar.setVisibility(View.VISIBLE);
+        anim.cancelAnimation();
+        anim.setVisibility(View.INVISIBLE);
+    }
+
+    private void buffer_end() {
+        category_statement.setVisibility(View.VISIBLE);
+        spinner.setVisibility(View.VISIBLE);
+        words_statement.setVisibility(View.VISIBLE);
+        first_word_box.setVisibility(View.VISIBLE);
+        second_word_box.setVisibility(View.VISIBLE);
+        third_word_box.setVisibility(View.VISIBLE);
+        btn.setVisibility(View.VISIBLE);
+        isProgressBarVisible = false;
+        isTextViewVisible = false;
+        hidden_statement.setVisibility(View.GONE);
+        pBar.setVisibility(View.GONE);
+        anim.playAnimation();
+        anim.setVisibility(View.VISIBLE);
     }
 
 
@@ -280,23 +312,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("MainActivity", "onPause");
-        instance_SP.saveData(word1, word2, word3, category);
-    }
-
-
-    @Override
     public void onBackPressed() {
         // Go back to the previous activity when the back button is pressed
         finish();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("MainActivity", "onStart");
+    protected void onPause() {
+        super.onPause();
+        Log.d("MainActivity", "onPause");
+        instance_SP.saveData(word1, word2, word3, category);
     }
 
     @Override
@@ -313,11 +338,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-            Log.d("MainActivity", "onResume");
-            bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-            init_portrait();
-            afterLogin();
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("progressBarVisible", isProgressBarVisible);
+        outState.putBoolean("textViewVisible", isTextViewVisible);
     }
+
 }

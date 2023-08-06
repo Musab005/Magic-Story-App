@@ -78,13 +78,15 @@ public class ImageTest extends AppCompatActivity {
         arrow.setVisibility(View.GONE);
         statement.setVisibility(View.GONE);
 
+        iv.setVisibility(View.VISIBLE);
         RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL); // Cache the image for subsequent requests
         Glide.with(ImageTest.this)
                 .load(intent.getStringExtra("url")) // Load the image URL
                 .apply(requestOptions)
                 .into(iv); // Display the image in the ImageView
-        iv.setVisibility(View.VISIBLE);
+        //start progress bar here in place of read story arrow and stop after
+        //arrow visible
         handler.postDelayed(() -> {
             // Code to be executed after t seconds
             arrow.setVisibility(View.VISIBLE);
