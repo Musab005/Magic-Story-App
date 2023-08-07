@@ -1,14 +1,10 @@
 package com.apps005.magicstory.View;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,26 +15,37 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.ImageNetworkRequest;
+import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.controller.StoryController;
+import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
 
-//TODO: 1. Incorporate a "loading" widget when the app makes the Network Request
+import java.util.concurrent.CompletableFuture;
+
+//TODO: read story arrow and statement under pBar? what about image view?
+//TODO: issue when action bar back pressed during writing story anim
+//TODO: check going to home then reopening app and also handling notifications during app
+//TODO: animation of writing story need to save upon config change
+//TODO: Read story text appearing after delay upon config change
+//TODO: onResume called after ending landing page
+//TODO: for activities that display animation, we need anim to continue on config changed and not make multiple API calls
+//TODO: ImageActivity oncnfigchanged put read story arrow immediately w/o delay
+//TODO: story activity done button
+//TODO: back button pressed on landing page
+//TODO: buffer-end when "done" pressed form story activity ??
+//TODO: image activity when config changed keep the saved instance state
+//TODO: when clicked read story and writing animation appears, it defaults to normal screen onconfigchanged but
+//TODO: background api call still working
 //issue of after login method when using on mobile might be solved with onStart() ??
-//too much activity on main thread!!
-//Put all instantiation in a separate method (widget instantiation)
-//TODO: 3. Setup an animation upon start of the application which greets user by their username
-//TODO: 4. Make the quality of spinner better
-//TODO: 5. Make UI/UX better in general
-//TODO: 6. Let user choose a theme colour of the app and save their preference. Can edit later
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -48,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void onError(String error);
     }
 
+    private ConstraintLayout hidden_layout;
     private EditText first_word_box;
     private EditText second_word_box;
     private EditText third_word_box;
@@ -56,39 +64,57 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String word2 = "";
     private String word3 = "";
     private SharedPreferencesManager instance_SP;
-    private LottieAnimationView anim;
-    private ProgressBar pBar;
+    private LottieAnimationView pencil_anim;
     private ActivityMainBinding bo;
     private Spinner spinner;
+    private TextView category_statement;
+    private TextView words_statement;
+    private Button btn;
+    private MainLoadingViewModel loadingViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity", "super onCreate");
+        Log.d("MainActivity", "onCreate");
+        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
-            launchLandingPage.launch(intent_first_login);
+            startActivity(intent_first_login);
         } else {
-            afterLogin();
-    }}
+            Log.d("MainActivity", "did not start landing page");
+            init_widgets();
+            setUI();
+            loadingViewModel = new ViewModelProvider(this).get(MainLoadingViewModel.class);
+            loadingViewModel.isLoading().observe(this, isLoading -> {
+                if (isLoading) {
+                    setUIvisibility(8);
+                    hidden_layout.setVisibility(View.VISIBLE);
+                } else {
+                    setUIvisibility(0);
+                    hidden_layout.setVisibility(View.GONE);
+                }
+            });
+            onClick();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("MainActivity", "onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("MainActivity", "onResume");
+    }
 
 
-
-    @SuppressLint("ResourceAsColor")
-    private void afterLogin() {
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_LONG).show();
-        wordBox_init(bo);
-        bo.wordsStatement.setTextColor(R.color.light_white);
-        spinner = spinner_init(bo);
-        setSavedData(spinner);
-        //start anim
-        anim = bo.animationView;
-        anim.setVisibility(View.VISIBLE);
-
-        //Generate Button - On Click
-        bo.generateButton.setOnClickListener(view -> {
+    private void onClick() {
+        btn.setOnClickListener(view -> {
             instance_SP.saveData(word1, word2, word3, category);
             if (word1.equals("") ||
                     word2.equals("") ||
@@ -98,121 +124,66 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
-                buffer_start(bo, spinner);
                 startImageActivity();
             }
         });
     }
 
-    @SuppressLint("ResourceAsColor")
-    private void buffer_start(ActivityMainBinding bo, Spinner spinner) {
-        first_word_box.setVisibility(View.INVISIBLE);
-        second_word_box.setVisibility(View.INVISIBLE);
-        third_word_box.setVisibility(View.INVISIBLE);
-        spinner.setVisibility(View.INVISIBLE);
-        bo.generateButton.setVisibility(View.INVISIBLE);
-        bo.categoryStatement.setVisibility(View.INVISIBLE);
-        bo.wordsStatement.setText("Putting in the magic...");
-        bo.wordsStatement.setTextColor(R.color.black);
-        anim.cancelAnimation();
-        anim.setVisibility(View.INVISIBLE);
-        pBar.setVisibility(View.VISIBLE);
-    }
-
-    @SuppressLint("ResourceAsColor")
-    private void buffer_end(ActivityMainBinding bo, Spinner spinner) {
-        first_word_box.setVisibility(View.VISIBLE);
-        second_word_box.setVisibility(View.VISIBLE);
-        third_word_box.setVisibility(View.VISIBLE);
-        spinner.setVisibility(View.VISIBLE);
-        bo.generateButton.setVisibility(View.VISIBLE);
-        bo.categoryStatement.setVisibility(View.VISIBLE);
-        bo.wordsStatement.setText(R.string.enter_3_words_text);
-        bo.wordsStatement.setTextColor(R.color.light_white);
-        anim.playAnimation();
-        anim.setVisibility(View.VISIBLE);
-        pBar.setVisibility(View.INVISIBLE);
-
-    }
 
     private void startImageActivity() {
-        StoryController.getInstance(this.getApplicationContext()).generateImage(
-                word1, word2, word3, category, this.getApplicationContext(), new startImage() {
-                    @Override
-                    public void onSuccess(String url) {
-                        Intent intent = new Intent(MainActivity.this, ImageTest.class);
-                        intent.putExtra("url", url);
-                        intent.putExtra("word1", word1);
-                        intent.putExtra("word2", word2);
-                        intent.putExtra("word3", word3);
-                        intent.putExtra("category", category);
-                        Log.d("MainActivity", "Starting image activity");
-                        //pBar.setVisibility(View.GONE);
-                        buffer_end(bo, spinner);
-                        startActivity(intent);
-                    }
-                    @Override
-                    public void onError(String error) {
-                        Log.d("MainActivity", "error: " + error);
-                        Toast.makeText(MainActivity.this, "Error: " + error,
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
+        Log.d("MainActivity startImage method", "starting buffer");
+        loadingViewModel.setLoading(true);
+
+        CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
+        // Handling the result when it becomes available
+        future.thenAccept(imageUrl -> {
+            // Handle the image URL when the request is successful
+            // This code will run in the main thread (UI thread)
+            // Use imageUrl here to display the image or perform other actions
+            Log.d("MainActivity startImage", "ImageURL successfully generated");
+            Intent intent = new Intent(MainActivity.this, ImageTest.class);
+            intent.putExtra("url", imageUrl);
+            intent.putExtra("word1",word1);
+            intent.putExtra("word2",word2);
+            intent.putExtra("word3",word3);
+            intent.putExtra("category",category);
+
+            Log.d("MainActivity startImage method", "starting image");
+            startActivity(intent);
+            loadingViewModel.setLoading(false);
+
+        }).exceptionally(exception -> {
+            // This code will also run in the main thread (UI thread)
+            Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
+            loadingViewModel.setLoading(false);
+            exception.printStackTrace();
+            return null;
+        });
     }
 
-
-    @NonNull
-    private Spinner spinner_init(ActivityMainBinding bo) {
-        Spinner spinner = bo.categoryBox;
+    private void init_widgets() {
+        hidden_layout = bo.hiddenLayout;
+        pencil_anim = bo.animationView;
+        category_statement = bo.categoryStatement;
+        spinner = bo.categoryBox;
+        words_statement = bo.wordsStatement;
+        first_word_box = bo.word1;
+        second_word_box = bo.word2;
+        third_word_box = bo.word3;
+        btn = bo.generateButton;
+    }
+    private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-        return spinner;
     }
 
-    private void setSavedData(Spinner spinner) {
-        word1 = instance_SP.getWord1();
-        word2 = instance_SP.getWord2();
-        word3 = instance_SP.getWord3();
-        category = instance_SP.getCategory();
-        first_word_box.setText(word1);
-        second_word_box.setText(word2);
-        third_word_box.setText(word3);
-        String[] categoryArray = getResources().getStringArray(R.array.Categories);
-        int categoryIndex = -1;
-        for (int i = 0; i < categoryArray.length; i++) {
-            if (categoryArray[i].equals(category)) {
-                categoryIndex = i;
-                break;
-            }
-        }
-        if (categoryIndex != -1) {
-            spinner.setSelection(categoryIndex);
-        }
-        Log.d("MainActivity", "setting: " + word1 + word2 + word3 + category);
-    }
-
-    private void wordBox_init(ActivityMainBinding bo) {
-        pBar = bo.pBar;
-        first_word_box = bo.word1;
-        second_word_box = bo.word2;
-        third_word_box = bo.word3;
-        third_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
-            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
-                word3 = third_word_box.getText().toString().trim();
-                hideKeyboard(textView);
-                Log.d("MainActivity", "word3: " + word3);
-                return true;
-            }
-            return false;
-        });
+    private void wordBoxListener_init() {
         first_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
                 word1 = first_word_box.getText().toString().trim();
                 hideKeyboard(textView);
-                Log.d("MainActivity", "word1: " + word1);
                 return true;
             }
             return false;
@@ -221,7 +192,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
                 word2 = second_word_box.getText().toString().trim();
                 hideKeyboard(textView);
-                Log.d("MainActivity", "word2: " + word2);
+                return true;
+            }
+            return false;
+        });
+        third_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
+                word3 = third_word_box.getText().toString().trim();
+                hideKeyboard(textView);
                 return true;
             }
             return false;
@@ -241,24 +219,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 hideKeyboard(view);
             }
         });
-
+        first_word_box.addTextChangedListener(new WordListener(first_word_box));
+        second_word_box.addTextChangedListener(new WordListener(second_word_box));
+        third_word_box.addTextChangedListener(new WordListener(third_word_box));
     }
-
-    private final ActivityResultLauncher<Intent> launchLandingPage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    // Handle the result from the LandingPage activity here
-                    Log.d("MainActivity:", "onResult");
-                    afterLogin();
-                } else {
-                    // Handle other result scenarios, if needed
-                    Toast.makeText(MainActivity.this, "Error",
-                            Toast.LENGTH_LONG).show();
-
-                }
-            }
-    );
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -284,23 +248,73 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         this.category = adapterView.getItemAtPosition(i).toString();
         instance_SP.saveData(word1, word2, word3, category);
-        Toast.makeText(MainActivity.this,
-                category, Toast.LENGTH_SHORT).show();
     }
+
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         instance_SP.saveData(word1, word2, word3, category);
     }
+
+    //finish affinity or no???
+    @Override
+    public void onBackPressed() {
+        // Go back to the previous activity when the back button is pressed
+        finish();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("MainActivity", "onPause");
         instance_SP.saveData(word1, word2, word3, category);
-        Log.d("MainActivity", "saving: " + word1 + word2 + word3 + category);
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        buffer_end(bo, spinner);
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("MainActivity", "onStop");
+    }
+
+    private void setUIvisibility(int visibility) {
+        pencil_anim.setVisibility(visibility);
+        category_statement.setVisibility(visibility);
+        spinner.setVisibility(visibility);
+        words_statement.setVisibility(visibility);
+        first_word_box.setVisibility(visibility);
+        second_word_box.setVisibility(visibility);
+        third_word_box.setVisibility(visibility);
+        btn.setVisibility(visibility);
+        Log.d("MainActivity line 356", "getting int value UI: " + btn.getVisibility());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("MainActivity", "onDestroy");
+    }
+
+    private void setUI() {
+        wordBoxListener_init();
+        spinner_init();
+        word1 = instance_SP.getWord1();
+        word2 = instance_SP.getWord2();
+        word3 = instance_SP.getWord3();
+        category = instance_SP.getCategory();
+        first_word_box.setText(word1);
+        second_word_box.setText(word2);
+        third_word_box.setText(word3);
+        String[] categoryArray = getResources().getStringArray(R.array.Categories);
+        int categoryIndex = -1;
+        for (int i = 0; i < categoryArray.length; i++) {
+            if (categoryArray[i].equals(category)) {
+                categoryIndex = i;
+                break;
+            }
+        }
+        if (categoryIndex != -1) {
+            spinner.setSelection(categoryIndex);
+        }
+        Log.d("MainActivity setUI", "setting: " + word1 + word2 + word3 + category);
+    }
+
 }
