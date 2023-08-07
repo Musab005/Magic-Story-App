@@ -1,9 +1,9 @@
 package com.apps005.magicstory.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.ImageNetworkRequest;
+import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
@@ -69,9 +70,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView category_statement;
     private TextView words_statement;
     private Button btn;
-    private boolean isUIvisible = true;
-    private boolean isHiddenLayoutVisible = false;
     private Handler handler;
+    private MainLoadingViewModel loadingViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,18 +88,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("MainActivity", "did not start landing page");
             init_widgets();
             setUI();
-            if (savedInstanceState != null) {
-                isUIvisible = savedInstanceState.getBoolean("UIvisible", true);
-                int value;
-                if (isUIvisible) {
-                    value = 0;
+            loadingViewModel = new ViewModelProvider(this).get(MainLoadingViewModel.class);
+            loadingViewModel.isLoading().observe(this, isLoading -> {
+                if (isLoading) {
+                    setUIvisibility(8);
+                    hidden_layout.setVisibility(View.VISIBLE);
                 } else {
-                    value = 8;
+                    setUIvisibility(0);
+                    hidden_layout.setVisibility(View.GONE);
                 }
-                setUIvisibility(value);
-                isHiddenLayoutVisible = savedInstanceState.getBoolean("hiddenVisible", false);
-                hidden_layout.setVisibility(isHiddenLayoutVisible ? View.VISIBLE : View.GONE);
-            }
+            });
             onClick();
         }
     }
@@ -114,10 +112,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "onResume");
-        if (instance_SP.getImageWasStarted()) {
-            setUIvisibility(0);
-            hidden_layout.setVisibility(View.GONE);
-        }
     }
 
 
@@ -140,12 +134,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void startImageActivity() {
         Log.d("MainActivity startImage method", "starting buffer");
-        //buffer_start();
-        setUIvisibility(8);
-        isUIvisible = false;
-
-        isHiddenLayoutVisible = true;
-        hidden_layout.setVisibility(View.VISIBLE);
+        loadingViewModel.setLoading(true);
 
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
@@ -161,21 +150,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
 
+            Log.d("MainActivity startImage method", "starting image");
             startActivity(intent);
-            Log.d("MainActivity startImage method", "UI true");
-            setUIvisibility(0);
-            isUIvisible = true;
-            isHiddenLayoutVisible = false;
-            hidden_layout.setVisibility(View.GONE);
-            instance_SP.imageWasStarted(true);
+            loadingViewModel.setLoading(false);
 
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)
             Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
-            hidden_layout.setVisibility(View.GONE);
-            setUIvisibility(0);
-            isUIvisible = true;
-            isHiddenLayoutVisible = false;
+            loadingViewModel.setLoading(false);
             exception.printStackTrace();
             return null;
         });
@@ -294,13 +276,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onStop() {
         super.onStop();
         Log.d("MainActivity", "onStop");
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("UIvisible", isUIvisible);
-        outState.putBoolean("hiddenVisible", isHiddenLayoutVisible);
     }
 
     private void setUIvisibility(int visibility) {

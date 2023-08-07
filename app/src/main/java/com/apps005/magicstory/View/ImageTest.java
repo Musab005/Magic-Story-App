@@ -3,6 +3,7 @@ package com.apps005.magicstory.View;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.ImageNetworkRequest;
+import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.WidgetStateManager;
 import com.apps005.magicstory.databinding.ActivityImageTestBinding;
 import com.bumptech.glide.Glide;
@@ -36,7 +38,6 @@ public class ImageTest extends AppCompatActivity {
 
     private final int GONE = 8;
     private final int VISIBLE = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
