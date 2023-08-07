@@ -39,7 +39,7 @@ public class Story extends AppCompatActivity {
         proceed();
 
     }
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
     }

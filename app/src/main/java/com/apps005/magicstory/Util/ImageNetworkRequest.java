@@ -95,9 +95,8 @@ public class ImageNetworkRequest {
             JSONObject requestJson = new JSONObject(gson.toJson(requestData));
 
             JsonObjectRequest story_request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, requestJson,
-                    response -> {
-                        completableFuture.complete(response.toString());
-                    }, error -> {
+                    response -> completableFuture.complete(response.toString()),
+                    error -> {
                 error.printStackTrace();
                 completableFuture.completeExceptionally(new RuntimeException(error.getMessage()));
             }) {

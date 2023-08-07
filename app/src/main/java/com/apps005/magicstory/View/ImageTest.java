@@ -99,9 +99,7 @@ public class ImageTest extends AppCompatActivity {
             Intent intent = new Intent(ImageTest.this, Story.class);
             intent.putExtra("story", story);
             startActivity(intent);
-            handler.postDelayed(() -> {
-                writingAnimViewModel.setLoading(false);
-            }, 2000);
+            handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
             finish();
         }).exceptionally(exception -> {
             Toast.makeText(ImageTest.this,"Image fail",Toast.LENGTH_SHORT).show();

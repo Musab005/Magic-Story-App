@@ -33,7 +33,6 @@ public class LandingPage extends AppCompatActivity {
     private EditText username_box;
     private Button save_button;
     private FirebaseFirestore db;
-    private ActivityLandingPageBinding bo;
     private String first_name;
     private String last_name;
     private String username;
@@ -41,8 +40,8 @@ public class LandingPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("LandingActivity", "onCreate");
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
-        init_portrait(bo);
+        com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
+        init(bo);
         button_listener();
     }
 
@@ -62,15 +61,9 @@ public class LandingPage extends AppCompatActivity {
             } else {
                 save_button.setVisibility(View.GONE);
                 pBar.setVisibility(View.VISIBLE);
-                    saveData(first_name, last_name, username, formattedDate);
+                saveData(first_name, last_name, username, formattedDate);
             }
         });
-    }
-
-    private void save_fields() {
-        first_name = first_name_box.getText().toString().trim();
-        last_name = last_name_box.getText().toString().trim();
-        username = username_box.getText().toString().trim();
     }
 
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
@@ -85,7 +78,7 @@ public class LandingPage extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d("LandingPage", "ending");
-                            finish();
+                        finish();
                     } else {
                         pBar.setVisibility(View.GONE);
                         save_button.setVisibility(View.VISIBLE);
@@ -94,7 +87,7 @@ public class LandingPage extends AppCompatActivity {
                 });
     }
 
-    private void init_portrait(ActivityLandingPageBinding bo) {
+    private void init(ActivityLandingPageBinding bo) {
         LottieAnimationView anim = bo.animationView;
         anim.setVisibility(View.VISIBLE);
         save_button = bo.saveButton;
@@ -104,6 +97,12 @@ public class LandingPage extends AppCompatActivity {
         username_box = bo.usernameBox;
         pBar = bo.pBar;
         wordBox_init();
+    }
+
+    private void save_fields() {
+        first_name = first_name_box.getText().toString().trim();
+        last_name = last_name_box.getText().toString().trim();
+        username = username_box.getText().toString().trim();
     }
 
     private void wordBox_init() {

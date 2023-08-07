@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class WritingAnimViewModel extends ViewModel {
 
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     public LiveData<Boolean> isLoading() {
         return isLoading;

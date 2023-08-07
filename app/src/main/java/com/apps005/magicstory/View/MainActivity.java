@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView category_statement;
     private TextView words_statement;
     private Button btn;
-    private Handler handler;
     private MainLoadingViewModel loadingViewModel;
 
     @Override
@@ -80,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("MainActivity", "onCreate");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        instance_SP.imageWasStarted(false);
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
@@ -174,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         second_word_box = bo.word2;
         third_word_box = bo.word3;
         btn = bo.generateButton;
-        handler = new Handler();
     }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);

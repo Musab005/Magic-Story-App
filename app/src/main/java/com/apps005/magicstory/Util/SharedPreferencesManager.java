@@ -35,14 +35,6 @@ public class SharedPreferencesManager {
         preferences.edit().putString("username", username).apply();
     }
 
-    public void imageWasStarted(boolean bool) {
-        preferences.edit().putBoolean("UIstate", bool).apply();
-    }
-
-    public boolean getImageWasStarted() {
-        return preferences.getBoolean("UIstate",true);
-    }
-
     public String getUsername() {
         return preferences.getString("username", "");
     }
