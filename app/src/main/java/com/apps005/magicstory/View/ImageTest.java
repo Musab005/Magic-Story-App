@@ -18,8 +18,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.ImageNetworkRequest;
-import com.apps005.magicstory.Util.MainLoadingViewModel;
-import com.apps005.magicstory.Util.WidgetStateManager;
+import com.apps005.magicstory.Util.WritingAnimViewModel;
 import com.apps005.magicstory.databinding.ActivityImageTestBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -36,8 +35,7 @@ public class ImageTest extends AppCompatActivity {
     private ActivityImageTestBinding bo;
     private Intent intent;
 
-    private final int GONE = 8;
-    private final int VISIBLE = 0;
+    private WritingAnimViewModel writingAnimViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +47,14 @@ public class ImageTest extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         init();
-        WidgetStateManager.getInstance().isLoading().observe(this, isLoading -> {
+        writingAnimViewModel = new ViewModelProvider(this).get(WritingAnimViewModel.class);
+        writingAnimViewModel.isLoading().observe(this, isLoading -> {
             if (isLoading) {
-                // Show loading widget
-                setUIvisibility(GONE);
-                setAnimVisibility(VISIBLE);
+                setUIvisibility(8);
+                setAnimVisibility(0);
             } else {
-                // Hide loading widget
-                setUIvisibility(VISIBLE);
-                setAnimVisibility(GONE);
+                setUIvisibility(0);
+                setAnimVisibility(8);
             }
         });
         proceed();
@@ -82,7 +79,7 @@ public class ImageTest extends AppCompatActivity {
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
-        WidgetStateManager.getInstance().setLoading(true);
+        writingAnimViewModel.setLoading(true);
 
         CompletableFuture<String> future = new ImageNetworkRequest().
                 generateStoryAsync(word1, word2, word3, category, context);
@@ -96,12 +93,12 @@ public class ImageTest extends AppCompatActivity {
             intent.putExtra("story", story);
             startActivity(intent);
             handler.postDelayed(() -> {
-                WidgetStateManager.getInstance().setLoading(false);
+                writingAnimViewModel.setLoading(false);
             }, 2000);
             finish();
         }).exceptionally(exception -> {
             Toast.makeText(ImageTest.this,"Image fail",Toast.LENGTH_SHORT).show();
-            // Handle exceptions here, if any
+            writingAnimViewModel.setLoading(false);
             // This code will also run in the main thread (UI thread)
             exception.printStackTrace();
             return null;

@@ -32,6 +32,7 @@ import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 import java.util.concurrent.CompletableFuture;
 
+//TODO: read story arrow and statement under pBar? what about image view?
 //TODO: issue when action bar back pressed during writing story anim
 //TODO: check going to home then reopening app and also handling notifications during app
 //TODO: animation of writing story need to save upon config change
