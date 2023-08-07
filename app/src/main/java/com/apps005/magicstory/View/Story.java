@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.databinding.ActivityStoryBinding;
-import com.apps005.magicstory.databinding.ActivityStoryLandBinding;
 
 
 
