@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,12 +71,18 @@ public class ImageTest extends AppCompatActivity {
     }
 
     private void displayImage(ImageView iv, Intent intent) {
+        statement.setVisibility(View.GONE);
+        arrow.setVisibility(View.GONE);
         RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(ImageTest.this)
                 .load(intent.getStringExtra("url"))
                 .apply(requestOptions)
                 .into(iv);
+        handler.postDelayed(() -> {
+            statement.setVisibility(View.VISIBLE);
+            arrow.setVisibility(View.VISIBLE);
+        }, 2000);
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
