@@ -31,13 +31,14 @@ import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 import java.util.concurrent.CompletableFuture;
 
+//TODO: issue when action bar back pressed during writing story anim
 //TODO: check going to home then reopening app and also handling notifications during app
 //TODO: animation of writing story need to save upon config change
 //TODO: Read story text appearing after delay upon config change
 //TODO: onResume called after ending landing page
 //TODO: for activities that display animation, we need anim to continue on config changed and not make multiple API calls
-//TODO: ImageActivity oncnfigchanged put read story aarrow immediately w/o delay
-//TODO: story activitty done button
+//TODO: ImageActivity oncnfigchanged put read story arrow immediately w/o delay
+//TODO: story activity done button
 //TODO: back button pressed on landing page
 //TODO: buffer-end when "done" pressed form story activity ??
 //TODO: image activity when config changed keep the saved instance state
@@ -47,10 +48,6 @@ import java.util.concurrent.CompletableFuture;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
-    private boolean isUIvisible = true;
-    private boolean isHiddenLayoutVisible = false;
-    private boolean imageWasStarted;
 
     public interface startImage {
         void onSuccess(String url);
@@ -66,13 +63,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String word2 = "";
     private String word3 = "";
     private SharedPreferencesManager instance_SP;
-    private LottieAnimationView anim;
+    private LottieAnimationView pencil_anim;
     private ActivityMainBinding bo;
     private Spinner spinner;
     private TextView category_statement;
     private TextView words_statement;
     private Button btn;
+    private boolean isUIvisible = true;
+    private boolean isHiddenLayoutVisible = false;
     private Handler handler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,14 +90,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             setUI();
             if (savedInstanceState != null) {
                 isUIvisible = savedInstanceState.getBoolean("UIvisible", true);
-                anim.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-                category_statement.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-                spinner.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-                words_statement.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-                first_word_box.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-                second_word_box.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-                third_word_box.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-                btn.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                int value;
+                if (isUIvisible) {
+                    value = 0;
+                } else {
+                    value = 8;
+                }
+                setUIvisibility(value);
                 isHiddenLayoutVisible = savedInstanceState.getBoolean("hiddenVisible", false);
                 hidden_layout.setVisibility(isHiddenLayoutVisible ? View.VISIBLE : View.GONE);
             }
@@ -115,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "onResume");
-        Log.d("MainActivity onResume", "imageWasStarted: " + imageWasStarted);
         if (instance_SP.getImageWasStarted()) {
             setUIvisibility(0);
             hidden_layout.setVisibility(View.GONE);
@@ -162,8 +160,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("word2",word2);
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
-            //Log.d("MainActivity startImage method", "ending buffer");
-            //buffer_end();
 
             startActivity(intent);
             Log.d("MainActivity startImage method", "UI true");
@@ -173,38 +169,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             hidden_layout.setVisibility(View.GONE);
             instance_SP.imageWasStarted(true);
 
-//            handler = new Handler();
-//            handler.postDelayed(() -> {
-//                Log.d("MainActivity startImage method", "ending buffer");
-//                buffer_end();
-//                startActivity(intent);
-//            }, 2000);
         }).exceptionally(exception -> {
-            Toast.makeText(MainActivity.this,"error line 206: Image fail",Toast.LENGTH_SHORT).show();
-            Log.d("MainActivity startImage", "ImageURL unsuccessful");
-            // Handle exceptions here, if any
             // This code will also run in the main thread (UI thread)
+            Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
+            hidden_layout.setVisibility(View.GONE);
+            setUIvisibility(0);
+            isUIvisible = true;
+            isHiddenLayoutVisible = false;
             exception.printStackTrace();
             return null;
         });
     }
 
-    private void buffer_start() {
-        Log.d("MainActivity buffer start", "buffer start");
-        setUIvisibility(8);
-        hidden_layout.setVisibility(View.VISIBLE);
-    }
-
-    private void buffer_end() {
-        Log.d("MainActivity buffer end", "buffer end");
-        hidden_layout.setVisibility(View.GONE);
-        setUIvisibility(0);
-    }
-
-
     private void init_widgets() {
         hidden_layout = bo.hiddenLayout;
-        anim = bo.animationView;
+        pencil_anim = bo.animationView;
         category_statement = bo.categoryStatement;
         spinner = bo.categoryBox;
         words_statement = bo.wordsStatement;
@@ -212,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         second_word_box = bo.word2;
         third_word_box = bo.word3;
         btn = bo.generateButton;
+        handler = new Handler();
     }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
@@ -324,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void setUIvisibility(int visibility) {
-        anim.setVisibility(visibility);
+        pencil_anim.setVisibility(visibility);
         category_statement.setVisibility(visibility);
         spinner.setVisibility(visibility);
         words_statement.setVisibility(visibility);
