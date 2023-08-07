@@ -47,6 +47,7 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
     <string name="Read_story_txt">Read story</string>
     <string name="image_generated_based_on_user_input_txt">Image generated based on user input</string>
     <string name="proceed_to_read_story_txt">proceed to read story</string>
+    <string name="ai_generated_image_txt">AI generated image</string>
 
     <string-array name="Categories">
         <item> </item>

@@ -22,7 +22,8 @@
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp"
             android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="@string/ai_generated_image_txt" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animationView"
