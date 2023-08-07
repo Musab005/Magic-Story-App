@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,22 +32,16 @@ import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 import java.util.concurrent.CompletableFuture;
 
+import okhttp3.internal.http2.Http2Reader;
+//TODO: BUGS
+//TODO: pBar on landing page dosen't continue onconfigchanged
+
+//TODO: INFO
 //TODO: read story arrow and statement under pBar? what about image view?
 //TODO: issue when action bar back pressed during writing story anim
 //TODO: check going to home then reopening app and also handling notifications during app
-//TODO: animation of writing story need to save upon config change
-//TODO: Read story text appearing after delay upon config change
 //TODO: onResume called after ending landing page
 //TODO: for activities that display animation, we need anim to continue on config changed and not make multiple API calls
-//TODO: ImageActivity oncnfigchanged put read story arrow immediately w/o delay
-//TODO: story activity done button
-//TODO: back button pressed on landing page
-//TODO: buffer-end when "done" pressed form story activity ??
-//TODO: image activity when config changed keep the saved instance state
-//TODO: when clicked read story and writing animation appears, it defaults to normal screen onconfigchanged but
-//TODO: background api call still working
-//issue of after login method when using on mobile might be solved with onStart() ??
-
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -150,7 +145,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             Log.d("MainActivity startImage method", "starting image");
             startActivity(intent);
-            loadingViewModel.setLoading(false);
+            Handler handler = new Handler();
+            handler.postDelayed(() ->
+                    loadingViewModel.setLoading(false), 1000);
 
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)

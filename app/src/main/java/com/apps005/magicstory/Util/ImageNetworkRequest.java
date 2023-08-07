@@ -75,7 +75,9 @@ public class ImageNetworkRequest {
 
     public CompletableFuture<String> generateStoryAsync(String word1, String word2, String word3,
                                                         String category, Context context) {
-        String prompt = "Write " + category + "about " + word1 + ", " + word2 + ", " + word3;
+        //String prompt = "Write a short " + category + " about " + word1 + ", " + word2 + ", " + word3;
+        String prompt = "Write a short " + category + " about " + word1 + ", " + word2 + ", and " + word3 + ". " +
+                "For example, create a very short scene that includes these elements.";
         CompletableFuture<String> completableFuture = new CompletableFuture<>();
 
         try {
