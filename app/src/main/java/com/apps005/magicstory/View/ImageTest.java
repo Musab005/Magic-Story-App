@@ -49,7 +49,6 @@ public class ImageTest extends AppCompatActivity {
             iv.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
             arrow.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
             statement.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
-            //set all widgets visibility like anim.setVisibility(isAnimVisible ? View.VISIBLE : View.GONE);
 
             isAnimVisible = savedInstanceState.getBoolean("animVisible", false);
             anim.setVisibility(isAnimVisible ? View.VISIBLE : View.GONE);

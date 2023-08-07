@@ -49,7 +49,8 @@ import java.util.concurrent.CompletableFuture;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private boolean isUIvisible = true;
-    private boolean isHiddenLayoutVisible;
+    private boolean isHiddenLayoutVisible = false;
+    private boolean imageWasStarted;
 
     public interface startImage {
         void onSuccess(String url);
@@ -72,21 +73,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView words_statement;
     private Button btn;
     private Handler handler;
-    int value;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MainActivity", "onCreate");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        init_widgets();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        Log.d("MainActivity onCreate", "got UI state: " + instance_SP.getUIstate());
+        instance_SP.imageWasStarted(false);
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
             startActivity(intent_first_login);
         } else {
             Log.d("MainActivity", "did not start landing page");
+            init_widgets();
             setUI();
             if (savedInstanceState != null) {
                 isUIvisible = savedInstanceState.getBoolean("UIvisible", true);
@@ -115,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "onResume");
+        Log.d("MainActivity onResume", "imageWasStarted: " + imageWasStarted);
+        if (instance_SP.getImageWasStarted()) {
+            setUIvisibility(0);
+            hidden_layout.setVisibility(View.GONE);
+        }
     }
 
 
@@ -160,13 +165,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //Log.d("MainActivity startImage method", "ending buffer");
             //buffer_end();
 
+            startActivity(intent);
             Log.d("MainActivity startImage method", "UI true");
             setUIvisibility(0);
             isUIvisible = true;
-
             isHiddenLayoutVisible = false;
             hidden_layout.setVisibility(View.GONE);
-            startActivity(intent);
+            instance_SP.imageWasStarted(true);
 
 //            handler = new Handler();
 //            handler.postDelayed(() -> {

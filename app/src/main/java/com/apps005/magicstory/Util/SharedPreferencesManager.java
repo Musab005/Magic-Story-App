@@ -35,11 +35,11 @@ public class SharedPreferencesManager {
         preferences.edit().putString("username", username).apply();
     }
 
-    public void saveUIstate(boolean bool) {
+    public void imageWasStarted(boolean bool) {
         preferences.edit().putBoolean("UIstate", bool).apply();
     }
 
-    public boolean getUIstate() {
+    public boolean getImageWasStarted() {
         return preferences.getBoolean("UIstate",true);
     }
 
