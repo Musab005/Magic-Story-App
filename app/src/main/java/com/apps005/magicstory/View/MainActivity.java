@@ -2,6 +2,7 @@ package com.apps005.magicstory.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
@@ -17,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,11 +48,15 @@ import java.util.concurrent.CompletableFuture;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private boolean isUIvisible = true;
+    private boolean isHiddenLayoutVisible;
+
     public interface startImage {
         void onSuccess(String url);
         void onError(String error);
     }
 
+    private ConstraintLayout hidden_layout;
     private EditText first_word_box;
     private EditText second_word_box;
     private EditText third_word_box;
@@ -62,31 +66,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String word3 = "";
     private SharedPreferencesManager instance_SP;
     private LottieAnimationView anim;
-    private ProgressBar pBar;
     private ActivityMainBinding bo;
     private Spinner spinner;
-    private TextView hidden_statement;
     private TextView category_statement;
     private TextView words_statement;
     private Button btn;
     private Handler handler;
-    private boolean isProgressBarVisible = false;
-    private boolean isTextViewVisible = false;
+    int value;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MainActivity", "onCreate");
+        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        init_widgets();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        if (savedInstanceState != null) {
-            isProgressBarVisible = savedInstanceState.getBoolean("progressBarVisible", false);
-            isTextViewVisible = savedInstanceState.getBoolean("textViewVisible", false);
-        }
+        Log.d("MainActivity onCreate", "got UI state: " + instance_SP.getUIstate());
         if (instance_SP.getUsername().isEmpty()) {
             Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
             Log.d("MainActivity", "starting landing page");
             startActivity(intent_first_login);
         } else {
             Log.d("MainActivity", "did not start landing page");
+            setUI();
+            if (savedInstanceState != null) {
+                isUIvisible = savedInstanceState.getBoolean("UIvisible", true);
+                anim.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                category_statement.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                spinner.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                words_statement.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                first_word_box.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                second_word_box.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                third_word_box.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                btn.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+                isHiddenLayoutVisible = savedInstanceState.getBoolean("hiddenVisible", false);
+                hidden_layout.setVisibility(isHiddenLayoutVisible ? View.VISIBLE : View.GONE);
+            }
+            onClick();
         }
     }
 
@@ -96,37 +111,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("MainActivity", "onStart");
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "onResume");
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        init_portrait();
-        pBar.setVisibility(isProgressBarVisible ? View.VISIBLE : View.GONE);
-        hidden_statement.setVisibility(isTextViewVisible ? View.VISIBLE : View.GONE);
-        afterLogin();
     }
 
-    private void init_portrait() {
-        hidden_statement = bo.hiddenStatement;
-        pBar = bo.pBar;
-        anim = bo.animationView;
-        category_statement = bo.categoryStatement;
-        spinner = bo.categoryBox;
-        words_statement = bo.wordsStatement;
-        first_word_box = bo.word1;
-        second_word_box = bo.word2;
-        third_word_box = bo.word3;
-        btn = bo.generateButton;
-    }
 
-    private void afterLogin() {
-        setUI();
-        //Generate Button - On Click
+    private void onClick() {
         btn.setOnClickListener(view -> {
             instance_SP.saveData(word1, word2, word3, category);
-            Log.d("MainActivity onBtnClick", "saving: " + word1 + word2 + word3 + category);
             if (word1.equals("") ||
                     word2.equals("") ||
                     word3.equals("") ||
@@ -140,33 +134,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    private void setUI() {
-        wordBoxListener_init();
-        spinner_init();
-        word1 = instance_SP.getWord1();
-        word2 = instance_SP.getWord2();
-        word3 = instance_SP.getWord3();
-        category = instance_SP.getCategory();
-        first_word_box.setText(word1);
-        second_word_box.setText(word2);
-        third_word_box.setText(word3);
-        String[] categoryArray = getResources().getStringArray(R.array.Categories);
-        int categoryIndex = -1;
-        for (int i = 0; i < categoryArray.length; i++) {
-            if (categoryArray[i].equals(category)) {
-                categoryIndex = i;
-                break;
-            }
-        }
-        if (categoryIndex != -1) {
-            spinner.setSelection(categoryIndex);
-        }
-        Log.d("MainActivity setUI", "setting: " + word1 + word2 + word3 + category);
-    }
-
 
     private void startImageActivity() {
-        buffer_start();
+        Log.d("MainActivity startImage method", "starting buffer");
+        //buffer_start();
+        setUIvisibility(8);
+        isUIvisible = false;
+
+        isHiddenLayoutVisible = true;
+        hidden_layout.setVisibility(View.VISIBLE);
+
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
@@ -180,10 +157,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("word2",word2);
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
-            handler = new Handler();
-            startActivity(intent);
+            //Log.d("MainActivity startImage method", "ending buffer");
             //buffer_end();
-            handler.postDelayed(this::buffer_end, 2000);
+
+            Log.d("MainActivity startImage method", "UI true");
+            setUIvisibility(0);
+            isUIvisible = true;
+
+            isHiddenLayoutVisible = false;
+            hidden_layout.setVisibility(View.GONE);
+            startActivity(intent);
+
+//            handler = new Handler();
+//            handler.postDelayed(() -> {
+//                Log.d("MainActivity startImage method", "ending buffer");
+//                buffer_end();
+//                startActivity(intent);
+//            }, 2000);
         }).exceptionally(exception -> {
             Toast.makeText(MainActivity.this,"error line 206: Image fail",Toast.LENGTH_SHORT).show();
             Log.d("MainActivity startImage", "ImageURL unsuccessful");
@@ -195,39 +185,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void buffer_start() {
-        category_statement.setVisibility(View.INVISIBLE);
-        spinner.setVisibility(View.GONE);
-        words_statement.setVisibility(View.GONE);
-        first_word_box.setVisibility(View.INVISIBLE);
-        second_word_box.setVisibility(View.INVISIBLE);
-        third_word_box.setVisibility(View.INVISIBLE);
-        btn.setVisibility(View.INVISIBLE);
-        isProgressBarVisible = true;
-        isTextViewVisible = true;
-        hidden_statement.setVisibility(View.VISIBLE);
-        pBar.setVisibility(View.VISIBLE);
-        anim.cancelAnimation();
-        anim.setVisibility(View.INVISIBLE);
+        Log.d("MainActivity buffer start", "buffer start");
+        setUIvisibility(8);
+        hidden_layout.setVisibility(View.VISIBLE);
     }
 
     private void buffer_end() {
-        category_statement.setVisibility(View.VISIBLE);
-        spinner.setVisibility(View.VISIBLE);
-        words_statement.setVisibility(View.VISIBLE);
-        first_word_box.setVisibility(View.VISIBLE);
-        second_word_box.setVisibility(View.VISIBLE);
-        third_word_box.setVisibility(View.VISIBLE);
-        btn.setVisibility(View.VISIBLE);
-        isProgressBarVisible = false;
-        isTextViewVisible = false;
-        hidden_statement.setVisibility(View.GONE);
-        pBar.setVisibility(View.GONE);
-        anim.playAnimation();
-        anim.setVisibility(View.VISIBLE);
+        Log.d("MainActivity buffer end", "buffer end");
+        hidden_layout.setVisibility(View.GONE);
+        setUIvisibility(0);
     }
 
 
-
+    private void init_widgets() {
+        hidden_layout = bo.hiddenLayout;
+        anim = bo.animationView;
+        category_statement = bo.categoryStatement;
+        spinner = bo.categoryBox;
+        words_statement = bo.wordsStatement;
+        first_word_box = bo.word1;
+        second_word_box = bo.word2;
+        third_word_box = bo.word3;
+        btn = bo.generateButton;
+    }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -311,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         instance_SP.saveData(word1, word2, word3, category);
     }
 
+    //finish affinity or no???
     @Override
     public void onBackPressed() {
         // Go back to the previous activity when the back button is pressed
@@ -330,6 +311,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("MainActivity", "onStop");
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("UIvisible", isUIvisible);
+        outState.putBoolean("hiddenVisible", isHiddenLayoutVisible);
+    }
+
+    private void setUIvisibility(int visibility) {
+        anim.setVisibility(visibility);
+        category_statement.setVisibility(visibility);
+        spinner.setVisibility(visibility);
+        words_statement.setVisibility(visibility);
+        first_word_box.setVisibility(visibility);
+        second_word_box.setVisibility(visibility);
+        third_word_box.setVisibility(visibility);
+        btn.setVisibility(visibility);
+        Log.d("MainActivity line 356", "getting int value UI: " + btn.getVisibility());
+    }
 
     @Override
     protected void onDestroy() {
@@ -337,11 +336,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("MainActivity", "onDestroy");
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("progressBarVisible", isProgressBarVisible);
-        outState.putBoolean("textViewVisible", isTextViewVisible);
+    private void setUI() {
+        wordBoxListener_init();
+        spinner_init();
+        word1 = instance_SP.getWord1();
+        word2 = instance_SP.getWord2();
+        word3 = instance_SP.getWord3();
+        category = instance_SP.getCategory();
+        first_word_box.setText(word1);
+        second_word_box.setText(word2);
+        third_word_box.setText(word3);
+        String[] categoryArray = getResources().getStringArray(R.array.Categories);
+        int categoryIndex = -1;
+        for (int i = 0; i < categoryArray.length; i++) {
+            if (categoryArray[i].equals(category)) {
+                categoryIndex = i;
+                break;
+            }
+        }
+        if (categoryIndex != -1) {
+            spinner.setSelection(categoryIndex);
+        }
+        Log.d("MainActivity setUI", "setting: " + word1 + word2 + word3 + category);
     }
 
 }

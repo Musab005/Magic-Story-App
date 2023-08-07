@@ -35,6 +35,14 @@ public class SharedPreferencesManager {
         preferences.edit().putString("username", username).apply();
     }
 
+    public void saveUIstate(boolean bool) {
+        preferences.edit().putBoolean("UIstate", bool).apply();
+    }
+
+    public boolean getUIstate() {
+        return preferences.getBoolean("UIstate",true);
+    }
+
     public String getUsername() {
         return preferences.getString("username", "");
     }

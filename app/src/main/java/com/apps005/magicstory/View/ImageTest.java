@@ -1,5 +1,6 @@
 package com.apps005.magicstory.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -33,6 +34,8 @@ public class ImageTest extends AppCompatActivity {
     private TextView statement;
     private ActivityImageTestBinding bo;
     private Intent intent;
+    private boolean isAnimVisible = false;
+    private boolean isUIvisible = true;
 
 
     @Override
@@ -41,6 +44,16 @@ public class ImageTest extends AppCompatActivity {
         Log.d("ImageActivity", "onCreate");
         bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
         init_portrait();
+        if (savedInstanceState != null) {
+            isUIvisible = savedInstanceState.getBoolean("UIvisible", true);
+            iv.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+            arrow.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+            statement.setVisibility(isUIvisible ? View.VISIBLE : View.GONE);
+            //set all widgets visibility like anim.setVisibility(isAnimVisible ? View.VISIBLE : View.GONE);
+
+            isAnimVisible = savedInstanceState.getBoolean("animVisible", false);
+            anim.setVisibility(isAnimVisible ? View.VISIBLE : View.GONE);
+        }
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -68,23 +81,24 @@ public class ImageTest extends AppCompatActivity {
         iv = bo.imageView;
         anim = bo.animationView;
         anim.setVisibility(View.GONE);
+        isAnimVisible = false;
         handler = new Handler();
         intent = getIntent();
     }
 
 
     private void displayImage(ImageView iv, Intent intent) {
-        iv.setVisibility(View.GONE);
         arrow.setVisibility(View.GONE);
         statement.setVisibility(View.GONE);
+        iv.setVisibility(View.GONE);
 
-        iv.setVisibility(View.VISIBLE);
         RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL); // Cache the image for subsequent requests
         Glide.with(ImageTest.this)
                 .load(intent.getStringExtra("url")) // Load the image URL
                 .apply(requestOptions)
                 .into(iv); // Display the image in the ImageView
+        iv.setVisibility(View.VISIBLE);
         //start progress bar here in place of read story arrow and stop after
         //arrow visible
         handler.postDelayed(() -> {
@@ -95,11 +109,15 @@ public class ImageTest extends AppCompatActivity {
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
+        //these 3 are UI
         iv.setVisibility(View.GONE);
         arrow.setVisibility(View.GONE);
         statement.setVisibility(View.GONE);
+        isUIvisible = false;
+
         anim.setVisibility(View.VISIBLE);
         anim.playAnimation();
+        isAnimVisible = true;
         CompletableFuture<String> future = new ImageNetworkRequest().
                 generateStoryAsync(word1, word2, word3, category, context);
 
@@ -112,6 +130,17 @@ public class ImageTest extends AppCompatActivity {
             Intent intent = new Intent(ImageTest.this, Story.class);
             intent.putExtra("story", story);
             startActivity(intent);
+            handler.postDelayed(() -> {
+                // Code to be executed after t seconds
+                anim.cancelAnimation();
+                anim.setVisibility(View.GONE);
+                isAnimVisible = false;
+
+                iv.setVisibility(View.VISIBLE);
+                arrow.setVisibility(View.VISIBLE);
+                statement.setVisibility(View.VISIBLE);
+                isUIvisible = true;
+            }, 5000);
             finish();
         }).exceptionally(exception -> {
             Toast.makeText(ImageTest.this,"Image fail",Toast.LENGTH_SHORT).show();
@@ -160,5 +189,11 @@ public class ImageTest extends AppCompatActivity {
         Log.d("ImageActivity", "onResume");
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("animVisible", isAnimVisible);
+        outState.putBoolean("UIvisible", isUIvisible);
+    }
 
 }
