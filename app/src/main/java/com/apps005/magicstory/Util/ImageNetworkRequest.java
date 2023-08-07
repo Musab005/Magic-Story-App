@@ -94,12 +94,26 @@ public class ImageNetworkRequest {
             Gson gson = new Gson();
             JSONObject requestJson = new JSONObject(gson.toJson(requestData));
 
-            JsonObjectRequest story_request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, requestJson,
-                    response -> completableFuture.complete(response.toString()),
+                    JsonObjectRequest story_request = new JsonObjectRequest(Request.Method.POST, CHATGPT_URL, requestJson,
+                    response -> {
+                        // Replace this with the actual API response JSON string
+                        String apiResponse = response.toString();
+                        String assistantReply;
+                        try {
+                            JSONObject parsedResponse = new JSONObject(apiResponse);
+                            JSONArray choicesArray = parsedResponse.getJSONArray("choices");
+                            JSONObject choice = choicesArray.getJSONObject(0);
+                            JSONObject message = choice.getJSONObject("message");
+                            assistantReply = message.getString("content");
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        completableFuture.complete(assistantReply);
+                    },
                     error -> {
-                error.printStackTrace();
-                completableFuture.completeExceptionally(new RuntimeException(error.getMessage()));
-            }) {
+                        error.printStackTrace();
+                        completableFuture.completeExceptionally(new RuntimeException(error.getMessage()));
+                    }) {
                 @Override
                 public Map<String, String> getHeaders() {
                     Map<String, String> headers = new HashMap<>();

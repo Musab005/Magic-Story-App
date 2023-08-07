@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_weight="3.2"
-            android:background="@color/button_layout"
+            android:background="@color/white"
             android:orientation="vertical"
             android:padding="5dp"
             android:visibility="visible">
