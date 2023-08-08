@@ -19,16 +19,26 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.ImageNetworkRequest;
+import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WritingAnimViewModel;
 import com.apps005.magicstory.databinding.ActivityImageTestBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class ImageTest extends AppCompatActivity {
     private Handler handler;
+    private SharedPreferencesManager instance_SP;
+    private FirebaseFirestore db;
     private LottieAnimationView anim;
     private ImageView iv;
     private ImageView arrow;
@@ -74,7 +84,10 @@ public class ImageTest extends AppCompatActivity {
         String word2 = intent.getStringExtra("word2");
         String word3 = intent.getStringExtra("word3");
         String category = intent.getStringExtra("category");
-        arrow.setOnClickListener(view -> startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext()));
+        arrow.setOnClickListener(view -> {
+            incrementReadStoryCount();
+            startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext());
+        });
     }
 
     private void displayImage(ImageView iv, Intent intent) {
@@ -121,6 +134,44 @@ public class ImageTest extends AppCompatActivity {
             exception.printStackTrace();
             return null;
         });
+    }
+
+    private void incrementReadStoryCount() {
+        CollectionReference usersCollection = db.collection("Users");
+        String usernameToUpdate = instance_SP.getUsername();
+        // Create a map with the updated "count" value
+        Map<String, Object> incrementData = new HashMap<>();
+        incrementData.put("read_story", FieldValue.increment(1));
+
+        usersCollection.whereEqualTo("username", usernameToUpdate)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        // Get the document ID of the user to update
+                        String documentId = documentSnapshot.getId();
+                        // Update the "count" field for the user
+                        usersCollection.document(documentId)
+                                .update(incrementData)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Update successful
+                                    Toast.makeText(ImageTest.this,
+                                            "read story count incremented by one",
+                                            Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle errors
+                                    Toast.makeText(ImageTest.this,
+                                            "ERROR: read story count",
+                                            Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors
+                    Toast.makeText(ImageTest.this,
+                            "ERROR: read story count",
+                            Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void setUIvisibility(int value) {
@@ -192,6 +243,8 @@ public class ImageTest extends AppCompatActivity {
         anim = bo.animationView;
         handler = new Handler();
         intent = getIntent();
+        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        db = FirebaseFirestore.getInstance();
     }
 
 }

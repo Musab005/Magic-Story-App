@@ -29,12 +29,52 @@ import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO: LOGIC
-//TODO: Update firestore with count usage
+
+//TODO: Implement unique username logic
+//Firestore firestore = FirebaseFirestore.getInstance();
+//
+//// Reference to the collection
+//        CollectionReference usersCollection = firestore.collection("users");
+//
+//// Desired username for the new user
+//        String desiredUsername = "new_username";
+//
+//// Query to check if the desired username exists
+//        usersCollection.whereEqualTo("username", desiredUsername)
+//        .get()
+//        .addOnSuccessListener(querySnapshot -> {
+//        if (querySnapshot.isEmpty()) {
+//        // Username is available, add the new user to the collection
+//        Map<String, Object> newUser = new HashMap<>();
+//        newUser.put("username", desiredUsername);
+//        // Add other user data fields as needed
+//        // ...
+//
+//        // Add the new user document
+//        usersCollection.add(newUser)
+//        .addOnSuccessListener(documentReference -> {
+//        // User added successfully
+//        })
+//        .addOnFailureListener(e -> {
+//        // Handle errors
+//        });
+//        } else {
+//        // Username is already taken, display an error message
+//        }
+//        })
+//        .addOnFailureListener(e -> {
+//        // Handle errors
+//        });
+
 
 //TODO: INFO
 //TODO: check going to home then reopening app and also handling notifications during app
@@ -117,10 +157,48 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
-                //db.collection("Users").get()
+                incrementImageCount();
                 startImageActivity();
             }
         });
+    }
+
+    private void incrementImageCount() {
+        CollectionReference usersCollection = db.collection("Users");
+        String usernameToUpdate = instance_SP.getUsername();
+        // Create a map with the updated "count" value
+        Map<String, Object> incrementData = new HashMap<>();
+        incrementData.put("count_image", FieldValue.increment(1));
+
+        usersCollection.whereEqualTo("username", usernameToUpdate)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        // Get the document ID of the user to update
+                        String documentId = documentSnapshot.getId();
+                        // Update the "count" field for the user
+                        usersCollection.document(documentId)
+                                .update(incrementData)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Update successful
+                                    Toast.makeText(MainActivity.this,
+                                            "image count incremented by one",
+                                            Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle errors
+                                    Toast.makeText(MainActivity.this,
+                                            "ERROR: image count",
+                                            Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors
+                    Toast.makeText(MainActivity.this,
+                            "ERROR: image count",
+                            Toast.LENGTH_SHORT).show();
+                });
     }
 
 
@@ -165,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         second_word_box = bo.word2;
         third_word_box = bo.word3;
         btn = bo.generateButton;
+        db = FirebaseFirestore.getInstance();
     }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
