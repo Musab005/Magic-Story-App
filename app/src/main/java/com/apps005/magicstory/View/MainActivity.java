@@ -32,16 +32,11 @@ import com.apps005.magicstory.databinding.ActivityMainBinding;
 
 import java.util.concurrent.CompletableFuture;
 
-import okhttp3.internal.http2.Http2Reader;
 //TODO: BUGS
-//TODO: pBar on landing page dosen't continue onconfigchanged
 
 //TODO: INFO
-//TODO: read story arrow and statement under pBar? what about image view?
-//TODO: issue when action bar back pressed during writing story anim
 //TODO: check going to home then reopening app and also handling notifications during app
-//TODO: onResume called after ending landing page
-//TODO: for activities that display animation, we need anim to continue on config changed and not make multiple API calls
+//TODO: onResume called after ending landing page?
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 

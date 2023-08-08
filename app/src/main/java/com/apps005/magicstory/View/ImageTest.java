@@ -35,7 +35,7 @@ public class ImageTest extends AppCompatActivity {
     private TextView statement;
     private ActivityImageTestBinding bo;
     private Intent intent;
-
+    private ActionBar actionBar;
     private WritingAnimViewModel writingAnimViewModel;
 
     @Override
@@ -43,9 +43,11 @@ public class ImageTest extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("ImageActivity", "onCreate");
         bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.show();
+            Log.d("ImageActivity onCreate", "Showing Action Bar");
         }
         init();
         writingAnimViewModel = new ViewModelProvider(this).get(WritingAnimViewModel.class);
@@ -53,9 +55,14 @@ public class ImageTest extends AppCompatActivity {
             if (isLoading) {
                 setUIvisibility(8);
                 setAnimVisibility(0);
+                if (actionBar != null) {
+                    actionBar.hide();
+                }
+                Log.d("ImageActivity onCreate", "Loading true, hiding UI");
             } else {
                 setUIvisibility(0);
                 setAnimVisibility(8);
+                Log.d("ImageActivity onCreate", "Loading false, showing UI");
             }
         });
         proceed();
@@ -71,23 +78,28 @@ public class ImageTest extends AppCompatActivity {
     }
 
     private void displayImage(ImageView iv, Intent intent) {
-        statement.setVisibility(View.GONE);
-        arrow.setVisibility(View.GONE);
+        Log.d("ImageActivity displayImage", "hiding arrow and statement");
         RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(ImageTest.this)
                 .load(intent.getStringExtra("url"))
                 .apply(requestOptions)
                 .into(iv);
-        handler.postDelayed(() -> {
-            statement.setVisibility(View.VISIBLE);
-            arrow.setVisibility(View.VISIBLE);
-        }, 2000);
+        if (Boolean.TRUE.equals(writingAnimViewModel.isLoading().getValue())) {
+            statement.setVisibility(View.GONE);
+            arrow.setVisibility(View.GONE);
+        } else {
+            handler.postDelayed(() -> {
+                statement.setVisibility(View.VISIBLE);
+                arrow.setVisibility(View.VISIBLE);
+                Log.d("ImageActivity displayImage", "showing arrow and statement after 2s");
+            }, 3000);
+        }
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
         writingAnimViewModel.setLoading(true);
-
+        Log.d("ImageActivity startStory", "loading true");
         CompletableFuture<String> future = new ImageNetworkRequest().
                 generateStoryAsync(word1, word2, word3, category, context);
 
@@ -99,7 +111,8 @@ public class ImageTest extends AppCompatActivity {
             Intent intent = new Intent(ImageTest.this, Story.class);
             intent.putExtra("story", story);
             startActivity(intent);
-            handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
+            Log.d("ImageActivity startStory", "starting story");
+            //handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
             finish();
         }).exceptionally(exception -> {
             Toast.makeText(ImageTest.this,"Image fail",Toast.LENGTH_SHORT).show();
@@ -112,8 +125,15 @@ public class ImageTest extends AppCompatActivity {
 
     private void setUIvisibility(int value) {
         iv.setVisibility(value);
-        arrow.setVisibility(value);
-        statement.setVisibility(value);
+        if (value == 0) {
+            handler.postDelayed(() -> {
+                arrow.setVisibility(value);
+                statement.setVisibility(value);
+            }, 2000);
+        } else {
+            arrow.setVisibility(value);
+            statement.setVisibility(value);
+        }
     }
 
     private void setAnimVisibility(int value) {
