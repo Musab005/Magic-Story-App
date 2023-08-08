@@ -79,7 +79,7 @@ public class LandingPage extends AppCompatActivity {
     }
 
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
-        User user = new User(first_name, last_name, formattedDate,0, username);
+        User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
         SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
         db.collection("Users").add(user)
                 .addOnFailureListener(e -> {

@@ -29,10 +29,12 @@ import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.concurrent.CompletableFuture;
 
-//TODO: BUGS
+//TODO: LOGIC
+//TODO: Update firestore with count usage
 
 //TODO: INFO
 //TODO: check going to home then reopening app and also handling notifications during app
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void onError(String error);
     }
 
+    private FirebaseFirestore db;
     private ConstraintLayout hidden_layout;
     private EditText first_word_box;
     private EditText second_word_box;
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
+                //db.collection("Users").get()
                 startImageActivity();
             }
         });
@@ -123,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void startImageActivity() {
         Log.d("MainActivity startImage method", "starting buffer");
         loadingViewModel.setLoading(true);
-
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
@@ -143,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Handler handler = new Handler();
             handler.postDelayed(() ->
                     loadingViewModel.setLoading(false), 1000);
-
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)
             Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
