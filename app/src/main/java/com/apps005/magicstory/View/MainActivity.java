@@ -38,45 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-
-//TODO: Implement unique username logic
-//Firestore firestore = FirebaseFirestore.getInstance();
-//
-//// Reference to the collection
-//        CollectionReference usersCollection = firestore.collection("users");
-//
-//// Desired username for the new user
-//        String desiredUsername = "new_username";
-//
-//// Query to check if the desired username exists
-//        usersCollection.whereEqualTo("username", desiredUsername)
-//        .get()
-//        .addOnSuccessListener(querySnapshot -> {
-//        if (querySnapshot.isEmpty()) {
-//        // Username is available, add the new user to the collection
-//        Map<String, Object> newUser = new HashMap<>();
-//        newUser.put("username", desiredUsername);
-//        // Add other user data fields as needed
-//        // ...
-//
-//        // Add the new user document
-//        usersCollection.add(newUser)
-//        .addOnSuccessListener(documentReference -> {
-//        // User added successfully
-//        })
-//        .addOnFailureListener(e -> {
-//        // Handle errors
-//        });
-//        } else {
-//        // Username is already taken, display an error message
-//        }
-//        })
-//        .addOnFailureListener(e -> {
-//        // Handle errors
-//        });
-
-
-//TODO: INFO
+//TODO: Display welcome username message
 //TODO: check going to home then reopening app and also handling notifications during app
 //TODO: onResume called after ending landing page?
 

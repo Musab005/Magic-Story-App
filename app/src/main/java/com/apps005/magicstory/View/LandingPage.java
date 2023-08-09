@@ -22,6 +22,7 @@ import com.apps005.magicstory.Util.LandingPageLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
 import com.apps005.magicstory.model.User;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
@@ -81,20 +82,40 @@ public class LandingPage extends AppCompatActivity {
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
         User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
         SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
-        db.collection("Users").add(user)
-                .addOnFailureListener(e -> {
-                    Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show();
-                    landingPageLoadingViewModel.setLoading(false);
-                })
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("LandingPage", "ending");
-                        finish();
+
+        CollectionReference usersCollection = db.collection("Users");
+        usersCollection.whereEqualTo("username", username)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (querySnapshot.isEmpty()) {
+                        // Username is available, add the new user to the collection
+                        usersCollection.add(user)
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                    landingPageLoadingViewModel.setLoading(false);
+                                })
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Log.d("LandingPage", "Success. Ending activity...");
+                                        Toast.makeText(LandingPage.this,"Ending activity",Toast.LENGTH_SHORT).show();
+                                        this.finish();
+                                    } else {
+                                        landingPageLoadingViewModel.setLoading(false);
+                                        Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     } else {
+                        // Username is already taken, display an error message
                         landingPageLoadingViewModel.setLoading(false);
-                        Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LandingPage.this,"Username is already taken",Toast.LENGTH_SHORT).show();
                     }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors
+                    landingPageLoadingViewModel.setLoading(false);
+                    Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
                 });
+
     }
 
     private void init(ActivityLandingPageBinding bo) {
@@ -207,5 +228,6 @@ public class LandingPage extends AppCompatActivity {
         super.onResume();
         Log.d("LandingActivity", "onResume");
     }
+
 
 }
