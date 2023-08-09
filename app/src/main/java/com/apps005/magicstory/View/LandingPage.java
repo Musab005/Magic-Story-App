@@ -2,6 +2,7 @@ package com.apps005.magicstory.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,9 +18,11 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.LandingPageLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
 import com.apps005.magicstory.model.User;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
@@ -36,6 +39,7 @@ public class LandingPage extends AppCompatActivity {
     private String first_name;
     private String last_name;
     private String username;
+    private LandingPageLoadingViewModel landingPageLoadingViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +47,16 @@ public class LandingPage extends AppCompatActivity {
         com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
         init(bo);
         button_listener();
+        landingPageLoadingViewModel = new ViewModelProvider(this).get(LandingPageLoadingViewModel.class);
+        landingPageLoadingViewModel.isLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                save_button.setVisibility(View.GONE);
+                pBar.setVisibility(View.VISIBLE);
+            } else {
+                save_button.setVisibility(View.VISIBLE);
+                pBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void button_listener() {
@@ -59,32 +73,49 @@ public class LandingPage extends AppCompatActivity {
                         "Please write your first name, last name and choose a username",
                         Toast.LENGTH_SHORT).show();
             } else {
-                save_button.setVisibility(View.GONE);
-                pBar.setVisibility(View.VISIBLE);
+                landingPageLoadingViewModel.setLoading(true);
                 saveData(first_name, last_name, username, formattedDate);
             }
         });
     }
 
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
-        User user = new User(first_name, last_name, formattedDate,0, username);
+        User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
         SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
-        db.collection("Users").add(user)
-                .addOnFailureListener(e -> {
-                    Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show();
-                    pBar.setVisibility(View.GONE);
-                    save_button.setVisibility(View.VISIBLE);
-                })
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("LandingPage", "ending");
-                        finish();
+
+        CollectionReference usersCollection = db.collection("Users");
+        usersCollection.whereEqualTo("username", username)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (querySnapshot.isEmpty()) {
+                        // Username is available, add the new user to the collection
+                        usersCollection.add(user)
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                    landingPageLoadingViewModel.setLoading(false);
+                                })
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Log.d("LandingPage", "Success. Ending activity...");
+                                        Toast.makeText(LandingPage.this,"Ending activity",Toast.LENGTH_SHORT).show();
+                                        this.finish();
+                                    } else {
+                                        landingPageLoadingViewModel.setLoading(false);
+                                        Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     } else {
-                        pBar.setVisibility(View.GONE);
-                        save_button.setVisibility(View.VISIBLE);
-                        Toast.makeText(LandingPage.this,"fail",Toast.LENGTH_SHORT).show();
+                        // Username is already taken, display an error message
+                        landingPageLoadingViewModel.setLoading(false);
+                        Toast.makeText(LandingPage.this,"Username is already taken",Toast.LENGTH_SHORT).show();
                     }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors
+                    landingPageLoadingViewModel.setLoading(false);
+                    Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
                 });
+
     }
 
     private void init(ActivityLandingPageBinding bo) {
@@ -197,5 +228,6 @@ public class LandingPage extends AppCompatActivity {
         super.onResume();
         Log.d("LandingActivity", "onResume");
     }
+
 
 }

@@ -5,15 +5,36 @@ public class User {
     private String first_name;
     private String last_name;
     private String date_joined;
-    private int count_usage;
+    private int count_image;
     private String username;
 
-    public User(String first_name, String last_name, String date_joined, int count_usage, String username) {
+    public int getRead_story() {
+        return read_story;
+    }
+
+    public void setRead_story(int read_story) {
+        this.read_story = read_story;
+    }
+
+    public int getDone_story() {
+        return done_story;
+    }
+
+    public void setDone_story(int done_story) {
+        this.done_story = done_story;
+    }
+
+    private int read_story;
+    private int done_story;
+
+    public User(String first_name, String last_name, String date_joined, int count_image, String username, int read_story, int done_story) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.date_joined = date_joined;
-        this.count_usage = count_usage;
+        this.count_image = count_image;
         this.username = username;
+        this.read_story = read_story;
+        this.done_story = done_story;
     }
 
     public String getUsername() {
@@ -52,11 +73,11 @@ public class User {
         this.date_joined = date_joined;
     }
 
-    public int getCount_usage() {
-        return count_usage;
+    public int getCount_image() {
+        return count_image;
     }
 
-    public void setCount_usage(int count_usage) {
-        this.count_usage = count_usage;
+    public void setCount_image(int count_image) {
+        this.count_image = count_image;
     }
 }

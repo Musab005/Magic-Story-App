@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,25 +29,18 @@ import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO: read story arrow and statement under pBar? what about image view?
-//TODO: issue when action bar back pressed during writing story anim
+//TODO: Display welcome username message
 //TODO: check going to home then reopening app and also handling notifications during app
-//TODO: animation of writing story need to save upon config change
-//TODO: Read story text appearing after delay upon config change
-//TODO: onResume called after ending landing page
-//TODO: for activities that display animation, we need anim to continue on config changed and not make multiple API calls
-//TODO: ImageActivity oncnfigchanged put read story arrow immediately w/o delay
-//TODO: story activity done button
-//TODO: back button pressed on landing page
-//TODO: buffer-end when "done" pressed form story activity ??
-//TODO: image activity when config changed keep the saved instance state
-//TODO: when clicked read story and writing animation appears, it defaults to normal screen onconfigchanged but
-//TODO: background api call still working
-//issue of after login method when using on mobile might be solved with onStart() ??
-
+//TODO: onResume called after ending landing page?
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -55,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void onError(String error);
     }
 
+    private FirebaseFirestore db;
     private ConstraintLayout hidden_layout;
     private EditText first_word_box;
     private EditText second_word_box;
@@ -124,16 +119,54 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
+                incrementImageCount();
                 startImageActivity();
             }
         });
+    }
+
+    private void incrementImageCount() {
+        CollectionReference usersCollection = db.collection("Users");
+        String usernameToUpdate = instance_SP.getUsername();
+        // Create a map with the updated "count" value
+        Map<String, Object> incrementData = new HashMap<>();
+        incrementData.put("count_image", FieldValue.increment(1));
+
+        usersCollection.whereEqualTo("username", usernameToUpdate)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        // Get the document ID of the user to update
+                        String documentId = documentSnapshot.getId();
+                        // Update the "count" field for the user
+                        usersCollection.document(documentId)
+                                .update(incrementData)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Update successful
+                                    Toast.makeText(MainActivity.this,
+                                            "image count incremented by one",
+                                            Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle errors
+                                    Toast.makeText(MainActivity.this,
+                                            "ERROR: image count",
+                                            Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors
+                    Toast.makeText(MainActivity.this,
+                            "ERROR: image count",
+                            Toast.LENGTH_SHORT).show();
+                });
     }
 
 
     private void startImageActivity() {
         Log.d("MainActivity startImage method", "starting buffer");
         loadingViewModel.setLoading(true);
-
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
@@ -150,8 +183,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             Log.d("MainActivity startImage method", "starting image");
             startActivity(intent);
-            loadingViewModel.setLoading(false);
-
+            Handler handler = new Handler();
+            handler.postDelayed(() ->
+                    loadingViewModel.setLoading(false), 1000);
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)
             Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
@@ -171,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         second_word_box = bo.word2;
         third_word_box = bo.word3;
         btn = bo.generateButton;
+        db = FirebaseFirestore.getInstance();
     }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
