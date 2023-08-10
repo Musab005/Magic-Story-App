@@ -41,7 +41,6 @@ import java.util.concurrent.CompletableFuture;
 //TODO: double check activity stack as the app progresses
 //TODO: start image then back within one sec to check if loading anim still there
 //TODO: check going to home then reopening app and also handling notifications during app
-//TODO: onResume called after ending landing page?
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
