@@ -5,7 +5,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -81,7 +83,6 @@ public class LandingPage extends AppCompatActivity {
             } else {
                 landingPageLoadingViewModel.setLoading(true);
                 saveData(first_name, last_name, username, formattedDate);
-                this.finish();
             }
         });
     }
@@ -103,7 +104,12 @@ public class LandingPage extends AppCompatActivity {
                                 })
                                 .addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
-                                        instance_SP.setFirstLaunch(false);
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(() -> {
+                                            instance_SP.setFirstLaunch(false);
+                                            startActivity(new Intent(LandingPage.this, MainActivity.class));
+                                            this.finish();
+                                        }, 2000);
                                     } else {
                                         landingPageLoadingViewModel.setLoading(false);
                                         Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();

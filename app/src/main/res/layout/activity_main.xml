@@ -152,6 +152,7 @@
                 android:layout_marginBottom="18dp"
                 android:layout_weight="1"
                 android:text="@string/generate_text"
+                android:textSize="30sp"
                 android:visibility="visible"
                 tools:ignore="TextSizeCheck" />
 

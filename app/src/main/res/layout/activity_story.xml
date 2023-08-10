@@ -50,8 +50,8 @@
             android:background="@color/white"
             android:gravity="clip_vertical"
             android:orientation="vertical"
-            android:padding="8dp"
-            android:visibility="invisible">
+            android:padding="5dp"
+            android:visibility="visible">
 
             <Button
                 android:id="@+id/Done_button"

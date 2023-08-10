@@ -3,7 +3,6 @@ package com.apps005.magicstory.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.apps005.magicstory.Util.SharedPreferencesManager;
@@ -16,11 +15,6 @@ public class InitialActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Toast.makeText(InitialActivity.this, "initial onCreate", Toast.LENGTH_SHORT).show();
-        SharedPreferencesManager instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        if (instance_SP.isFirstLaunch()) {
-            Intent intent_first_login = new Intent(InitialActivity.this, LandingPage.class);
-            startActivity(intent_first_login);
-        }
     }
 
     @Override
@@ -28,11 +22,13 @@ public class InitialActivity extends AppCompatActivity {
         super.onResume();
         Toast.makeText(InitialActivity.this, "initial onResume", Toast.LENGTH_SHORT).show();
         SharedPreferencesManager instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        if (!instance_SP.isFirstLaunch()) { //if (first launch = false)
-            Intent intent = new Intent(InitialActivity.this, MainActivity.class);
-            startActivity(intent);
-            this.finish();
+        if (instance_SP.isFirstLaunch()) {
+            startActivity(new Intent(this, LandingPage.class));
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
         }
+        this.finish();
+
     }
 
     @Override

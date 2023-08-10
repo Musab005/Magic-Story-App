@@ -175,8 +175,8 @@
         <Button
             android:id="@+id/generate_button"
             style="@style/gen_button_style"
-            android:layout_width="149dp"
-            android:layout_height="64dp"
+            android:layout_width="180dp"
+            android:layout_height="79dp"
             android:layout_marginBottom="18dp"
             android:gravity="center"
             android:text="@string/generate_text"
