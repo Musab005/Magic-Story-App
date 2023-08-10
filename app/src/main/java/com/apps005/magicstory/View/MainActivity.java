@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO: Display welcome username message
 //TODO: check going to home then reopening app and also handling notifications during app
 //TODO: onResume called after ending landing page?
 
@@ -81,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("MainActivity", "did not start landing page");
             init_widgets();
             setUI();
+            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername() , Toast.LENGTH_SHORT).show();
             loadingViewModel = new ViewModelProvider(this).get(MainLoadingViewModel.class);
             loadingViewModel.isLoading().observe(this, isLoading -> {
                 if (isLoading) {
@@ -142,10 +142,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         usersCollection.document(documentId)
                                 .update(incrementData)
                                 .addOnSuccessListener(aVoid -> {
-                                    // Update successful
-                                    Toast.makeText(MainActivity.this,
-                                            "image count incremented by one",
-                                            Toast.LENGTH_SHORT).show();
+                                    // Update is successful
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
