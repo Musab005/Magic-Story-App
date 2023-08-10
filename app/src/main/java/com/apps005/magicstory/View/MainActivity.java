@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -38,6 +37,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+//TODO: check onBackPressed
+//TODO: double check activity stack as the app progresses
+//TODO: start image then back within one sec to check if loading anim still there
 //TODO: check going to home then reopening app and also handling notifications during app
 //TODO: onResume called after ending landing page?
 
@@ -69,42 +71,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity", "onCreate");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        if (instance_SP.getUsername().isEmpty()) {
-            Intent intent_first_login = new Intent(MainActivity.this, LandingPage.class);
-            Log.d("MainActivity", "starting landing page");
-            startActivity(intent_first_login);
-        } else {
-            Log.d("MainActivity", "did not start landing page");
-            init_widgets();
-            setUI();
-            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername() , Toast.LENGTH_SHORT).show();
-            loadingViewModel = new ViewModelProvider(this).get(MainLoadingViewModel.class);
-            loadingViewModel.isLoading().observe(this, isLoading -> {
-                if (isLoading) {
-                    setUIvisibility(8);
-                    hidden_layout.setVisibility(View.VISIBLE);
-                } else {
-                    setUIvisibility(0);
-                    hidden_layout.setVisibility(View.GONE);
-                }
-            });
-            onClick();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("MainActivity", "onStart");
+        init_widgets();
+        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("MainActivity", "onResume");
+        setUI();
+        loadingViewModel = new ViewModelProvider(this).get(MainLoadingViewModel.class);
+        loadingViewModel.isLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                setUIvisibility(8);
+                hidden_layout.setVisibility(View.VISIBLE);
+            } else {
+                setUIvisibility(0);
+                hidden_layout.setVisibility(View.GONE);
+            }
+        });
+        onClick();
     }
 
 
@@ -162,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     private void startImageActivity() {
-        Log.d("MainActivity startImage method", "starting buffer");
         loadingViewModel.setLoading(true);
         CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
@@ -170,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             // Handle the image URL when the request is successful
             // This code will run in the main thread (UI thread)
             // Use imageUrl here to display the image or perform other actions
-            Log.d("MainActivity startImage", "ImageURL successfully generated");
             Intent intent = new Intent(MainActivity.this, ImageTest.class);
             intent.putExtra("url", imageUrl);
             intent.putExtra("word1",word1);
@@ -178,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
 
-            Log.d("MainActivity startImage method", "starting image");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(() ->
@@ -203,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         third_word_box = bo.word3;
         btn = bo.generateButton;
         db = FirebaseFirestore.getInstance();
+        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
     }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
@@ -297,14 +281,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("MainActivity", "onPause");
         instance_SP.saveData(word1, word2, word3, category);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("MainActivity", "onStop");
     }
 
     private void setUIvisibility(int visibility) {
@@ -316,13 +293,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         second_word_box.setVisibility(visibility);
         third_word_box.setVisibility(visibility);
         btn.setVisibility(visibility);
-        Log.d("MainActivity line 356", "getting int value UI: " + btn.getVisibility());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("MainActivity", "onDestroy");
     }
 
     private void setUI() {
@@ -346,7 +321,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (categoryIndex != -1) {
             spinner.setSelection(categoryIndex);
         }
-        Log.d("MainActivity setUI", "setting: " + word1 + word2 + word3 + category);
     }
 
 }

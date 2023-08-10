@@ -35,6 +35,14 @@ public class SharedPreferencesManager {
         preferences.edit().putString("username", username).apply();
     }
 
+    public void setFirstLaunch(boolean flag) {
+        preferences.edit().putBoolean("first_launch", flag).apply();
+    }
+
+    public boolean isFirstLaunch() {
+        return preferences.getBoolean("first_launch", true);
+    }
+
     public String getUsername() {
         return preferences.getString("username", "");
     }

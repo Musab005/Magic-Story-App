@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,13 +50,11 @@ public class ImageTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("ImageActivity", "onCreate");
         bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.show();
-            Log.d("ImageActivity onCreate", "Showing Action Bar");
         }
         init();
         writingAnimViewModel = new ViewModelProvider(this).get(WritingAnimViewModel.class);
@@ -68,11 +65,9 @@ public class ImageTest extends AppCompatActivity {
                 if (actionBar != null) {
                     actionBar.hide();
                 }
-                Log.d("ImageActivity onCreate", "Loading true, hiding UI");
             } else {
                 setUIvisibility(0);
                 setAnimVisibility(8);
-                Log.d("ImageActivity onCreate", "Loading false, showing UI");
             }
         });
         proceed();
@@ -91,7 +86,6 @@ public class ImageTest extends AppCompatActivity {
     }
 
     private void displayImage(ImageView iv, Intent intent) {
-        Log.d("ImageActivity displayImage", "hiding arrow and statement");
         RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(ImageTest.this)
@@ -105,14 +99,12 @@ public class ImageTest extends AppCompatActivity {
             handler.postDelayed(() -> {
                 statement.setVisibility(View.VISIBLE);
                 arrow.setVisibility(View.VISIBLE);
-                Log.d("ImageActivity displayImage", "showing arrow and statement after 2s");
             }, 3000);
         }
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
         writingAnimViewModel.setLoading(true);
-        Log.d("ImageActivity startStory", "loading true");
         CompletableFuture<String> future = new ImageNetworkRequest().
                 generateStoryAsync(word1, word2, word3, category, context);
 
@@ -124,7 +116,6 @@ public class ImageTest extends AppCompatActivity {
             Intent intent = new Intent(ImageTest.this, Story.class);
             intent.putExtra("story", story);
             startActivity(intent);
-            Log.d("ImageActivity startStory", "starting story");
             //handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
             this.finish();
         }).exceptionally(exception -> {
@@ -154,9 +145,6 @@ public class ImageTest extends AppCompatActivity {
                                 .update(incrementData)
                                 .addOnSuccessListener(aVoid -> {
                                     // Update successful
-                                    Toast.makeText(ImageTest.this,
-                                            "read story count incremented by one",
-                                            Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
@@ -196,38 +184,22 @@ public class ImageTest extends AppCompatActivity {
         // Go back to the previous activity when the back button is pressed
         finish();
     }
-    public interface startStory {
-        void onResult(String result);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("ImageActivity", "onStart");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("ImageActivity", "onStop");
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("ImageActivity", "onDestroy");
+        Toast.makeText(ImageTest.this,"Image onDestroy",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("ImageActivity", "onPause");
+        Toast.makeText(ImageTest.this,"Image onPause",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("ImageActivity", "onResume");
     }
 
 
@@ -246,5 +218,10 @@ public class ImageTest extends AppCompatActivity {
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         db = FirebaseFirestore.getInstance();
     }
+
+    public interface startStory {
+        void onResult(String result);
+    }
+
 
 }

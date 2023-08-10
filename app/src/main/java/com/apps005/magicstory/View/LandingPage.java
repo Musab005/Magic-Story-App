@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -31,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 public class LandingPage extends AppCompatActivity {
 
     private EditText first_name_box;
+    private SharedPreferencesManager instance_SP;
     private ProgressBar pBar;
     private EditText last_name_box;
     private EditText username_box;
@@ -43,9 +43,15 @@ public class LandingPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("LandingActivity", "onCreate");
+        Toast.makeText(LandingPage.this, "LandingPage onCreate", Toast.LENGTH_SHORT).show();
         com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
         init(bo);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(LandingPage.this, "LandingPage onResume", Toast.LENGTH_SHORT).show();
         button_listener();
         landingPageLoadingViewModel = new ViewModelProvider(this).get(LandingPageLoadingViewModel.class);
         landingPageLoadingViewModel.isLoading().observe(this, isLoading -> {
@@ -75,6 +81,7 @@ public class LandingPage extends AppCompatActivity {
             } else {
                 landingPageLoadingViewModel.setLoading(true);
                 saveData(first_name, last_name, username, formattedDate);
+                this.finish();
             }
         });
     }
@@ -96,9 +103,7 @@ public class LandingPage extends AppCompatActivity {
                                 })
                                 .addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
-                                        Log.d("LandingPage", "Success. Ending activity...");
-                                        Toast.makeText(LandingPage.this,"Ending activity",Toast.LENGTH_SHORT).show();
-                                        this.finish();
+                                        instance_SP.setFirstLaunch(false);
                                     } else {
                                         landingPageLoadingViewModel.setLoading(false);
                                         Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
@@ -127,6 +132,7 @@ public class LandingPage extends AppCompatActivity {
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
         pBar = bo.pBar;
+        instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         wordBox_init();
     }
 
@@ -198,35 +204,16 @@ public class LandingPage extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("LandingActivity", "onStart");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("LandingActivity", "onStop");
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("LandingActivity", "onDestroy");
+        Toast.makeText(LandingPage.this, "LandingPage onDestroy", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("LandingActivity", "onPause");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("LandingActivity", "onResume");
+        Toast.makeText(LandingPage.this, "LandingPage onPause", Toast.LENGTH_SHORT).show();
     }
 
 

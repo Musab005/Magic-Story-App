@@ -39,7 +39,6 @@ public class Story extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("StoryActivity", "onCreate");
         bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
         init();
         ActionBar actionBar = getSupportActionBar();
@@ -96,38 +95,24 @@ public class Story extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // Go back to the previous activity when the back button is pressed
-        finish();
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("StoryActivity", "onStart");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("StoryActivity", "onStop");
+        this.finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("StoryActivity", "onDestroy");
+        Toast.makeText(Story.this,"Story onDestroy",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("StoryActivity", "onPause");
+        Toast.makeText(Story.this,"Story onPause",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("StoryActivity", "onResume");
     }
 
     private void incrementDoneCount() {
@@ -148,9 +133,6 @@ public class Story extends AppCompatActivity {
                                 .update(incrementData)
                                 .addOnSuccessListener(aVoid -> {
                                     // Update successful
-                                    Toast.makeText(Story.this,
-                                            "done count incremented by one",
-                                            Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
