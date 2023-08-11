@@ -6,14 +6,12 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
@@ -92,28 +90,6 @@ public class Story extends AppCompatActivity {
             }
         });
     }
-    @Override
-    public void onBackPressed() {
-        // Go back to the previous activity when the back button is pressed
-        this.finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Toast.makeText(Story.this,"Story onDestroy",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Toast.makeText(Story.this,"Story onPause",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     private void incrementDoneCount() {
         CollectionReference usersCollection = db.collection("Users");
@@ -136,17 +112,11 @@ public class Story extends AppCompatActivity {
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
-                                    Toast.makeText(Story.this,
-                                            "ERROR: done count",
-                                            Toast.LENGTH_SHORT).show();
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors
-                    Toast.makeText(Story.this,
-                            "ERROR: done count",
-                            Toast.LENGTH_SHORT).show();
                 });
     }
 }

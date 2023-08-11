@@ -119,7 +119,7 @@ public class ImageTest extends AppCompatActivity {
             //handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
             this.finish();
         }).exceptionally(exception -> {
-            Toast.makeText(ImageTest.this,"Image fail",Toast.LENGTH_SHORT).show();
+            Toast.makeText(ImageTest.this,"ERROR: Story fail",Toast.LENGTH_SHORT).show();
             writingAnimViewModel.setLoading(false);
             // This code will also run in the main thread (UI thread)
             exception.printStackTrace();
@@ -148,17 +148,11 @@ public class ImageTest extends AppCompatActivity {
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
-                                    Toast.makeText(ImageTest.this,
-                                            "ERROR: read story count",
-                                            Toast.LENGTH_SHORT).show();
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors
-                    Toast.makeText(ImageTest.this,
-                            "ERROR: read story count",
-                            Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -177,29 +171,6 @@ public class ImageTest extends AppCompatActivity {
 
     private void setAnimVisibility(int value) {
         anim.setVisibility(value);
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Go back to the previous activity when the back button is pressed
-        finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Toast.makeText(ImageTest.this,"Image onDestroy",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Toast.makeText(ImageTest.this,"Image onPause",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
 

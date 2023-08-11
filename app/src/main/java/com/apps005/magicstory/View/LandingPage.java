@@ -45,7 +45,6 @@ public class LandingPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(LandingPage.this, "LandingPage onCreate", Toast.LENGTH_SHORT).show();
         com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
         init(bo);
     }
@@ -53,7 +52,6 @@ public class LandingPage extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Toast.makeText(LandingPage.this, "LandingPage onResume", Toast.LENGTH_SHORT).show();
         button_listener();
         landingPageLoadingViewModel = new ViewModelProvider(this).get(LandingPageLoadingViewModel.class);
         landingPageLoadingViewModel.isLoading().observe(this, isLoading -> {
@@ -194,12 +192,6 @@ public class LandingPage extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        // Close the app when the back button is pressed on the LandingPageActivity
-        finishAffinity();
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View view = getCurrentFocus();
@@ -210,17 +202,6 @@ public class LandingPage extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Toast.makeText(LandingPage.this, "LandingPage onDestroy", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Toast.makeText(LandingPage.this, "LandingPage onPause", Toast.LENGTH_SHORT).show();
-    }
 
 
 }

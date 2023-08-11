@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+//TODO: Tests
 //TODO: check onBackPressed
 //TODO: double check activity stack as the app progresses
 //TODO: start image then back within one sec to check if loading anim still there
@@ -131,17 +132,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
-                                    Toast.makeText(MainActivity.this,
-                                            "ERROR: image count",
-                                            Toast.LENGTH_SHORT).show();
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors
-                    Toast.makeText(MainActivity.this,
-                            "ERROR: image count",
-                            Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -268,13 +263,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         instance_SP.saveData(word1, word2, word3, category);
-    }
-
-    //finish affinity or no???
-    @Override
-    public void onBackPressed() {
-        // Go back to the previous activity when the back button is pressed
-        finish();
     }
 
     @Override
