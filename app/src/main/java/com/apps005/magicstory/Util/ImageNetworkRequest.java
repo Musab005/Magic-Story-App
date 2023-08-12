@@ -22,6 +22,7 @@ public class ImageNetworkRequest {
     private static final String DALLE_URL = "https://api.openai.com/v1/images/generations";
     private static final String CHATGPT_URL = "https://api.openai.com/v1/chat/completions";
 
+
     public CompletableFuture<String> generateImageAsync(String word1, String word2, String word3,
                                                         String category, Context context) {
         String prompt = category + " picture of " + word1 + ", " + word2 + ", " + word3;

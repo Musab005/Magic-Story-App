@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     loadingViewModel.setLoading(false), 1000);
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)
-            Toast.makeText(MainActivity.this,"Image fail",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"ERROR: Image fail. Do you have internet connection?",Toast.LENGTH_SHORT).show();
             loadingViewModel.setLoading(false);
             exception.printStackTrace();
             return null;

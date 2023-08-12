@@ -119,7 +119,7 @@ public class ImageTest extends AppCompatActivity {
             //handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
             this.finish();
         }).exceptionally(exception -> {
-            Toast.makeText(ImageTest.this,"ERROR: Story fail",Toast.LENGTH_SHORT).show();
+            Toast.makeText(ImageTest.this,"ERROR: Story fail. Do you have internet connection?",Toast.LENGTH_SHORT).show();
             writingAnimViewModel.setLoading(false);
             // This code will also run in the main thread (UI thread)
             exception.printStackTrace();
