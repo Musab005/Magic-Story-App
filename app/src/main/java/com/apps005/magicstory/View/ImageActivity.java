@@ -91,7 +91,7 @@ public class ImageActivity extends AppCompatActivity {
             if (isConnectedToInternet()) {
                 db = FirebaseFirestore.getInstance();
                 incrementReadStoryCount();
-                startStoryActivity(word1, word2, word3, category, ImageActivity.this.getApplicationContext());
+                startStoryActivity(word1, word2, word3, category);
             } else {
                 Toast.makeText(ImageActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
             }
@@ -138,10 +138,10 @@ public class ImageActivity extends AppCompatActivity {
         }
     }
 
-    private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
+    private void startStoryActivity(String word1, String word2, String word3, String category) {
         writingAnimViewModel.setLoading(true);
         CompletableFuture<String> future = new NetworkRequest().
-                generateStoryAsync(word1, word2, word3, category, context);
+                generateStoryAsync(word1, word2, word3, category);
 
 // Handling the result when it becomes available
         future.thenAccept(story -> {

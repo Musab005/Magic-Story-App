@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void startImageActivity() {
         loadingViewModel.setLoading(true);
         CompletableFuture<String> future = networkRequest.
-                generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
+                generateImageAsync(word1, word2, word3, category);
         // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
             // This code will run in the main thread (UI thread)

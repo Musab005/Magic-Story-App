@@ -1,11 +1,9 @@
 package com.apps005.magicstory.Util;
 
-import android.content.Context;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.apps005.magicstory.controller.StoryController;
+import com.apps005.magicstory.controller.MagicStoryApp;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -24,7 +22,7 @@ public class NetworkRequest {
 
 
     public CompletableFuture<String> generateImageAsync(String word1, String word2, String word3,
-                                                        String category, Context context) {
+                                                        String category) {
         String prompt = category + " picture of " + word1 + ", " + word2 + ", " + word3;
         // Make the POST request asynchronously using CompletableFuture
         CompletableFuture<String> completableFuture = new CompletableFuture<>();
@@ -69,13 +67,13 @@ public class NetworkRequest {
                         DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        StoryController.getInstance(context).addToRequestQueue(image_request);
+        MagicStoryApp.getInstance().addToRequestQueue(image_request);
 
         return completableFuture;
     }
 
     public CompletableFuture<String> generateStoryAsync(String word1, String word2, String word3,
-                                                        String category, Context context) {
+                                                        String category) {
         //String prompt = "Write a short " + category + " about " + word1 + ", " + word2 + ", " + word3;
         String prompt = "Write a short " + category + " about " + word1 + ", " + word2 + ", and " + word3 + ". " +
                 "For example, create a very short scene that includes these elements.";
@@ -131,7 +129,8 @@ public class NetworkRequest {
                             socketTimeout,
                             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            StoryController.getInstance(context).addToRequestQueue(story_request);
+
+            MagicStoryApp.getInstance().addToRequestQueue(story_request);
         } catch (JSONException e) {
             e.printStackTrace();
         }

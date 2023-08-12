@@ -14,4 +14,5 @@
     <color name="blue_username" />
     <color name="BLUE_username">#0B5DB3</color>
     <color name="button_layout">#D3D1CC</color>
+    <color name="anim_blue">#FF0D0D4D</color>
 </resources>
