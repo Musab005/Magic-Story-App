@@ -6,7 +6,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.View.LandingPage;
+import com.apps005.magicstory.View.LoginActivity;
 import com.apps005.magicstory.View.MainActivity;
 
 public class InitialActivity extends AppCompatActivity {
@@ -23,7 +23,7 @@ public class InitialActivity extends AppCompatActivity {
         Toast.makeText(InitialActivity.this, "initial onResume", Toast.LENGTH_SHORT).show();
         SharedPreferencesManager instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         if (instance_SP.isFirstLaunch()) {
-            startActivity(new Intent(this, LandingPage.class));
+            startActivity(new Intent(this, LoginActivity.class));
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }

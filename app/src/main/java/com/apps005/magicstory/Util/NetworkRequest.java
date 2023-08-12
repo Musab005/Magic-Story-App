@@ -1,15 +1,11 @@
 package com.apps005.magicstory.Util;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.apps005.magicstory.View.MainActivity;
 import com.apps005.magicstory.controller.StoryController;
-import com.google.android.gms.tasks.CancellationToken;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -18,12 +14,9 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 
-public class ImageNetworkRequest {
-
-    private boolean cancel = false;
+public class NetworkRequest {
 
     private static final String API_KEY = "";
     private static final String DALLE_URL = "https://api.openai.com/v1/images/generations";
@@ -45,11 +38,6 @@ public class ImageNetworkRequest {
             completableFuture.completeExceptionally(e);
         }
 
-        if (this.cancel) {
-            Log.d("DONEE","DONEE");
-            completableFuture.completeExceptionally(new Throwable("Request Cancelled"));
-        }
-
         JsonObjectRequest image_request = new JsonObjectRequest(Request.Method.POST, DALLE_URL, jsonRequest,
                 response -> {
                     try {
@@ -62,9 +50,6 @@ public class ImageNetworkRequest {
                         completableFuture.completeExceptionally(e);
                     }
                 }, error -> {
-            if (this.cancel) {
-                completableFuture.completeExceptionally(new CancellationException("API call was canceled"));
-            }
             error.printStackTrace();
             completableFuture.completeExceptionally(new RuntimeException(error.getMessage()));
         }) {
@@ -83,11 +68,6 @@ public class ImageNetworkRequest {
                         socketTimeout,
                         DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        if (this.cancel) {
-            Log.d("DONEE","DONEE");
-            completableFuture.completeExceptionally(new Throwable("Request Cancelled"));
-        }
 
         StoryController.getInstance(context).addToRequestQueue(image_request);
 
@@ -158,8 +138,5 @@ public class ImageNetworkRequest {
         return completableFuture;
 
 
-    }
-    public void doCancel() {
-        this.cancel = true;
     }
 }

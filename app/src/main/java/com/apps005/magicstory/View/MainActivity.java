@@ -5,9 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -24,10 +22,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.ImageNetworkRequest;
+import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WordListener;
@@ -36,16 +33,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO: Tests
-//TODO: check onBackPressed
-//TODO: double check activity stack as the app progresses
-//TODO: start image then back within one sec to check if loading anim still there
-//TODO: check going to home then reopening app and also handling notifications during app
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -53,9 +44,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         void onSuccess(String url);
         void onError(String error);
     }
-
     private FirebaseFirestore db;
-    private ImageNetworkRequest imageNetworkRequest;
+    private NetworkRequest networkRequest;
     private ConstraintLayout hidden_layout;
     private EditText first_word_box;
     private EditText second_word_box;
@@ -80,6 +70,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         init_widgets();
         Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_SHORT).show();
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        instance_SP.saveData(word1, word2, word3, category);
+    }
 
     @Override
     protected void onResume() {
@@ -97,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
         onClick();
     }
-
 
     private void onClick() {
         btn.setOnClickListener(view -> {
@@ -124,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void incrementImageCount() {
         CollectionReference usersCollection = db.collection("Users");
         String usernameToUpdate = instance_SP.getUsername();
-        // Create a map with the updated "count" value
         Map<String, Object> incrementData = new HashMap<>();
         incrementData.put("count_image", FieldValue.increment(1));
 
@@ -132,9 +125,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
-                        // Get the document ID of the user to update
                         String documentId = documentSnapshot.getId();
-                        // Update the "count" field for the user
                         usersCollection.document(documentId)
                                 .update(incrementData)
                                 .addOnSuccessListener(aVoid -> {
@@ -142,45 +133,83 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
-                                    Toast.makeText(MainActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this,"ERROR: Please try again later",Toast.LENGTH_SHORT).show();
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors
-                    Toast.makeText(MainActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this,"ERROR: Please try again later",Toast.LENGTH_SHORT).show();
                 });
     }
 
-
     private void startImageActivity() {
         loadingViewModel.setLoading(true);
-        CompletableFuture<String> future = imageNetworkRequest.
+        CompletableFuture<String> future = networkRequest.
                 generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
-            // Handle the image URL when the request is successful
             // This code will run in the main thread (UI thread)
             // Use imageUrl here to display the image or perform other actions
-            Intent intent = new Intent(MainActivity.this, ImageTest.class);
+            Intent intent = new Intent(MainActivity.this, ImageActivity.class);
             intent.putExtra("url", imageUrl);
             intent.putExtra("word1",word1);
             intent.putExtra("word2",word2);
             intent.putExtra("word3",word3);
             intent.putExtra("category",category);
-
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(() ->
                     loadingViewModel.setLoading(false), 1000);
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)
-            Toast.makeText(MainActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"ERROR: Please try again later",Toast.LENGTH_SHORT).show();
             loadingViewModel.setLoading(false);
             exception.printStackTrace();
             return null;
         });
     }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        word3 = third_word_box.getText().toString().trim();
+        word2 = second_word_box.getText().toString().trim();
+        word1 = first_word_box.getText().toString().trim();
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if (view != null) {
+                hideKeyboard(view);
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Really Exit?")
+                .setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes,
+                        (dialogInterface, i) -> MainActivity.super.onBackPressed()).create().show();
+    }
+
+    // Helper method to check internet connectivity
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
+    }
+
 
     private void init_widgets() {
         hidden_layout = bo.hiddenLayout;
@@ -193,7 +222,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         third_word_box = bo.word3;
         btn = bo.generateButton;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        imageNetworkRequest = new ImageNetworkRequest();
+        networkRequest = new NetworkRequest();
+    }
+    private void setUI() {
+        wordBoxListener_init();
+        spinner_init();
+        category = instance_SP.getCategory();
+        first_word_box.setText(instance_SP.getWord1());
+        second_word_box.setText(instance_SP.getWord2());
+        third_word_box.setText(instance_SP.getWord3());
+        String[] categoryArray = getResources().getStringArray(R.array.Categories);
+        int categoryIndex = -1;
+        for (int i = 0; i < categoryArray.length; i++) {
+            if (categoryArray[i].equals(category)) {
+                categoryIndex = i;
+                break;
+            }
+        }
+        if (categoryIndex != -1) {
+            spinner.setSelection(categoryIndex);
+        }
+    }
+    private void setUIvisibility(int visibility) {
+        pencil_anim.setVisibility(visibility);
+        category_statement.setVisibility(visibility);
+        spinner.setVisibility(visibility);
+        words_statement.setVisibility(visibility);
+        first_word_box.setVisibility(visibility);
+        second_word_box.setVisibility(visibility);
+        third_word_box.setVisibility(visibility);
+        btn.setVisibility(visibility);
     }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
@@ -201,7 +259,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
     }
-
     private void wordBoxListener_init() {
         first_word_box.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
@@ -247,101 +304,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         third_word_box.addTextChangedListener(new WordListener(third_word_box));
     }
 
-    private void hideKeyboard(View view) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        word3 = third_word_box.getText().toString().trim();
-        word2 = second_word_box.getText().toString().trim();
-        word1 = first_word_box.getText().toString().trim();
-    }
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View view = getCurrentFocus();
-            if (view != null) {
-                hideKeyboard(view);
-            }
-        }
-        return super.onTouchEvent(event);
-    }
-
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         this.category = adapterView.getItemAtPosition(i).toString();
-        instance_SP.saveData(word1, word2, word3, category);
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        instance_SP.saveData(word1, word2, word3, category);
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        instance_SP.saveData(word1, word2, word3, category);
-    }
-
-    private void setUIvisibility(int visibility) {
-        pencil_anim.setVisibility(visibility);
-        category_statement.setVisibility(visibility);
-        spinner.setVisibility(visibility);
-        words_statement.setVisibility(visibility);
-        first_word_box.setVisibility(visibility);
-        second_word_box.setVisibility(visibility);
-        third_word_box.setVisibility(visibility);
-        btn.setVisibility(visibility);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    private void setUI() {
-        wordBoxListener_init();
-        spinner_init();
-        word1 = instance_SP.getWord1();
-        word2 = instance_SP.getWord2();
-        word3 = instance_SP.getWord3();
-        category = instance_SP.getCategory();
-        first_word_box.setText(word1);
-        second_word_box.setText(word2);
-        third_word_box.setText(word3);
-        String[] categoryArray = getResources().getStringArray(R.array.Categories);
-        int categoryIndex = -1;
-        for (int i = 0; i < categoryArray.length; i++) {
-            if (categoryArray[i].equals(category)) {
-                categoryIndex = i;
-                break;
-            }
-        }
-        if (categoryIndex != -1) {
-            spinner.setSelection(categoryIndex);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setTitle("Really Exit?")
-                .setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes,
-                        (dialogInterface, i) -> MainActivity.super.onBackPressed()).create().show();
-    }
-
-    // Helper method to check internet connectivity
-    private boolean isConnectedToInternet() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }
-        return false;
-    }
-
 
 }

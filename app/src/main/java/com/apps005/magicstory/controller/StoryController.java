@@ -7,7 +7,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.apps005.magicstory.View.ImageTest;
+import com.apps005.magicstory.View.ImageActivity;
 import com.apps005.magicstory.View.MainActivity;
 import com.apps005.magicstory.model.StoryModel;
 
@@ -41,7 +41,7 @@ public class StoryController extends Application {
     }
 
     public void generateStory(String word1, String word2, String word3,
-                              String category, Context context, final ImageTest.startStory callback) {
+                              String category, Context context, final ImageActivity.startStory callback) {
         Log.d("controller", "calling generateStory from model");
         new StoryModel().generateStory(word1, word2, word3, category, context,
                 callback::onResult);

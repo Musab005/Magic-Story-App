@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:background="@color/dark_blue"
         android:padding="15dp"
-        tools:context=".View.LandingPage">
+        tools:context=".View.LoginActivity">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animationView"

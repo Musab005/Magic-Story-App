@@ -3,7 +3,7 @@ package com.apps005.magicstory.controller;
 
 import android.app.Application;
 
-public class MagicStory extends Application {
+public class MagicStoryApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.ImageNetworkRequest;
+import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WritingAnimViewModel;
 import com.apps005.magicstory.databinding.ActivityImageTestBinding;
@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class ImageTest extends AppCompatActivity {
+public class ImageActivity extends AppCompatActivity {
     private Handler handler;
     private SharedPreferencesManager instance_SP;
     private FirebaseFirestore db;
@@ -58,7 +58,7 @@ public class ImageTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bo = DataBindingUtil.setContentView(ImageTest.this, R.layout.activity_image_test);
+        bo = DataBindingUtil.setContentView(ImageActivity.this, R.layout.activity_image_test);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -91,9 +91,9 @@ public class ImageTest extends AppCompatActivity {
             if (isConnectedToInternet()) {
                 db = FirebaseFirestore.getInstance();
                 incrementReadStoryCount();
-                startStoryActivity(word1, word2, word3, category, ImageTest.this.getApplicationContext());
+                startStoryActivity(word1, word2, word3, category, ImageActivity.this.getApplicationContext());
             } else {
-                Toast.makeText(ImageTest.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ImageActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -103,14 +103,14 @@ public class ImageTest extends AppCompatActivity {
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
 
 
-        Glide.with(ImageTest.this)
+        Glide.with(ImageActivity.this)
                 .load(intent.getStringExtra("url"))
                 .apply(requestOptions)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         // Handle load failure here
-                        Toast.makeText(ImageTest.this, "Image failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ImageActivity.this, "Image failed", Toast.LENGTH_SHORT).show();
                         return false; // Return false to allow Glide to display the placeholder or error image
                     }
                     @Override
@@ -123,7 +123,7 @@ public class ImageTest extends AppCompatActivity {
                 .into(iv);
 
 
-//        Glide.with(ImageTest.this)
+//        Glide.with(ImageActivity.this)
 //                .load(intent.getStringExtra("url"))
 //                .apply(requestOptions)
 //                .into(iv);
@@ -140,7 +140,7 @@ public class ImageTest extends AppCompatActivity {
 
     private void startStoryActivity(String word1, String word2, String word3, String category, Context context) {
         writingAnimViewModel.setLoading(true);
-        CompletableFuture<String> future = new ImageNetworkRequest().
+        CompletableFuture<String> future = new NetworkRequest().
                 generateStoryAsync(word1, word2, word3, category, context);
 
 // Handling the result when it becomes available
@@ -148,13 +148,13 @@ public class ImageTest extends AppCompatActivity {
             // Handle the image URL when the request is successful
             // This code will run in the main thread (UI thread)
             // Use imageUrl here to display the image or perform other actions
-            Intent intent = new Intent(ImageTest.this, Story.class);
+            Intent intent = new Intent(ImageActivity.this, StoryActivity.class);
             intent.putExtra("story", story);
             startActivity(intent);
             //handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
             this.finish();
         }).exceptionally(exception -> {
-            Toast.makeText(ImageTest.this,"ERROR",Toast.LENGTH_SHORT).show();
+            Toast.makeText(ImageActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
             writingAnimViewModel.setLoading(false);
             // This code will also run in the main thread (UI thread)
             exception.printStackTrace();
@@ -231,7 +231,7 @@ public class ImageTest extends AppCompatActivity {
                 .setMessage("Are you sure you want to go back?")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes,
-                        (dialogInterface, i) -> ImageTest.super.onBackPressed()).create().show();
+                        (dialogInterface, i) -> ImageActivity.super.onBackPressed()).create().show();
     }
 
     // Helper method to check internet connectivity

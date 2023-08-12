@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Story extends AppCompatActivity {
+public class StoryActivity extends AppCompatActivity {
     private ScrollView scrollView;
     private SharedPreferencesManager instance_SP;
     private FirebaseFirestore db;

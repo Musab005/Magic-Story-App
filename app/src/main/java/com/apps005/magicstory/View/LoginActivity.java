@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.LandingPageLoadingViewModel;
+import com.apps005.magicstory.Util.LoginPageLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
 import com.apps005.magicstory.model.User;
@@ -32,7 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class LandingPage extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText first_name_box;
     private SharedPreferencesManager instance_SP;
@@ -44,7 +44,7 @@ public class LandingPage extends AppCompatActivity {
     private String first_name;
     private String last_name;
     private String username;
-    private LandingPageLoadingViewModel landingPageLoadingViewModel;
+    private LoginPageLoadingViewModel loginPageLoadingViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +56,8 @@ public class LandingPage extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         button_listener();
-        landingPageLoadingViewModel = new ViewModelProvider(this).get(LandingPageLoadingViewModel.class);
-        landingPageLoadingViewModel.isLoading().observe(this, isLoading -> {
+        loginPageLoadingViewModel = new ViewModelProvider(this).get(LoginPageLoadingViewModel.class);
+        loginPageLoadingViewModel.isLoading().observe(this, isLoading -> {
             if (isLoading) {
                 save_button.setVisibility(View.GONE);
                 pBar.setVisibility(View.VISIBLE);
@@ -78,16 +78,16 @@ public class LandingPage extends AppCompatActivity {
             if (first_name.isEmpty() ||
                     last_name.isEmpty() ||
                     username.isEmpty()) {
-                Toast.makeText(LandingPage.this,
+                Toast.makeText(LoginActivity.this,
                         "Please write your first name, last name and choose a username",
                         Toast.LENGTH_SHORT).show();
             } else {
                 if (isConnectedToInternet()) {
                     db = FirebaseFirestore.getInstance();
-                    landingPageLoadingViewModel.setLoading(true);
+                    loginPageLoadingViewModel.setLoading(true);
                     saveData(first_name, last_name, username, formattedDate);
                 } else {
-                    Toast.makeText(LandingPage.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -104,32 +104,32 @@ public class LandingPage extends AppCompatActivity {
                             // Username is available, add the new user to the collection
                             usersCollection.add(user)
                                     .addOnFailureListener(e -> {
-                                        Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
-                                        landingPageLoadingViewModel.setLoading(false);
+                                        Toast.makeText(LoginActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                        loginPageLoadingViewModel.setLoading(false);
                                     })
                                     .addOnCompleteListener(task -> {
                                         if (task.isSuccessful()) {
                                             Handler handler = new Handler();
                                             handler.postDelayed(() -> {
                                                 instance_SP.setFirstLaunch(false);
-                                                startActivity(new Intent(LandingPage.this, MainActivity.class));
+                                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                                 this.finish();
                                             }, 2000);
                                         } else {
-                                            landingPageLoadingViewModel.setLoading(false);
-                                            Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                            loginPageLoadingViewModel.setLoading(false);
+                                            Toast.makeText(LoginActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
                                         }
                                     });
                         } else {
                             // Username is already taken, display an error message
-                            landingPageLoadingViewModel.setLoading(false);
-                            Toast.makeText(LandingPage.this,"Username is already taken",Toast.LENGTH_SHORT).show();
+                            loginPageLoadingViewModel.setLoading(false);
+                            Toast.makeText(LoginActivity.this,"Username is already taken",Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(e -> {
                         // Handle errors
-                        landingPageLoadingViewModel.setLoading(false);
-                        Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                        loginPageLoadingViewModel.setLoading(false);
+                        Toast.makeText(LoginActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
                     });
     }
 
@@ -223,7 +223,7 @@ public class LandingPage extends AppCompatActivity {
                 .setMessage("Are you sure you want to exit?")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes,
-                        (dialogInterface, i) -> LandingPage.super.onBackPressed()).create().show();
+                        (dialogInterface, i) -> LoginActivity.super.onBackPressed()).create().show();
     }
 
 }
