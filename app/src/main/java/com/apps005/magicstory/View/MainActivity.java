@@ -1,12 +1,16 @@
 package com.apps005.magicstory.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private FirebaseFirestore db;
+    private ImageNetworkRequest imageNetworkRequest;
     private ConstraintLayout hidden_layout;
     private EditText first_word_box;
     private EditText second_word_box;
@@ -105,8 +110,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();
             } else {
-                incrementImageCount();
-                startImageActivity();
+                if (isConnectedToInternet()) {
+                    db = FirebaseFirestore.getInstance();
+                    incrementImageCount();
+                    startImageActivity();
+                } else {
+                    Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -132,18 +142,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
+                                    Toast.makeText(MainActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors
+                    Toast.makeText(MainActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
                 });
     }
 
 
     private void startImageActivity() {
         loadingViewModel.setLoading(true);
-        CompletableFuture<String> future = new ImageNetworkRequest().generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
+        CompletableFuture<String> future = imageNetworkRequest.
+                generateImageAsync(word1, word2, word3, category, MainActivity.this.getApplicationContext());
         // Handling the result when it becomes available
         future.thenAccept(imageUrl -> {
             // Handle the image URL when the request is successful
@@ -162,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     loadingViewModel.setLoading(false), 1000);
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)
-            Toast.makeText(MainActivity.this,"ERROR: Image fail. Do you have internet connection?",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
             loadingViewModel.setLoading(false);
             exception.printStackTrace();
             return null;
@@ -179,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         second_word_box = bo.word2;
         third_word_box = bo.word3;
         btn = bo.generateButton;
-        db = FirebaseFirestore.getInstance();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        imageNetworkRequest = new ImageNetworkRequest();
     }
     private void spinner_init() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Categories, android.R.layout.simple_spinner_dropdown_item);
@@ -309,5 +322,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             spinner.setSelection(categoryIndex);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Really Exit?")
+                .setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes,
+                        (dialogInterface, i) -> MainActivity.super.onBackPressed()).create().show();
+    }
+
+    // Helper method to check internet connectivity
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
+    }
+
 
 }

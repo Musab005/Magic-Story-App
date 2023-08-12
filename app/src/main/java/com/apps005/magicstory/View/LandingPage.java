@@ -1,11 +1,14 @@
 package com.apps005.magicstory.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -79,65 +82,76 @@ public class LandingPage extends AppCompatActivity {
                         "Please write your first name, last name and choose a username",
                         Toast.LENGTH_SHORT).show();
             } else {
-                landingPageLoadingViewModel.setLoading(true);
-                saveData(first_name, last_name, username, formattedDate);
+                if (isConnectedToInternet()) {
+                    db = FirebaseFirestore.getInstance();
+                    landingPageLoadingViewModel.setLoading(true);
+                    saveData(first_name, last_name, username, formattedDate);
+                } else {
+                    Toast.makeText(LandingPage.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
-        User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
-        SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
-
-        CollectionReference usersCollection = db.collection("Users");
-        usersCollection.whereEqualTo("username", username)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (querySnapshot.isEmpty()) {
-                        // Username is available, add the new user to the collection
-                        usersCollection.add(user)
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
-                                    landingPageLoadingViewModel.setLoading(false);
-                                })
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(() -> {
-                                            instance_SP.setFirstLaunch(false);
-                                            startActivity(new Intent(LandingPage.this, MainActivity.class));
-                                            this.finish();
-                                        }, 2000);
-                                    } else {
-                                        landingPageLoadingViewModel.setLoading(false);
+            User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
+            SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
+            CollectionReference usersCollection = db.collection("Users");
+            usersCollection.whereEqualTo("username", username)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (querySnapshot.isEmpty()) {
+                            // Username is available, add the new user to the collection
+                            usersCollection.add(user)
+                                    .addOnFailureListener(e -> {
                                         Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        // Username is already taken, display an error message
+                                        landingPageLoadingViewModel.setLoading(false);
+                                    })
+                                    .addOnCompleteListener(task -> {
+                                        if (task.isSuccessful()) {
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(() -> {
+                                                instance_SP.setFirstLaunch(false);
+                                                startActivity(new Intent(LandingPage.this, MainActivity.class));
+                                                this.finish();
+                                            }, 2000);
+                                        } else {
+                                            landingPageLoadingViewModel.setLoading(false);
+                                            Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        } else {
+                            // Username is already taken, display an error message
+                            landingPageLoadingViewModel.setLoading(false);
+                            Toast.makeText(LandingPage.this,"Username is already taken",Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle errors
                         landingPageLoadingViewModel.setLoading(false);
-                        Toast.makeText(LandingPage.this,"Username is already taken",Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Handle errors
-                    landingPageLoadingViewModel.setLoading(false);
-                    Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
-                });
-
+                        Toast.makeText(LandingPage.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                    });
     }
 
     private void init(ActivityLandingPageBinding bo) {
         LottieAnimationView anim = bo.animationView;
         anim.setVisibility(View.VISIBLE);
         save_button = bo.saveButton;
-        db = FirebaseFirestore.getInstance();
         first_name_box = bo.firstNameBox;
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
         pBar = bo.pBar;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         wordBox_init();
+    }
+    // Helper method to check internet connectivity
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 
     private void save_fields() {
@@ -202,6 +216,14 @@ public class LandingPage extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Really Exit?")
+                .setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes,
+                        (dialogInterface, i) -> LandingPage.super.onBackPressed()).create().show();
+    }
 
 }

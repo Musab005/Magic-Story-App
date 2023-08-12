@@ -1,10 +1,14 @@
 package com.apps005.magicstory.View;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +58,10 @@ public class Story extends AppCompatActivity {
     private void proceed() {
         storyText.setText(intent.getStringExtra("story"));
         done_button.setOnClickListener(view -> {
-            incrementDoneCount();
+            if (isConnectedToInternet()) {
+                db = FirebaseFirestore.getInstance();
+                incrementDoneCount();
+            }
             this.finish();
         });
     }
@@ -66,7 +73,6 @@ public class Story extends AppCompatActivity {
         storyText = bo.storyText;
         widgets_init();
         intent = getIntent();
-        db = FirebaseFirestore.getInstance();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
     }
 
@@ -118,5 +124,20 @@ public class Story extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     // Handle errors
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Done reading?")
+                .setMessage("Scroll all the way to the bottom!").show();
+    }
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 }

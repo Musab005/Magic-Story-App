@@ -148,6 +148,8 @@
             <Button
                 android:id="@+id/generate_button"
                 style="@style/gen_button_style"
+                android:layout_width="161dp"
+                android:layout_height="71dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="18dp"
                 android:layout_weight="1"
