@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
@@ -40,10 +42,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    public interface startImage {
-        void onSuccess(String url);
-        void onError(String error);
-    }
     private FirebaseFirestore db;
     private NetworkRequest networkRequest;
     private ConstraintLayout hidden_layout;
@@ -163,7 +161,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     loadingViewModel.setLoading(false), 1000);
         }).exceptionally(exception -> {
             // This code will also run in the main thread (UI thread)
-            Toast.makeText(MainActivity.this,"ERROR: Please try again later",Toast.LENGTH_SHORT).show();
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Error loading image")
+                    .setMessage("An unexpected error occurred.")
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        // Do something if the user clicks "OK"
+                        dialog.dismiss(); // Dismiss the dialog
+                    })
+                    .setCancelable(false) // Prevent dialog dismissal on outside touch or back press
+                    .create()
+                    .show();
             loadingViewModel.setLoading(false);
             exception.printStackTrace();
             return null;
@@ -200,17 +207,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         (dialogInterface, i) -> MainActivity.super.onBackPressed()).create().show();
     }
 
-    // Helper method to check internet connectivity
-    private boolean isConnectedToInternet() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }
-        return false;
-    }
-
-
     private void init_widgets() {
         hidden_layout = bo.hiddenLayout;
         pencil_anim = bo.animationView;
@@ -223,14 +219,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn = bo.generateButton;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         networkRequest = new NetworkRequest();
+        // Register the BroadcastReceiver to monitor network changes
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new NetworkChangeReceiver(), intentFilter);
     }
     private void setUI() {
         wordBoxListener_init();
         spinner_init();
+        word1 = instance_SP.getWord1();
+        word2 = instance_SP.getWord2();
+        word3 = instance_SP.getWord3();
         category = instance_SP.getCategory();
-        first_word_box.setText(instance_SP.getWord1());
-        second_word_box.setText(instance_SP.getWord2());
-        third_word_box.setText(instance_SP.getWord3());
+        first_word_box.setText(word1);
+        second_word_box.setText(word2);
+        third_word_box.setText(word3);
         String[] categoryArray = getResources().getStringArray(R.array.Categories);
         int categoryIndex = -1;
         for (int i = 0; i < categoryArray.length; i++) {
@@ -302,6 +304,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         first_word_box.addTextChangedListener(new WordListener(first_word_box));
         second_word_box.addTextChangedListener(new WordListener(second_word_box));
         third_word_box.addTextChangedListener(new WordListener(third_word_box));
+    }
+
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 
     @Override

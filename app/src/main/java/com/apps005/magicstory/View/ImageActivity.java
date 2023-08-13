@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WritingAnimViewModel;
@@ -76,6 +78,9 @@ public class ImageActivity extends AppCompatActivity {
             } else {
                 setUIvisibility(0);
                 setAnimVisibility(8);
+                if (actionBar != null) {
+                    actionBar.show();
+                }
             }
         });
         proceed();
@@ -102,16 +107,24 @@ public class ImageActivity extends AppCompatActivity {
         RequestOptions requestOptions = new RequestOptions().override(Target.SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
 
-
         Glide.with(ImageActivity.this)
                 .load(intent.getStringExtra("url"))
-                .apply(requestOptions)
+                .apply(requestOptions.placeholder(R.drawable.placeholder))
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         // Handle load failure here
-                        Toast.makeText(ImageActivity.this, "Image failed", Toast.LENGTH_SHORT).show();
-                        return false; // Return false to allow Glide to display the placeholder or error image
+                        new AlertDialog.Builder(ImageActivity.this)
+                                .setTitle("Error loading image")
+                                .setMessage("An unexpected error occurred.")
+                                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                    // Do something if the user clicks "OK"
+                                    dialog.dismiss(); // Dismiss the dialog
+                                })
+                                .setCancelable(false) // Prevent dialog dismissal on outside touch or back press
+                                .create()
+                                .show();
+                        return true; // Return false to allow Glide to display the placeholder or error image
                     }
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
@@ -122,11 +135,6 @@ public class ImageActivity extends AppCompatActivity {
                 })
                 .into(iv);
 
-
-//        Glide.with(ImageActivity.this)
-//                .load(intent.getStringExtra("url"))
-//                .apply(requestOptions)
-//                .into(iv);
         if (Boolean.TRUE.equals(writingAnimViewModel.isLoading().getValue())) {
             statement.setVisibility(View.GONE);
             arrow.setVisibility(View.GONE);
@@ -151,10 +159,19 @@ public class ImageActivity extends AppCompatActivity {
             Intent intent = new Intent(ImageActivity.this, StoryActivity.class);
             intent.putExtra("story", story);
             startActivity(intent);
-            //handler.postDelayed(() -> writingAnimViewModel.setLoading(false), 2000);
             this.finish();
         }).exceptionally(exception -> {
-            Toast.makeText(ImageActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
+            new AlertDialog.Builder(ImageActivity.this)
+                    .setTitle("Error loading story")
+                    .setMessage("An unexpected error occurred.")
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        // Do something if the user clicks "OK"
+                        dialog.dismiss(); // Dismiss the dialog
+                    })
+                    .setCancelable(false) // Prevent dialog dismissal on outside touch or back press
+                    .create()
+                    .show();
+            //Toast.makeText(ImageActivity.this,"error loading",Toast.LENGTH_SHORT).show();
             writingAnimViewModel.setLoading(false);
             // This code will also run in the main thread (UI thread)
             exception.printStackTrace();
@@ -222,6 +239,9 @@ public class ImageActivity extends AppCompatActivity {
         handler = new Handler();
         intent = getIntent();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        // Register the BroadcastReceiver to monitor network changes
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new NetworkChangeReceiver(), intentFilter);
     }
 
     @Override
@@ -243,10 +263,5 @@ public class ImageActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    public interface startStory {
-        void onResult(String result);
-    }
-
 
 }

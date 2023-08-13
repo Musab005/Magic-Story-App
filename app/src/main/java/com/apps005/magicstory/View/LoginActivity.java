@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.LoginPageLoadingViewModel;
+import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
 import com.apps005.magicstory.model.User;
@@ -31,6 +33,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+
+//TODO: clean up broadcast reciever
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -84,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 if (isConnectedToInternet()) {
                     db = FirebaseFirestore.getInstance();
+                    Toast.makeText(LoginActivity.this, "got firebase instance", Toast.LENGTH_SHORT).show();
                     loginPageLoadingViewModel.setLoading(true);
                     saveData(first_name, last_name, username, formattedDate);
                 } else {
@@ -143,6 +149,9 @@ public class LoginActivity extends AppCompatActivity {
         pBar = bo.pBar;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         wordBox_init();
+        // Register the BroadcastReceiver to monitor network changes
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new NetworkChangeReceiver(), intentFilter);
     }
     // Helper method to check internet connectivity
     private boolean isConnectedToInternet() {

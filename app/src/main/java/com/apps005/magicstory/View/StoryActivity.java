@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.apps005.magicstory.R;
+import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.databinding.ActivityStoryBinding;
 import com.google.firebase.firestore.CollectionReference;
@@ -74,6 +76,9 @@ public class StoryActivity extends AppCompatActivity {
         widgets_init();
         intent = getIntent();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
+        // Register the BroadcastReceiver to monitor network changes
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new NetworkChangeReceiver(), intentFilter);
     }
 
 
