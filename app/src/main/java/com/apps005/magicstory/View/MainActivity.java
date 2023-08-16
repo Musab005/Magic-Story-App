@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-
+//TODO:welcome username and network connection lost toast onconfigchanged
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private FirebaseFirestore db;
@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn = bo.generateButton;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         networkRequest = new NetworkRequest();
+
         // Register the BroadcastReceiver to monitor network changes
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new NetworkChangeReceiver(), intentFilter);

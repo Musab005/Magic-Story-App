@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_landing_page);
+        com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_login);
         init(bo);
     }
 
@@ -102,41 +102,61 @@ public class LoginActivity extends AppCompatActivity {
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
             User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
             SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
-            CollectionReference usersCollection = db.collection("Users");
-            usersCollection.whereEqualTo("username", username)
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        if (querySnapshot.isEmpty()) {
-                            // Username is available, add the new user to the collection
-                            usersCollection.add(user)
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(LoginActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
-                                        loginPageLoadingViewModel.setLoading(false);
-                                    })
-                                    .addOnCompleteListener(task -> {
-                                        if (task.isSuccessful()) {
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(() -> {
-                                                instance_SP.setFirstLaunch(false);
-                                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                                this.finish();
-                                            }, 2000);
-                                        } else {
-                                            loginPageLoadingViewModel.setLoading(false);
+            CollectionReference usersCollection;
+                usersCollection = db.collection("Users");
+                Toast.makeText(LoginActivity.this,"init",Toast.LENGTH_SHORT).show();
+                usersCollection.whereEqualTo("username", username)
+                        .get()
+                        .addOnSuccessListener(querySnapshot -> {
+                            if (querySnapshot.isEmpty()) {
+                                // Username is available, add the new user to the collection
+                                usersCollection.add(user)
+                                        .addOnFailureListener(e -> {
                                             Toast.makeText(LoginActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                        } else {
-                            // Username is already taken, display an error message
+                                            loginPageLoadingViewModel.setLoading(false);
+                                        })
+                                        .addOnCompleteListener(task -> {
+                                            if (task.isSuccessful()) {
+                                                Handler handler = new Handler();
+                                                handler.postDelayed(() -> {
+                                                    instance_SP.setFirstLaunch(false);
+                                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                    this.finish();
+                                                }, 2000);
+                                            } else {
+                                                loginPageLoadingViewModel.setLoading(false);
+                                                new AlertDialog.Builder(LoginActivity.this)
+                                                        .setTitle("Error")
+                                                        .setMessage("An unexpected error occurred.")
+                                                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                                            // Do something if the user clicks "OK"
+                                                            dialog.dismiss(); // Dismiss the dialog
+                                                        })
+                                                        .setCancelable(false) // Prevent dialog dismissal on outside touch or back press
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                            } else {
+                                // Username is already taken, display an error message
+                                loginPageLoadingViewModel.setLoading(false);
+                                Toast.makeText(LoginActivity.this,"Username is already taken",Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle errors
                             loginPageLoadingViewModel.setLoading(false);
-                            Toast.makeText(LoginActivity.this,"Username is already taken",Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle errors
-                        loginPageLoadingViewModel.setLoading(false);
-                        Toast.makeText(LoginActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
-                    });
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setTitle("Error")
+                                    .setMessage("An unexpected error occurred.")
+                                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                        // Do something if the user clicks "OK"
+                                        dialog.dismiss(); // Dismiss the dialog
+                                    })
+                                    .setCancelable(false) // Prevent dialog dismissal on outside touch or back press
+                                    .create()
+                                    .show();
+                        });
     }
 
     private void init(ActivityLandingPageBinding bo) {

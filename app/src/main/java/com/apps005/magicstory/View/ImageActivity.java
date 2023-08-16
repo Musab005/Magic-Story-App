@@ -60,7 +60,7 @@ public class ImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bo = DataBindingUtil.setContentView(ImageActivity.this, R.layout.activity_image_test);
+        bo = DataBindingUtil.setContentView(ImageActivity.this, R.layout.activity_image);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
