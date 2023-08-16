@@ -75,7 +75,7 @@ public class NetworkRequest {
     public CompletableFuture<String> generateStoryAsync(String word1, String word2, String word3,
                                                         String category) {
         //String prompt = "Write a short " + category + " about " + word1 + ", " + word2 + ", " + word3;
-        String prompt = "Write a short " + category + " about " + word1 + ", " + word2 + ", and " + word3 + ". " +
+        String prompt = "Write a very short " + category + " scene/script about " + word1 + ", " + word2 + ", and " + word3 + ". " +
                 "For example, create a very short scene that includes these elements.";
         CompletableFuture<String> completableFuture = new CompletableFuture<>();
 
