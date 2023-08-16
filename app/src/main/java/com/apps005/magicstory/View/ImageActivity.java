@@ -27,7 +27,7 @@ import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WritingAnimViewModel;
-import com.apps005.magicstory.databinding.ActivityImageTestBinding;
+import com.apps005.magicstory.databinding.ActivityImageBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -52,7 +52,7 @@ public class ImageActivity extends AppCompatActivity {
     private ImageView iv;
     private ImageView arrow;
     private TextView statement;
-    private ActivityImageTestBinding bo;
+    private ActivityImageBinding bo;
     private Intent intent;
     private ActionBar actionBar;
     private WritingAnimViewModel writingAnimViewModel;
