@@ -26,7 +26,7 @@ import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.LoginPageLoadingViewModel;
 import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.databinding.ActivityLandingPageBinding;
+import com.apps005.magicstory.databinding.ActivityLoginBinding;
 import com.apps005.magicstory.model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.apps005.magicstory.databinding.ActivityLandingPageBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        com.apps005.magicstory.databinding.ActivityLoginBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_login);
         init(bo);
     }
 
@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
     }
 
-    private void init(ActivityLandingPageBinding bo) {
+    private void init(ActivityLoginBinding bo) {
         LottieAnimationView anim = bo.animationView;
         anim.setVisibility(View.VISIBLE);
         save_button = bo.saveButton;
