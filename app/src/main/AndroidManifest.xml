@@ -14,7 +14,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         tools:targetApi="31">
-
         <activity
             android:name=".controller.InitialActivity"
             android:exported="true"
@@ -24,7 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".View.ImageActivity"
             android:exported="true"
@@ -32,18 +30,17 @@
         <activity
             android:name=".View.LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".View.StoryActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".View.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <meta-data
             android:name="preloaded_fonts"

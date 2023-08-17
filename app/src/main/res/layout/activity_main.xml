@@ -8,7 +8,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_white">
+        android:background="@color/white">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animationView"
@@ -17,7 +17,7 @@
             android:visibility="visible"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/writing_animation" />
+            app:lottie_rawRes="@raw/lastpencil" />
 
         <LinearLayout
             android:id="@+id/linear_layout"
@@ -74,8 +74,11 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:fontFamily="@font/blinker_semibold"
                 android:gravity="center"
                 android:text="@string/choose_a_category_text"
+                android:textColor="@color/black"
+                android:textSize="30sp"
                 android:visibility="visible" />
 
             <Spinner
@@ -84,7 +87,6 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:backgroundTint="@color/black"
                 android:entries="@array/Categories"
                 android:gravity="center"
                 android:visibility="visible" />
@@ -97,7 +99,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:layout_weight="1"
+                android:fontFamily="@font/baskervville"
                 android:text="@string/enter_3_words_text"
+                android:textColor="@color/black"
+                android:textStyle="bold"
                 android:visibility="visible" />
 
             <EditText
@@ -108,6 +113,8 @@
                 android:layout_gravity="center"
                 android:autofillHints=""
                 android:hint="@string/word1_text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/hint_words"
                 android:visibility="visible" />
 
             <EditText
@@ -123,7 +130,7 @@
                 android:hint="@string/Word2_text"
                 android:inputType="textPersonName"
                 android:textColor="@color/black"
-                android:textColorHint="@color/words_hint_txt"
+                android:textColorHint="@color/hint_words"
                 android:textSize="20sp"
                 android:visibility="visible" />
 
@@ -141,7 +148,7 @@
                 android:hint="@string/Word3_text"
                 android:inputType="textPersonName"
                 android:textColor="@color/black"
-                android:textColorHint="@color/words_hint_txt"
+                android:textColorHint="@color/hint_words"
                 android:textSize="20sp"
                 android:visibility="visible" />
 
@@ -154,6 +161,7 @@
                 android:layout_marginBottom="18dp"
                 android:layout_weight="1"
                 android:text="@string/generate_text"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 android:visibility="visible"
                 tools:ignore="TextSizeCheck" />
