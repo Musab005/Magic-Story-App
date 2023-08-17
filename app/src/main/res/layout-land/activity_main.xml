@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_white">
+        android:background="@color/white">
 
 
         <com.airbnb.lottie.LottieAnimationView
@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/writing_animation" />
+            app:lottie_rawRes="@raw/lastpencil" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -84,8 +84,9 @@
                 android:layout_width="320dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="12dp"
                 android:layout_weight="1"
+                android:fontFamily="@font/eczar"
                 android:text="@string/choose_a_category_text"
                 android:textAlignment="center"
                 android:visibility="visible" />
@@ -107,9 +108,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
+                android:fontFamily="@font/baskervville"
                 android:text="@string/enter_3_words_text"
                 android:textSize="40sp"
                 android:visibility="visible" />
@@ -141,7 +143,9 @@
                 android:autofillHints=""
                 android:ems="10"
                 android:hint="@string/word1_text"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="#000000"
+                android:textColorHint="@color/hint_words" />
 
             <EditText
                 android:id="@+id/word2"
@@ -155,7 +159,9 @@
                 android:autofillHints=""
                 android:ems="10"
                 android:hint="@string/Word2_text"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="#000000"
+                android:textColorHint="@color/hint_words" />
 
             <EditText
                 android:id="@+id/word3"
@@ -169,7 +175,9 @@
                 android:autofillHints=""
                 android:ems="10"
                 android:hint="@string/Word3_text"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="#000000"
+                android:textColorHint="@color/hint_words" />
         </LinearLayout>
 
         <Button

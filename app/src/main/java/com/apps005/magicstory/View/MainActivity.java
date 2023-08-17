@@ -39,7 +39,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO:welcome username and network connection lost toast onconfigchanged
+//TODO:welcome username and network connection lost toast onconfigchanged should not show again
+//TODO: landing page wifi off after login pressed?? loading widget not stoppin??
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private FirebaseFirestore db;
