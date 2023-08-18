@@ -17,7 +17,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
             if (networkInfo == null || !networkInfo.isConnected()) {
                 // Handle network interruption here
-                Toast.makeText(context, "Network connection lost. Please check your connection.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Connection lost", Toast.LENGTH_SHORT).show();
             }
         }
     }

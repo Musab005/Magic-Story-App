@@ -1,5 +1,6 @@
 package com.apps005.magicstory.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -29,7 +30,6 @@ import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.Util.WelcomeToastViewModel;
 import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
 import com.google.firebase.firestore.CollectionReference;
@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO:network connection lost toast onconfigchanged should not show again??
+//TODO: network connection lost toast onconfigchanged should not show again??
 //TODO: landing page wifi off after login pressed?? loading widget not stoppin??
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             welcomeToastShown = true;
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -145,13 +146,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle errors
-                                    Toast.makeText(MainActivity.this,"ERROR: Please try again later",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, "ERROR: Please try again later", Toast.LENGTH_SHORT).show();
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors
-                    Toast.makeText(MainActivity.this,"ERROR: Please try again later",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "ERROR: Please try again later", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -165,10 +166,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             // Use imageUrl here to display the image or perform other actions
             Intent intent = new Intent(MainActivity.this, ImageActivity.class);
             intent.putExtra("url", imageUrl);
-            intent.putExtra("word1",word1);
-            intent.putExtra("word2",word2);
-            intent.putExtra("word3",word3);
-            intent.putExtra("category",category);
+            intent.putExtra("word1", word1);
+            intent.putExtra("word2", word2);
+            intent.putExtra("word3", word3);
+            intent.putExtra("category", category);
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(() ->
@@ -336,9 +337,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(WELCOME_TOAST_SHOWN_KEY, welcomeToastShown);
     }
-
 }
