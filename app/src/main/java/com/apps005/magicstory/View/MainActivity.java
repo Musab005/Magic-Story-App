@@ -29,6 +29,7 @@ import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
+import com.apps005.magicstory.Util.WelcomeToastViewModel;
 import com.apps005.magicstory.Util.WordListener;
 import com.apps005.magicstory.databinding.ActivityMainBinding;
 import com.google.firebase.firestore.CollectionReference;
@@ -39,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO:welcome username and network connection lost toast onconfigchanged should not show again
+//TODO:network connection lost toast onconfigchanged should not show again??
 //TODO: landing page wifi off after login pressed?? loading widget not stoppin??
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -61,13 +62,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView words_statement;
     private Button btn;
     private MainLoadingViewModel loadingViewModel;
+    private static final String WELCOME_TOAST_SHOWN_KEY = "welcomeToastShown";
+    private boolean welcomeToastShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bo = DataBindingUtil.setContentView(this, R.layout.activity_main);
         init_widgets();
-        Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_SHORT).show();
+        if (savedInstanceState != null) {
+            welcomeToastShown = savedInstanceState.getBoolean(WELCOME_TOAST_SHOWN_KEY, false);
+        }
+        if (!welcomeToastShown) { // == false
+            // Show the welcome toast
+            Toast.makeText(MainActivity.this, "welcome " + instance_SP.getUsername(), Toast.LENGTH_SHORT).show();
+            welcomeToastShown = true;
+        }
     }
     @Override
     protected void onPause() {
@@ -89,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 hidden_layout.setVisibility(View.GONE);
             }
         });
+        // Register the BroadcastReceiver to monitor network changes
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new NetworkChangeReceiver(), intentFilter);
         onClick();
     }
 
@@ -220,10 +233,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn = bo.generateButton;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         networkRequest = new NetworkRequest();
-
-        // Register the BroadcastReceiver to monitor network changes
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new NetworkChangeReceiver(), intentFilter);
     }
     private void setUI() {
         wordBoxListener_init();
@@ -324,6 +333,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(WELCOME_TOAST_SHOWN_KEY, welcomeToastShown);
     }
 
 }

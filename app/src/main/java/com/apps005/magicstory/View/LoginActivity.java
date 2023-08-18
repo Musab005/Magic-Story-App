@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -89,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 if (isConnectedToInternet()) {
                     db = FirebaseFirestore.getInstance();
-                    Toast.makeText(LoginActivity.this, "got firebase instance", Toast.LENGTH_SHORT).show();
                     loginPageLoadingViewModel.setLoading(true);
                     saveData(first_name, last_name, username, formattedDate);
                 } else {
@@ -104,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
             SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
             CollectionReference usersCollection;
                 usersCollection = db.collection("Users");
-                Toast.makeText(LoginActivity.this,"init",Toast.LENGTH_SHORT).show();
                 usersCollection.whereEqualTo("username", username)
                         .get()
                         .addOnSuccessListener(querySnapshot -> {
@@ -117,12 +114,9 @@ public class LoginActivity extends AppCompatActivity {
                                         })
                                         .addOnCompleteListener(task -> {
                                             if (task.isSuccessful()) {
-                                                Handler handler = new Handler();
-                                                handler.postDelayed(() -> {
-                                                    instance_SP.setFirstLaunch(false);
-                                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                                    this.finish();
-                                                }, 2000);
+                                                instance_SP.setFirstLaunch(false);
+                                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                this.finish();
                                             } else {
                                                 loginPageLoadingViewModel.setLoading(false);
                                                 new AlertDialog.Builder(LoginActivity.this)
