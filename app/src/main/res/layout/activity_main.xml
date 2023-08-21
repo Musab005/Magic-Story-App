@@ -89,6 +89,7 @@
                 android:layout_weight="1"
                 android:entries="@array/Categories"
                 android:gravity="center"
+                android:scrollbarSize="10dp"
                 android:visibility="visible" />
 
 

@@ -51,20 +51,17 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
 
     <string-array name="Categories">
         <item> </item>
-        <item>Horror</item>
-        <item>Classical</item>
+        <item>Mystery</item>
         <item>Comedy</item>
+        <item>Batman</item>
+        <item>Fantasy World</item>
+        <item>Horror</item>
         <item>Motivation</item>
         <item>Romance</item>
         <item>Starstruck</item>
         <item>Hero</item>
         <item>Villain</item>
         <item>Crime</item>
-        <item>Murder</item>
-        <item>Mystery</item>
-        <item>Optimistic</item>
-        <item>Batman</item>
-        <item>Fantasy World</item>
         <item>Time Travel</item>
         <item>Alien Encounter</item>
         <item>Parallel Universes</item>
@@ -72,7 +69,9 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
         <item>Superpowers</item>
         <item>Haunted House</item>
         <item>Exploration</item>
+        <item>Classical</item>
         <item>Dreamscape</item>
+        <item>Optimistic</item>
         <item>Cultural Exchange</item>
         <item>Technological Advancements</item>
         <item>Lost and Found</item>
