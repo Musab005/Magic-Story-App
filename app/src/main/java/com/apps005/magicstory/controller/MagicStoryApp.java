@@ -17,7 +17,6 @@ public class MagicStoryApp extends Application {
         super.onCreate();
         instance = this;
         requestQueue = Volley.newRequestQueue(this);
-        Log.d("Controller", "MagicStoryApp instance created");
     }
 
     public MagicStoryApp() {

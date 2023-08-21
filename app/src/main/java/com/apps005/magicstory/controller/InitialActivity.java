@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.View.LoginActivity;
+import com.apps005.magicstory.View.CreateAccountActivity;
 import com.apps005.magicstory.View.MainActivity;
 
 public class InitialActivity extends AppCompatActivity {
@@ -20,7 +20,7 @@ public class InitialActivity extends AppCompatActivity {
         super.onResume();
         SharedPreferencesManager instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         if (instance_SP.isFirstLaunch()) {
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, CreateAccountActivity.class));
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }

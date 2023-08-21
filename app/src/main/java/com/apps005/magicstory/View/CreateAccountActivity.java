@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,13 +18,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
 import com.apps005.magicstory.Util.LoginPageLoadingViewModel;
-import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.databinding.ActivityLoginBinding;
+import com.apps005.magicstory.databinding.ActivityCreateAccountBinding;
 import com.apps005.magicstory.model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,10 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
-//TODO: clean up broadcast reciever
-
-public class LoginActivity extends AppCompatActivity {
+public class CreateAccountActivity extends AppCompatActivity {
 
     private EditText first_name_box;
     private SharedPreferencesManager instance_SP;
@@ -52,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.apps005.magicstory.databinding.ActivityLoginBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        com.apps005.magicstory.databinding.ActivityCreateAccountBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_create_account);
         init(bo);
     }
 
@@ -82,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
             if (first_name.isEmpty() ||
                     last_name.isEmpty() ||
                     username.isEmpty()) {
-                Toast.makeText(LoginActivity.this,
+                Toast.makeText(CreateAccountActivity.this,
                         "Please write your first name, last name and choose a username",
                         Toast.LENGTH_SHORT).show();
             } else {
@@ -91,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                     loginPageLoadingViewModel.setLoading(true);
                     saveData(first_name, last_name, username, formattedDate);
                 } else {
-                    Toast.makeText(LoginActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateAccountActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -100,8 +93,7 @@ public class LoginActivity extends AppCompatActivity {
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
             User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
             SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
-            CollectionReference usersCollection;
-                usersCollection = db.collection("Users");
+            CollectionReference usersCollection = db.collection("Users");
                 usersCollection.whereEqualTo("username", username)
                         .get()
                         .addOnSuccessListener(querySnapshot -> {
@@ -109,19 +101,20 @@ public class LoginActivity extends AppCompatActivity {
                                 // Username is available, add the new user to the collection
                                 usersCollection.add(user)
                                         .addOnFailureListener(e -> {
-                                            Toast.makeText(LoginActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(CreateAccountActivity.this,"ERROR. Try again later",Toast.LENGTH_SHORT).show();
                                             loginPageLoadingViewModel.setLoading(false);
                                         })
                                         .addOnCompleteListener(task -> {
                                             if (task.isSuccessful()) {
                                                 instance_SP.setFirstLaunch(false);
-                                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                startActivity(new Intent(CreateAccountActivity.this, MainActivity.class));
                                                 this.finish();
                                             } else {
+                                                //is this really useful?
                                                 loginPageLoadingViewModel.setLoading(false);
-                                                new AlertDialog.Builder(LoginActivity.this)
+                                                new AlertDialog.Builder(CreateAccountActivity.this)
                                                         .setTitle("Error")
-                                                        .setMessage("An unexpected error occurred.")
+                                                        .setMessage("Task failed")
                                                         .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                                                             // Do something if the user clicks "OK"
                                                             dialog.dismiss(); // Dismiss the dialog
@@ -134,15 +127,15 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 // Username is already taken, display an error message
                                 loginPageLoadingViewModel.setLoading(false);
-                                Toast.makeText(LoginActivity.this,"Username is already taken",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CreateAccountActivity.this,"Username is already taken",Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnFailureListener(e -> {
-                            // Handle errors
+                            // unable to access firebase
                             loginPageLoadingViewModel.setLoading(false);
-                            new AlertDialog.Builder(LoginActivity.this)
+                            new AlertDialog.Builder(CreateAccountActivity.this)
                                     .setTitle("Error")
-                                    .setMessage("An unexpected error occurred.")
+                                    .setMessage("An unexpected error occurred: " + e.getMessage())
                                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                                         // Do something if the user clicks "OK"
                                         dialog.dismiss(); // Dismiss the dialog
@@ -153,19 +146,14 @@ public class LoginActivity extends AppCompatActivity {
                         });
     }
 
-    private void init(ActivityLoginBinding bo) {
-        LottieAnimationView anim = bo.animationView;
-        anim.setVisibility(View.VISIBLE);
-        save_button = bo.saveButton;
+    private void init(ActivityCreateAccountBinding bo) {
         first_name_box = bo.firstNameBox;
         last_name_box = bo.lastNameBox;
         username_box = bo.usernameBox;
+        save_button = bo.saveButton;
         pBar = bo.pBar;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        wordBox_init();
-        // Register the BroadcastReceiver to monitor network changes
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new NetworkChangeReceiver(), intentFilter);
+        wordBox_listener();
     }
     // Helper method to check internet connectivity
     private boolean isConnectedToInternet() {
@@ -183,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
         username = username_box.getText().toString().trim();
     }
 
-    private void wordBox_init() {
+    private void wordBox_listener() {
         first_name_box.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard(textView);
@@ -246,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setMessage("Are you sure you want to exit?")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes,
-                        (dialogInterface, i) -> LoginActivity.super.onBackPressed()).create().show();
+                        (dialogInterface, i) -> CreateAccountActivity.super.onBackPressed()).create().show();
     }
 
 }

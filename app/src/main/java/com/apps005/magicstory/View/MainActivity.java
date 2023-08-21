@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.MainLoadingViewModel;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
@@ -40,7 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//TODO: network connection lost toast onconfigchanged should not show again??
 //TODO: landing page wifi off after login pressed?? loading widget not stoppin??
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -100,9 +97,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 hidden_layout.setVisibility(View.GONE);
             }
         });
-        // Register the BroadcastReceiver to monitor network changes
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new NetworkChangeReceiver(), intentFilter);
         onClick();
     }
 

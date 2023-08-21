@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.NetworkChangeReceiver;
 import com.apps005.magicstory.Util.NetworkRequest;
 import com.apps005.magicstory.Util.SharedPreferencesManager;
 import com.apps005.magicstory.Util.WritingAnimViewModel;
@@ -239,9 +237,6 @@ public class ImageActivity extends AppCompatActivity {
         handler = new Handler();
         intent = getIntent();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
-        // Register the BroadcastReceiver to monitor network changes
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new NetworkChangeReceiver(), intentFilter);
     }
 
     @Override

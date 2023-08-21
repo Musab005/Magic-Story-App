@@ -136,7 +136,7 @@
                 style="@style/wordbox_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|left"
+                android:layout_gravity="center|start"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="20dp"
@@ -145,7 +145,8 @@
                 android:hint="@string/word1_text"
                 android:inputType="textPersonName"
                 android:textColor="#000000"
-                android:textColorHint="@color/hint_words" />
+                android:textColorHint="@color/hint_words"
+                tools:ignore="VisualLintTextFieldSize,VisualLintBounds" />
 
             <EditText
                 android:id="@+id/word2"
@@ -161,14 +162,15 @@
                 android:hint="@string/Word2_text"
                 android:inputType="textPersonName"
                 android:textColor="#000000"
-                android:textColorHint="@color/hint_words" />
+                android:textColorHint="@color/hint_words"
+                tools:ignore="VisualLintTextFieldSize,VisualLintBounds" />
 
             <EditText
                 android:id="@+id/word3"
                 style="@style/wordbox_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|right"
+                android:layout_gravity="center|end"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="20dp"
@@ -177,7 +179,8 @@
                 android:hint="@string/Word3_text"
                 android:inputType="textPersonName"
                 android:textColor="#000000"
-                android:textColorHint="@color/hint_words" />
+                android:textColorHint="@color/hint_words"
+                tools:ignore="VisualLintTextFieldSize,VisualLintBounds" />
         </LinearLayout>
 
         <Button

@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:background="@color/dark_blue"
         android:padding="15dp"
-        tools:context=".View.LoginActivity">
+        tools:context=".View.CreateAccountActivity">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animationView"
@@ -21,6 +21,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="18dp"
             android:layout_marginBottom="18dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
