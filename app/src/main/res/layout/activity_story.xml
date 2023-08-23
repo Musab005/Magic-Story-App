@@ -34,7 +34,7 @@
                     android:background="@color/light_white"
                     android:fontFamily="@font/baskervville"
                     android:padding="10dp"
-                    android:text="@string/story"
+                    android:text="@string/done_text"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"

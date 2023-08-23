@@ -1,4 +1,4 @@
-package com.apps005.magicstory.View;
+package com.spark005apps.magicstory.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -21,11 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.NetworkRequest;
-import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.Util.WritingAnimViewModel;
-import com.apps005.magicstory.databinding.ActivityImageBinding;
+import com.spark005apps.magicstory.R;
+import com.spark005apps.magicstory.Util.NetworkRequest;
+import com.spark005apps.magicstory.Util.SharedPreferencesManager;
+import com.spark005apps.magicstory.Util.WritingAnimViewModel;
+import com.spark005apps.magicstory.databinding.ActivityImageBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -33,6 +33,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -145,6 +146,11 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     private void startStoryActivity(String word1, String word2, String word3, String category) {
+        Bundle params = new Bundle();
+        params.putString("category", "Button Click");
+        params.putString("button_name", "story button");
+        FirebaseAnalytics.getInstance(this).logEvent("button_click", params);
+
         writingAnimViewModel.setLoading(true);
         CompletableFuture<String> future = new NetworkRequest().
                 generateStoryAsync(word1, word2, word3, category);

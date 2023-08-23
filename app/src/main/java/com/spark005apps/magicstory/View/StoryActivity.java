@@ -1,4 +1,4 @@
-package com.apps005.magicstory.View;
+package com.spark005apps.magicstory.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -17,13 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.databinding.ActivityStoryBinding;
+import com.spark005apps.magicstory.Util.SharedPreferencesManager;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.spark005apps.magicstory.R;
+import com.spark005apps.magicstory.databinding.ActivityStoryBinding;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class StoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bo = DataBindingUtil.setContentView(this, R.layout.activity_story);
+        bo = DataBindingUtil.setContentView(this, com.spark005apps.magicstory.R.layout.activity_story);
         init();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -58,6 +59,10 @@ public class StoryActivity extends AppCompatActivity {
     private void proceed() {
         storyText.setText(intent.getStringExtra("story"));
         done_button.setOnClickListener(view -> {
+            Bundle params = new Bundle();
+            params.putString("category", "Button Click");
+            params.putString("button_name", "done button");
+            FirebaseAnalytics.getInstance(this).logEvent("button_click", params);
             if (isConnectedToInternet()) {
                 db = FirebaseFirestore.getInstance();
                 incrementDoneCount();

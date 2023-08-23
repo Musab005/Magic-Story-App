@@ -1,10 +1,11 @@
-package com.apps005.magicstory.Util;
+package com.spark005apps.magicstory.Util;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class LoginPageLoadingViewModel extends ViewModel {
+public class WritingAnimViewModel extends ViewModel {
+
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     public LiveData<Boolean> isLoading() {
@@ -15,4 +16,3 @@ public class LoginPageLoadingViewModel extends ViewModel {
         isLoading.setValue(loading);
     }
 }
-

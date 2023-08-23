@@ -1,4 +1,4 @@
-package com.apps005.magicstory.controller;
+package com.spark005apps.magicstory.controller;
 
 import android.app.Application;
 import android.util.Log;

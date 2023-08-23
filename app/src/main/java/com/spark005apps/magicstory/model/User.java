@@ -1,4 +1,4 @@
-package com.apps005.magicstory.model;
+package com.spark005apps.magicstory.model;
 
 public class User {
 

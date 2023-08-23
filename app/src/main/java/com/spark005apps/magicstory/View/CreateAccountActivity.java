@@ -1,4 +1,4 @@
-package com.apps005.magicstory.View;
+package com.spark005apps.magicstory.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,14 +15,16 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.LoginPageLoadingViewModel;
-import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.databinding.ActivityCreateAccountBinding;
-import com.apps005.magicstory.model.User;
+import com.spark005apps.magicstory.R;
+import com.spark005apps.magicstory.Util.LoginPageLoadingViewModel;
+import com.spark005apps.magicstory.Util.SharedPreferencesManager;
+import com.spark005apps.magicstory.databinding.ActivityCreateAccountBinding;
+import com.spark005apps.magicstory.model.User;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,10 +44,12 @@ public class CreateAccountActivity extends AppCompatActivity {
     private String last_name;
     private String username;
     private LoginPageLoadingViewModel loginPageLoadingViewModel;
+    private CheckBox checkBox;
+    private FirebaseAnalytics mFirebaseAnalytics;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.apps005.magicstory.databinding.ActivityCreateAccountBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_create_account);
+        com.spark005apps.magicstory.databinding.ActivityCreateAccountBinding bo = DataBindingUtil.setContentView(this, R.layout.activity_create_account);
         init(bo);
     }
 
@@ -78,6 +82,10 @@ public class CreateAccountActivity extends AppCompatActivity {
                 Toast.makeText(CreateAccountActivity.this,
                         "Please write your first name, last name and choose a username",
                         Toast.LENGTH_SHORT).show();
+            } else if (!checkBox.isChecked()) {
+                Toast.makeText(CreateAccountActivity.this,
+                        "Please agree to the privacy policy",
+                        Toast.LENGTH_SHORT).show();
             } else {
                 if (isConnectedToInternet()) {
                     db = FirebaseFirestore.getInstance();
@@ -91,6 +99,11 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     private void saveData(String first_name, String last_name, String username, String formattedDate) {
+        Bundle params = new Bundle();
+        params.putString("category", "Button Click");
+        params.putString("button_name", "create account");
+        FirebaseAnalytics.getInstance(this).logEvent("button_click", params);
+
             User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
             SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
             CollectionReference usersCollection = db.collection("Users");
@@ -154,6 +167,10 @@ public class CreateAccountActivity extends AppCompatActivity {
         pBar = bo.pBar;
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
         wordBox_listener();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        checkBox = bo.checkBox;
+        bo.privacyPolicyText.setOnClickListener(view ->
+                startActivity(new Intent(CreateAccountActivity.this, PrivacyPolicyActivity.class)));
     }
     // Helper method to check internet connectivity
     private boolean isConnectedToInternet() {

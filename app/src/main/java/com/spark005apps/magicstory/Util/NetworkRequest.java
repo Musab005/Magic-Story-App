@@ -1,9 +1,9 @@
-package com.apps005.magicstory.Util;
+package com.spark005apps.magicstory.Util;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.apps005.magicstory.controller.MagicStoryApp;
+import com.spark005apps.magicstory.controller.MagicStoryApp;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;

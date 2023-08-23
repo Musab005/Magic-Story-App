@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
+        <item>@font/arvo</item>
         <item>@font/atomic_age</item>
         <item>@font/blinker_semibold</item>
         <item>@font/bubblegum_sans</item>
@@ -8,5 +9,6 @@
         <item>@font/eczar</item>
         <item>@font/luckiest_guy</item>
         <item>@font/paprika</item>
+        <item>@font/roboto</item>
     </array>
 </resources>

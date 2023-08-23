@@ -1,4 +1,4 @@
-package com.apps005.magicstory;
+package com.spark005apps.magicstory;
 
 import org.junit.Test;
 

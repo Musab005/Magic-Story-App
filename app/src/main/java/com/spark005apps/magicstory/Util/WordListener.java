@@ -1,4 +1,4 @@
-package com.apps005.magicstory.Util;
+package com.spark005apps.magicstory.Util;
 
 import android.text.Editable;
 import android.text.TextWatcher;

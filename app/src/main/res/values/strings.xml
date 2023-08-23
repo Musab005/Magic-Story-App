@@ -12,27 +12,6 @@
     <string name="next_text">Next</string>
     <string name="done_text">Done</string>
     <string name="re_generate_text">Re-\ngenerate</string>
-    <string name="story">
-Once upon a time in a small town called Quirkville, there lived an astronaut named Major Melvin Mischief. Now, Major Mischief was known for his love of mischief and his uncanny ability to find humor in the most unlikely situations.\n
-
-One sunny day, Major Mischief decided to take a break from his space adventures and go on a road trip in his trusty old car, which he lovingly named "Cosmo Cruiser." He packed his bags, grabbed his favorite pair of headphones, and set off on a quirky adventure.\n
-
-As he cruised down the highway, Major Mischief couldn\'t resist the urge to listen to his favorite upbeat tunes. He plugged his headphones into his car\'s audio system, turned up the volume, and began singing along with gusto. Little did he know, his singing voice had the power to make people break into spontaneous laughter.\n
-
-Unaware of the hilarity he was causing, Major Mischief drove through town, spreading joy and laughter wherever he went. Pedestrians burst into giggles, dogs started wagging their tails uncontrollably, and even traffic lights turned red with laughter. Quirkville had never seen such a comical sight!\n
-
-Curious about the uproar he was causing, Major Mischief took off his headphones for a moment, and to his surprise, he heard the sound of laughter echoing through the streets. It was then that he realized his extraordinary talent for making people laugh with his singing.\n
-
-Determined to share his gift with the world, Major Mischief hatched a plan. He parked his car in the town square, connected his headphones to a portable speaker, and turned up the volume. As soon as his silly songs filled the air, a crowd gathered around him, unable to resist the infectious laughter that followed.\n
-
-Word quickly spread, and people from neighboring towns came to witness Major Mischief\'s comical concerts. His fame skyrocketed, and soon he was known as the "Singing Astronaut." He traveled from town to town, bringing joy to everyone he encountered.\n
-
-One day, as Major Mischief was performing his signature rendition of "Rocket Man," he caught the attention of a talent scout from a famous comedy show. The scout was so impressed by Major Mischief\'s ability to spread laughter that he offered him a spot on the show.\n
-
-Major Mischief gladly accepted the offer and became a beloved comedian, famous for his unique blend of space humor and catchy tunes. His car, the Cosmo Cruiser, became a symbol of laughter, and people started wearing headphones in his honor.\n
-
-And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles to people\'s faces, proving that even in the vastness of space or the ordinary setting of a car ride, laughter has the power to unite and brighten our lives.
-    </string>
     <string name="choose_a_category_text">Choose a category:</string>
     <string name="enter_3_words_text">Enter 3 words:</string>
     <string name="word_1_text">Word 1</string>
@@ -43,11 +22,13 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
     <string name="pick_a_username_txt">Pick a username:</string>
     <string name="last_name_txt">Last name</string>
     <string name="first_name_txt">First name</string>
-    <string name="putting_in_the_magic_txt">Putting in the magic...</string>
+    <string name="putting_in_the_magic_txt">Putting in the magic…</string>
     <string name="Read_story_txt">Read story</string>
     <string name="image_generated_based_on_user_input_txt">Image generated based on user input</string>
     <string name="proceed_to_read_story_txt">proceed to read story</string>
     <string name="ai_generated_image_txt">AI generated image</string>
+    <string name="privacy_policy_header"><u>Privacy Policy</u></string>
+    <string name="i_agree_to_the_privacy_policy">I agree to the <u>Privacy Policy</u></string>
 
     <string-array name="Categories">
         <item> </item>
@@ -55,13 +36,11 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
         <item>Comedy</item>
         <item>Batman</item>
         <item>Fantasy World</item>
-        <item>Horror</item>
         <item>Motivation</item>
         <item>Romance</item>
         <item>Starstruck</item>
         <item>Hero</item>
         <item>Villain</item>
-        <item>Crime</item>
         <item>Time Travel</item>
         <item>Alien Encounter</item>
         <item>Parallel Universes</item>
@@ -77,7 +56,32 @@ And so, Major Melvin Mischief, the Singing Astronaut, continued to bring smiles 
         <item>Lost and Found</item>
         <item>Love at First Sight</item>
         <item>Quest for Knowledge</item>
-        <item>Apocalyptic Event</item>
     </string-array>
+
+    <string name="privacy_policy">
+        <b>Privacy Policy</b>\n
+        <i>Last Updated: 22/08/2023</i>\n\n
+        Welcome to Magic Story!\n\n
+        This Privacy Policy outlines how Magic Story ("we", "us", "our") collects, uses, and protects the information you provide when using our mobile application ("app"). By using our app, you agree to the practices described in this policy.\n\n
+        Information We Collect:\n\n
+        We collect and store the following information when you use our app:\n\n
+        Full name and frequency of usage \n\n
+        Analytics and Diagnostics Data \n\n
+        How We Use Your Information:\n\n
+        The information helps us understand user behaviour and improve our app. We use analytics tools to collect data on app usage and performance. This data includes crash logs and diagnostics, which help us identify and address any issues to provide you with a better experience. \n\n
+        User-Generated Content:\n\n
+        Our app generates images and stories based on user input. While we make efforts to ensure that the content generated is safe and appropriate, we want to emphasize that we do not claim responsibility for any harmful, inappropriate, or offensive content that may be generated. OpenAI\'s API is designed to detect and prevent harmful content, but errors can occur.\n\n
+        Children\'s Privacy:\n\n
+        Our app is suitable for users of all ages, including children. We do not knowingly collect personal information from individuals under the age of 13. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at musabumair005@gmail.com, and we will take steps to remove such information.\n\n
+        Account deletion:\n\n
+        Please contact us at musabumair005@gmail.com and we will delete all data associated with your usage.\n\n
+        Changes to this Privacy Policy:\n\n
+        We reserve the right to modify this Privacy Policy at any time. Any changes will be effective immediately upon posting the updated policy in the app. We encourage you to review this policy periodically for any updates.\n\n
+        Contact Us:\n\n
+        If you have any questions or concerns about this Privacy Policy or our app\'s practices, please contact us at musabumair005@gmail.com.\n\n
+        Your Consent:\n\n
+        By using our app, you consent to the terms outlined in this Privacy Policy.\n
+</string>
+
 
 </resources>

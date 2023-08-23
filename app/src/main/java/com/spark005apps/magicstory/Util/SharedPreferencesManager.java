@@ -1,4 +1,4 @@
-package com.apps005.magicstory.Util;
+package com.spark005apps.magicstory.Util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;

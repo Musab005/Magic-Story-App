@@ -1,12 +1,12 @@
-package com.apps005.magicstory.controller;
+package com.spark005apps.magicstory.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.View.CreateAccountActivity;
-import com.apps005.magicstory.View.MainActivity;
+import com.spark005apps.magicstory.Util.SharedPreferencesManager;
+import com.spark005apps.magicstory.View.CreateAccountActivity;
+import com.spark005apps.magicstory.View.MainActivity;
 
 public class InitialActivity extends AppCompatActivity {
 

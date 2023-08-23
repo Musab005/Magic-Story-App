@@ -13,13 +13,19 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        tools:targetApi="31">
+        tools:targetApi="33">
+        <activity
+            android:name=".View.PrivacyPolicyActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light"/>
         <activity
             android:name=".controller.InitialActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.AppCompat.Light"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

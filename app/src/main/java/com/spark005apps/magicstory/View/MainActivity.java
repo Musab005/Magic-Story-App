@@ -1,4 +1,4 @@
-package com.apps005.magicstory.View;
+package com.spark005apps.magicstory.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -24,12 +24,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
-import com.apps005.magicstory.R;
-import com.apps005.magicstory.Util.NetworkRequest;
-import com.apps005.magicstory.Util.MainLoadingViewModel;
-import com.apps005.magicstory.Util.SharedPreferencesManager;
-import com.apps005.magicstory.Util.WordListener;
-import com.apps005.magicstory.databinding.ActivityMainBinding;
+import com.spark005apps.magicstory.R;
+import com.spark005apps.magicstory.Util.NetworkRequest;
+import com.spark005apps.magicstory.Util.MainLoadingViewModel;
+import com.spark005apps.magicstory.Util.SharedPreferencesManager;
+import com.spark005apps.magicstory.Util.WordListener;
+import com.spark005apps.magicstory.databinding.ActivityMainBinding;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -151,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void startImageActivity() {
+        Bundle params = new Bundle();
+        params.putString("category", "Button Click");
+        params.putString("button_name", "image button");
+        FirebaseAnalytics.getInstance(this).logEvent("button_click", params);
+
         loadingViewModel.setLoading(true);
         CompletableFuture<String> future = networkRequest.
                 generateImageAsync(word1, word2, word3, category);
