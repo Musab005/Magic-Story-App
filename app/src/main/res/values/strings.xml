@@ -31,7 +31,6 @@
     <string name="i_agree_to_the_privacy_policy">I agree to the <u>Privacy Policy</u></string>
 
     <string-array name="Categories">
-        <item> </item>
         <item>Mystery</item>
         <item>Comedy</item>
         <item>Batman</item>

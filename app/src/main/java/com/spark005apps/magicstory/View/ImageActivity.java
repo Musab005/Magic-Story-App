@@ -138,10 +138,8 @@ public class ImageActivity extends AppCompatActivity {
             statement.setVisibility(View.GONE);
             arrow.setVisibility(View.GONE);
         } else {
-            handler.postDelayed(() -> {
-                statement.setVisibility(View.VISIBLE);
-                arrow.setVisibility(View.VISIBLE);
-            }, 3000);
+            statement.setVisibility(View.VISIBLE);
+            arrow.setVisibility(View.VISIBLE);
         }
     }
 
