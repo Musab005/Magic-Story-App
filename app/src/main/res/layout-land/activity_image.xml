@@ -55,7 +55,7 @@
                 android:text="@string/Read_story_txt"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:visibility="gone"
+                android:visibility="visible"
                 tools:ignore="NestedWeights" />
 
             <ImageView
@@ -65,7 +65,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_weight="0.05"
                 android:contentDescription="@string/proceed_to_read_story_txt"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:srcCompat="@drawable/arrow_new" />
         </LinearLayout>
     </LinearLayout>
