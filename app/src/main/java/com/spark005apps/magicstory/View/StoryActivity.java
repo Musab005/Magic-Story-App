@@ -3,6 +3,7 @@ package com.spark005apps.magicstory.View;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.spark005apps.magicstory.Util.SharedPreferencesManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -34,11 +36,12 @@ public class StoryActivity extends AppCompatActivity {
     private ScrollView scrollView;
     private SharedPreferencesManager instance_SP;
     private FirebaseFirestore db;
-    private LinearLayout buttonLayout;
+    private ConstraintLayout buttonLayout;
     private TextView storyText;
     private Button done_button;
     private ActivityStoryBinding bo;
     private Intent intent;
+    private TextView report_story;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,14 @@ public class StoryActivity extends AppCompatActivity {
 
     private void proceed() {
         storyText.setText(intent.getStringExtra("story"));
+        report_story.setOnClickListener(view -> {
+            if (isConnectedToInternet()) {
+                db = FirebaseFirestore.getInstance();
+                addReport();
+            } else {
+                Toast.makeText(StoryActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
         done_button.setOnClickListener(view -> {
             Bundle params = new Bundle();
             params.putString("category", "Button Click");
@@ -76,6 +87,7 @@ public class StoryActivity extends AppCompatActivity {
         scrollView = bo.scrollView;
         buttonLayout = bo.buttonLayout;
         storyText = bo.storyText;
+        report_story = bo.reportStory;
         widgets_init();
         intent = getIntent();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());
@@ -102,6 +114,38 @@ public class StoryActivity extends AppCompatActivity {
         });
     }
 
+    private void addReport() {
+        CollectionReference usersCollection = db.collection("Users");
+        String usernameToUpdate = instance_SP.getUsername();
+        // Create a map with the updated "count" value
+        Map<String, Object> incrementData = new HashMap<>();
+        String report_words = instance_SP.getCategory() + ":" + instance_SP.getWord1() + "," +  instance_SP.getWord2() + "," + instance_SP.getWord3();
+        incrementData.put("report_words", report_words);
+
+        usersCollection.whereEqualTo("username", usernameToUpdate)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        // Get the document ID of the user to update
+                        String documentId = documentSnapshot.getId();
+                        // Update the "count" field for the user
+                        usersCollection.document(documentId)
+                                .update(incrementData)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Update successful
+                                    report_story.setVisibility(View.GONE);
+                                    Toast.makeText(StoryActivity.this, "Story reported", Toast.LENGTH_SHORT).show();
+
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle errors
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(StoryActivity.this, "ERROR: Please try again later", Toast.LENGTH_SHORT).show();
+                });
+    }
     private void incrementDoneCount() {
         CollectionReference usersCollection = db.collection("Users");
         String usernameToUpdate = instance_SP.getUsername();

@@ -53,6 +53,7 @@ public class ImageActivity extends AppCompatActivity {
     private TextView statement;
     private ActivityImageBinding bo;
     private Intent intent;
+    private TextView report_button;
     private ActionBar actionBar;
     private WritingAnimViewModel writingAnimViewModel;
 
@@ -91,6 +92,14 @@ public class ImageActivity extends AppCompatActivity {
         String word2 = intent.getStringExtra("word2");
         String word3 = intent.getStringExtra("word3");
         String category = intent.getStringExtra("category");
+        report_button.setOnClickListener(view -> {
+            if (isConnectedToInternet()) {
+                db = FirebaseFirestore.getInstance();
+                addReport();
+            } else {
+                Toast.makeText(ImageActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
         arrow.setOnClickListener(view -> {
             if (isConnectedToInternet()) {
                 db = FirebaseFirestore.getInstance();
@@ -138,10 +147,8 @@ public class ImageActivity extends AppCompatActivity {
             statement.setVisibility(View.GONE);
             arrow.setVisibility(View.GONE);
         } else {
-            handler.postDelayed(() -> {
-                statement.setVisibility(View.VISIBLE);
-                arrow.setVisibility(View.VISIBLE);
-            }, 3000);
+            statement.setVisibility(View.VISIBLE);
+            arrow.setVisibility(View.VISIBLE);
         }
     }
 
@@ -183,6 +190,38 @@ public class ImageActivity extends AppCompatActivity {
         });
     }
 
+    private void addReport() {
+        CollectionReference usersCollection = db.collection("Users");
+        String usernameToUpdate = instance_SP.getUsername();
+        // Create a map with the updated "count" value
+        Map<String, Object> incrementData = new HashMap<>();
+        String words = instance_SP.getCategory() + ":" + instance_SP.getWord1() + "," +  instance_SP.getWord2() + "," + instance_SP.getWord3();
+        incrementData.put("report_words", words);
+
+        usersCollection.whereEqualTo("username", usernameToUpdate)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        // Get the document ID of the user to update
+                        String documentId = documentSnapshot.getId();
+                        // Update the "count" field for the user
+                        usersCollection.document(documentId)
+                                .update(incrementData)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Update successful
+                                    report_button.setVisibility(View.GONE);
+                                    Toast.makeText(ImageActivity.this, "Image reported", Toast.LENGTH_SHORT).show();
+
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle errors
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ImageActivity.this, "ERROR: Please try again later", Toast.LENGTH_SHORT).show();
+                });
+    }
     private void incrementReadStoryCount() {
         CollectionReference usersCollection = db.collection("Users");
         String usernameToUpdate = instance_SP.getUsername();
@@ -208,7 +247,7 @@ public class ImageActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Handle errors
+                    Toast.makeText(ImageActivity.this, "ERROR: Please try again later", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -218,10 +257,12 @@ public class ImageActivity extends AppCompatActivity {
             handler.postDelayed(() -> {
                 arrow.setVisibility(value);
                 statement.setVisibility(value);
+                report_button.setVisibility(value);
             }, 2000);
         } else {
             arrow.setVisibility(value);
             statement.setVisibility(value);
+            report_button.setVisibility(value);
         }
     }
 
@@ -240,6 +281,7 @@ public class ImageActivity extends AppCompatActivity {
         statement = bo.readStoryStatement;
         iv = bo.imageView;
         anim = bo.animationView;
+        report_button = bo.reportButton;
         handler = new Handler();
         intent = getIntent();
         instance_SP = SharedPreferencesManager.getInstance(this.getApplicationContext());

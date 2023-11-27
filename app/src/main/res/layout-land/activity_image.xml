@@ -55,18 +55,28 @@
                 android:text="@string/Read_story_txt"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:visibility="gone"
+                android:visibility="visible"
                 tools:ignore="NestedWeights" />
 
             <ImageView
                 android:id="@+id/ReadStory_arrow"
-                android:layout_width="70dp"
-                android:layout_height="30dp"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_weight="0.05"
                 android:contentDescription="@string/proceed_to_read_story_txt"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:srcCompat="@drawable/arrow_new" />
+
+            <TextView
+                android:id="@+id/report_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/arvo"
+                android:text="@string/Report_image"
+                android:textColor="@color/material_dynamic_neutral30"
+                android:textStyle="italic" />
         </LinearLayout>
+
     </LinearLayout>
 </layout>

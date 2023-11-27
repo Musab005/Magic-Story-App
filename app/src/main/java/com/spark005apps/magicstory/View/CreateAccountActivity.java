@@ -104,7 +104,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         params.putString("button_name", "create account");
         FirebaseAnalytics.getInstance(this).logEvent("button_click", params);
 
-            User user = new User(first_name, last_name, formattedDate,0, username, 0,0);
+            User user = new User(first_name, last_name, formattedDate,0, username, 0,0, " ");
             SharedPreferencesManager.getInstance(this.getApplicationContext()).saveUsername(username);
             CollectionReference usersCollection = db.collection("Users");
                 usersCollection.whereEqualTo("username", username)
