@@ -24,10 +24,11 @@ public class User {
         this.done_story = done_story;
     }
 
+    private String report_words;
     private int read_story;
     private int done_story;
 
-    public User(String first_name, String last_name, String date_joined, int count_image, String username, int read_story, int done_story) {
+    public User(String first_name, String last_name, String date_joined, int count_image, String username, int read_story, int done_story, String report_words) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.date_joined = date_joined;
@@ -35,6 +36,7 @@ public class User {
         this.username = username;
         this.read_story = read_story;
         this.done_story = done_story;
+        this.report_words = report_words;
     }
 
     public String getUsername() {
@@ -79,5 +81,13 @@ public class User {
 
     public void setCount_image(int count_image) {
         this.count_image = count_image;
+    }
+
+    public String getReport_words() {
+        return report_words;
+    }
+
+    public void setReport_words(String report_words) {
+        this.report_words = report_words;
     }
 }
