@@ -12,7 +12,7 @@ android {
         applicationId "com.spark005apps.magicstory"
         minSdk 26
         targetSdk 33
-        versionCode 4
+        versionCode 5
         versionName "2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
