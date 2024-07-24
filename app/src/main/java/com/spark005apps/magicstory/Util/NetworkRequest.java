@@ -82,7 +82,7 @@ public class NetworkRequest {
         try {
             // Create a HashMap to represent the request payload
             Map<String, Object> requestData = new HashMap<>();
-            requestData.put("model", "gpt-3.5-turbo-16k");
+            requestData.put("model", "gpt-4o-mini");
 
             // Create a HashMap for the user message
             Map<String, String> userMessageMap = new HashMap<>();
