@@ -6,14 +6,14 @@ plugins {
 
 android {
     namespace 'com.spark005apps.magicstory'
-    compileSdk 34
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.spark005apps.magicstory"
         minSdk 26
-        targetSdk 34
-        versionCode 6
-        versionName "1"
+        targetSdk 33
+        versionCode 5
+        versionName "2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
