@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "333239435949",
+    "project_id": "magic-story-29c2c",
+    "storage_bucket": "magic-story-29c2c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333239435949:android:d9299458748ad4147f3c24",
+        "android_client_info": {
+          "package_name": "com.spark005apps.magicstory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "333239435949-h8cp70888i1baqdu2bjtrfbognu00l3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgjzvVVCf3xRQCO9-O5exHlD8X6xVfCys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "333239435949-h8cp70888i1baqdu2bjtrfbognu00l3r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
