@@ -48,32 +48,18 @@
             android:id="@+id/read_story_statement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="264dp"
+            android:layout_marginTop="100dp"
             android:fontFamily="@font/luckiest_guy"
-            android:text="@string/Read_story_txt"
+            android:gravity="center_horizontal"
+            android:text="Your magic story awaits!"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/ReadStory_arrow"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.949"
+            app:layout_constraintHorizontal_bias="0.58"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <ImageView
-            android:id="@+id/ReadStory_arrow"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:contentDescription="@string/proceed_to_read_story_txt"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/read_story_statement"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/arrow_new" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
         <TextView
             android:id="@+id/report_button"
@@ -88,6 +74,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+        <Button
+            android:id="@+id/ReadStory_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="50dp"
+            android:backgroundTint="#F4EFEF"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:outlineProvider="bounds"
+            android:text="Click!"
+            android:textSize="18sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/read_story_statement"
+            app:layout_constraintHorizontal_bias="0.503"
+            app:layout_constraintStart_toStartOf="@+id/read_story_statement"
+            app:layout_constraintTop_toBottomOf="@+id/read_story_statement"
+            app:layout_constraintVertical_bias="0.191" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

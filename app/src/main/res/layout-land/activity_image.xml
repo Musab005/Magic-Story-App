@@ -52,21 +52,21 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/luckiest_guy"
                 android:gravity="bottom"
-                android:text="@string/Read_story_txt"
+                android:text="Your magic story awaits!"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:visibility="visible"
                 tools:ignore="NestedWeights" />
 
-            <ImageView
+            <Button
                 android:id="@+id/ReadStory_arrow"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_weight="0.05"
-                android:contentDescription="@string/proceed_to_read_story_txt"
-                android:visibility="visible"
-                app:srcCompat="@drawable/arrow_new" />
+                android:layout_gravity="end"
+                android:backgroundTint="#F4EFEF"
+                android:outlineProvider="background"
+                android:text="Click!"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/report_button"
@@ -76,6 +76,7 @@
                 android:text="@string/Report_image"
                 android:textColor="@color/material_dynamic_neutral30"
                 android:textStyle="italic" />
+
         </LinearLayout>
 
     </LinearLayout>

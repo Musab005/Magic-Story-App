@@ -104,10 +104,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void onClick() {
         btn.setOnClickListener(view -> {
             instance_SP.saveData(word1, word2, word3, category);
-            if (word1.equals("") ||
-                    word2.equals("") ||
-                    word3.equals("") ||
-                    category.isEmpty()) {
+            if (word1.isEmpty() ||
+                    word2.isEmpty() ||
+                    word3.isEmpty()) {
                 Toast.makeText(MainActivity.this,
                         "Enter 3 words and choose a category",
                         Toast.LENGTH_SHORT).show();

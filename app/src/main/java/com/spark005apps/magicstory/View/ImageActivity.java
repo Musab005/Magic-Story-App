@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
+import android.widget.Button;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -49,7 +50,7 @@ public class ImageActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private LottieAnimationView anim;
     private ImageView iv;
-    private ImageView arrow;
+    private Button arrow;
     private TextView statement;
     private ActivityImageBinding bo;
     private Intent intent;

@@ -1,12 +1,9 @@
-buildscript {
-    dependencies {
-        classpath 'com.google.gms:google-services:4.3.15'
-        classpath 'com.android.tools.build:gradle:3.4.0'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.8'
-    }
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// REMOVE the old buildscript block entirely
+// AGP 8+ does not use buildscript classpath anymore
+
 plugins {
-    id 'com.android.application' version '7.4.0' apply false
-    id 'com.android.library' version '7.4.0' apply false
-    id 'com.google.gms.google-services' version '4.3.15' apply false
+    id 'com.android.application' version '8.5.2' apply false
+    id 'com.android.library' version '8.5.2' apply false
+    id 'com.google.gms.google-services' version '4.4.0' apply false
+    id 'com.google.firebase.crashlytics' version '3.0.2' apply false
 }

@@ -6,14 +6,15 @@ plugins {
 
 android {
     namespace 'com.spark005apps.magicstory'
-    compileSdk 33
+    compileSdk 35   // recommended with AGP 8+
 
     defaultConfig {
         applicationId "com.spark005apps.magicstory"
         minSdk 26
-        targetSdk 33
-        versionCode 5
-        versionName "2"
+        targetSdk 35    // recommended with AGP 8+
+        versionCode 11
+        versionName "1"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -23,33 +24,42 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17   // REQUIRED for AGP 8.0+
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     buildFeatures {
         dataBinding true
     }
-
 }
 
 dependencies {
 
+    // Firebase BOM controls versions → remove manual firebase versions
+    implementation platform('com.google.firebase:firebase-bom:32.2.2')
+
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-crashlytics'
+
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.firebase:firebase-firestore:24.7.0'
-    implementation 'com.google.firebase:firebase-crashlytics:18.4.0'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    // Lottie
+    implementation 'com.airbnb.android:lottie:6.1.0'
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'com.google.firebase:firebase-analytics:21.3.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
-    implementation 'com.airbnb.android:lottie:6.1.0'
-    implementation platform("com.google.firebase:firebase-bom:32.2.2")
 }
