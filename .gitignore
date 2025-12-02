@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app_folder_apk/
+/keys/
