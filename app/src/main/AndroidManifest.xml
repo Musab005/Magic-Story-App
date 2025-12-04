@@ -42,7 +42,7 @@
             android:name=".View.StoryActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".View.MainActivity"
             android:exported="true"

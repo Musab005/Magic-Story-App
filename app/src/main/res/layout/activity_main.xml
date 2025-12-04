@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
     <FrameLayout
@@ -158,8 +158,7 @@
                 style="@style/gen_button_style"
                 android:layout_width="161dp"
                 android:layout_height="71dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="18dp"
+                android:layout_marginBottom="50dp"
                 android:layout_weight="1"
                 android:text="@string/generate_text"
                 android:textColor="@color/white"
